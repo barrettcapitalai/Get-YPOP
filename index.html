@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$YPOP: The Financial Infrastructure of Influence</title>
+<meta name="description" content="Branded wallets and Visa cards that let creators, athletes, events and communities own the transaction, not just the audience. Run your numbers.">
+<meta property="og:title" content="$YPOP: The Financial Infrastructure of Influence">
+<meta property="og:description" content="Everyone has influence. Everyone can build a business. Who powers the money?">
+<meta name="theme-color" content="#F6F5EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0A0A; --panel:#121212; --panel-2:#171717; --line:#262626; --line-2:#333;
+  --text:#ECECEC; --muted:#8A8A8A; --dim:#5C5C5C;
+  --lime:#ADFF5A; --lime-dim:rgba(173,255,90,.12); --gold:#E8F500;
+  --sans:"Archivo",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono)}
+.g{color:var(--lime)}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.label::before{content:"// ";color:var(--dim)}
+
+/* header */
+header{border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:var(--sans);font-weight:800;font-size:22px;letter-spacing:-.01em;text-decoration:none}
+.logo span{color:var(--lime)}
+.bar .mono{font-size:12px;letter-spacing:.14em;color:var(--lime);text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:1px solid var(--lime);color:var(--bg);background:var(--lime);padding:12px 18px;border-radius:2px;cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--lime)}
+.btn.ghost:hover{background:var(--lime-dim)}
+.btn.sm{padding:9px 14px;font-size:12px}
+
+/* hero */
+.hero{padding:64px 0 40px}
+.hero .lede{font-family:var(--mono);color:var(--muted);font-size:clamp(15px,2vw,20px);max-width:760px;margin-top:18px}
+h1{font-weight:800;font-size:clamp(40px,7vw,88px);line-height:.95;letter-spacing:-.03em}
+h2{font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.05;letter-spacing:-.02em}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);border:1px solid var(--line);background:var(--panel)}
+.inputs{padding:32px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:30px}
+.field .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.numbox{display:flex;align-items:center;background:var(--bg);border:1px solid var(--line-2);border-radius:2px;padding:0 12px;min-width:0}
+.numbox:focus-within{border-color:var(--lime)}
+.numbox span{font-family:var(--mono);color:var(--muted);font-size:15px}
+.numbox input{background:transparent;border:0;outline:0;color:var(--text);font-family:var(--mono);font-size:18px;font-weight:700;width:120px;padding:10px 4px;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--lime) var(--p,50%),var(--line-2) var(--p,50%));border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line-2);border-radius:2px}
+input[type=range]::-moz-range-progress{height:4px;background:var(--lime)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;border-radius:50%;background:var(--lime);border:4px solid var(--bg);box-shadow:0 0 0 1px var(--lime)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--lime);border:4px solid var(--bg);box-shadow:0 0 0 1px var(--lime)}
+.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{font-family:var(--mono);font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line-2);padding:6px 10px;border-radius:2px;cursor:pointer}
+.chip:hover{color:var(--text);border-color:var(--muted)}
+.chip.on{color:var(--bg);background:var(--lime);border-color:var(--lime)}
+details.adv{border-top:1px solid var(--line);padding-top:18px}
+details.adv summary{list-style:none;cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::before{content:"+ ";color:var(--lime)}
+details.adv[open] summary::before{content:"– "}
+details.adv .field{margin-top:16px}
+.hint{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
+
+.outputs{padding:32px;display:flex;flex-direction:column;gap:28px;min-width:0}
+.headline{border-bottom:1px solid var(--line);padding-bottom:26px}
+.big{font-weight:800;font-size:clamp(48px,8vw,104px);line-height:.95;letter-spacing:-.035em;margin-top:10px;word-break:break-word}
+.big .cur{color:var(--lime)}
+.big small{font-size:.3em;font-weight:700;color:var(--muted);letter-spacing:0;margin-left:6px}
+.eq{font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:16px;line-height:1.7}
+.eq b{color:var(--text);font-weight:700}
+.eq i{font-style:normal;color:var(--lime)}
+.disclose{font-family:var(--mono);font-size:10.5px;line-height:1.45;color:#9A9A9A;margin-top:10px}
+.disclose strong{color:#C8C8C8;font-weight:500}
+.disclose .more{background:none;border:0;padding:0;font:inherit;color:var(--lime);text-decoration:underline;cursor:pointer}
+.disclose a{color:var(--lime)}
+footer .fine strong{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.stat{padding:0 18px;border-left:1px solid var(--line-2)}
+.stat:first-child{padding-left:0;border-left:0}
+.stat .v{font-weight:800;font-size:clamp(22px,2.8vw,32px);letter-spacing:-.02em;margin-top:6px;word-break:break-word}
+.stat .v .cur{color:var(--lime)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.toast{font-family:var(--mono);font-size:12px;color:var(--lime);align-self:center;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+
+/* sections */
+section{padding:72px 0 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.sec-head p{font-family:var(--mono);font-size:13px;color:var(--muted);max-width:520px;margin-top:10px}
+.tablewrap{border:1px solid var(--line);background:var(--panel);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:right;padding:14px 18px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:14px 18px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.hl{color:var(--lime);font-weight:700}
+tr.cur td{background:var(--lime-dim)}
+tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--lime)}
+.barcell{width:28%;min-width:140px}
+.barcell div{height:8px;background:var(--lime);border-radius:1px;opacity:.85;min-width:2px}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:2px}
+.seg button{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:0;color:var(--muted);padding:8px 14px;cursor:pointer}
+.seg button.on{background:var(--lime);color:var(--bg);font-weight:700}
+td.cell-on{outline:1px solid var(--lime);outline-offset:-1px;color:var(--lime);font-weight:700}
+
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);background:var(--panel)}
+.step{padding:28px 24px;border-left:1px solid var(--line)}
+.step:first-child{border-left:0}
+.step .n{font-family:var(--mono);font-size:13px;color:var(--lime)}
+.step h3{font-weight:800;font-size:18px;letter-spacing:-.01em;margin:10px 0 8px;text-transform:uppercase}
+.step p{color:var(--muted);font-size:14px}
+
+.quote{border-left:3px solid var(--lime);padding:8px 0 8px 28px}
+.quote p{font-weight:700;font-size:clamp(20px,2.6vw,30px);line-height:1.25;letter-spacing:-.015em}
+.quote p em{font-style:normal;color:var(--lime)}
+
+.cta{margin-top:72px;border:1px solid var(--line);background:linear-gradient(135deg,#121212 0%,#0d140a 100%);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cta p{font-family:var(--mono);color:var(--muted);margin-top:10px}
+
+footer{margin-top:72px;border-top:1px solid var(--line);padding:28px 0 48px}
+footer .fine{font-family:var(--mono);font-size:12px;line-height:1.7;color:#7A7A7A;max-width:900px}
+footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:20px}
+
+@media (max-width:900px){
+  .calc{grid-template-columns:1fr}
+  .inputs{border-right:0;border-bottom:1px solid var(--line)}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step:nth-child(3){border-left:0}
+  .step:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .hero{padding:40px 0 28px}
+  .inputs,.outputs{padding:22px 18px}
+  .stats{grid-template-columns:1fr;gap:16px}
+  .stat{padding:0;border-left:0}
+  .steps{grid-template-columns:1fr}
+  .step{border-left:0!important;border-top:1px solid var(--line)}
+  .step:first-child{border-top:0}
+  .cta{padding:32px 22px}
+  .bar .mono{display:none}
+  .numbox input{width:96px;font-size:16px}
+  th,td{padding:12px 12px}
+  .barcell{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+/* site nav */
+header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.bar{gap:20px}
+.tabs{display:flex;gap:2px;align-self:stretch;margin-right:auto;margin-left:20px}
+.tabs a{display:flex;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:0 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.tabs a:hover{color:var(--text)}
+.tabs a.on{color:var(--lime);border-bottom-color:var(--lime)}
+.tabs .ts{display:none}
+.more-calcs{margin-top:72px}
+.more-calcs .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line)}
+.more-calcs a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px;background:var(--panel);text-decoration:none;border-left:1px solid var(--line);transition:background .2s}
+.more-calcs a:first-child{border-left:0}
+.more-calcs a:hover{background:#151a10}
+.more-calcs h3{font-weight:800;font-size:20px;letter-spacing:-.01em;margin-top:6px}
+.more-calcs .arr{font-family:var(--mono);color:var(--lime);font-size:20px}
+@media (max-width:900px){
+  .bar{flex-wrap:wrap;height:auto;padding-top:12px;gap:0 12px}
+  .tabs{order:3;width:100%;margin:8px 0 0;overflow-x:auto;scrollbar-width:none;align-self:auto}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs a{padding:12px 12px 10px}
+  .tabs a:first-child{padding-left:0}
+}
+@media (max-width:640px){
+  .tabs .tl{display:none}
+  .tabs .ts{display:inline}
+  .tabs{justify-content:space-between}
+  .tabs a{padding:12px 4px 10px}
+  .bar .btn{margin-left:auto}
+}
+@media (max-width:560px){
+  .more-calcs .grid{grid-template-columns:1fr}
+  .more-calcs a{border-left:0;border-top:1px solid var(--line)}
+  .more-calcs a:first-child{border-top:0}
+}
+
+
+/* ===== 2026-10 deck theme: "Financial Infrastructure of Influence" ===== */
+:root{
+  --bg:#F6F5EE; --panel:#FFFFFF; --panel-2:#FAFAF5; --line:#E3E2D8; --line-2:#D3D2C7;
+  --text:#0B0B0B; --muted:#55554F; --dim:#8A8A82;
+  --lime:#2E8B0E;            /* green ink: text accents on cream */
+  --fill:#B6F03F;            /* lime fill: buttons, highlights */
+  --fill-2:#D9F99D;
+  --lime-dim:rgba(182,240,63,.28);
+  --around:#1F5C0B; --around-dim:rgba(31,92,11,.12);
+  --rw:#0B0B0B;
+  --sans:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --display:"Anton","Arial Narrow",Impact,sans-serif;
+}
+body{background:
+  radial-gradient(900px 520px at 100% 0%,rgba(182,240,63,.40),transparent 62%),
+  radial-gradient(700px 500px at 0% 100%,rgba(182,240,63,.22),transparent 60%),
+  var(--bg)}
+h1,h2,.big,.vs h3,.grp-h h3,.card h2,.tot,.econ .tot,.split .tot{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:0}
+h1{line-height:.92;font-size:clamp(46px,7.6vw,104px)}
+h2{line-height:.98}
+.big{letter-spacing:0;line-height:.95}
+.big small{font-family:var(--sans);font-weight:700;text-transform:none}
+.label{font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.22em;color:var(--muted)}
+.label::before{content:none}
+.hero .lede,.sec-head p,.cta p,.eq,.hint,.ticks,.stackcap,.legend,.tixnote,.vs .row{font-family:var(--sans)}
+.hero .lede{color:var(--muted);font-size:clamp(16px,1.6vw,20px);line-height:1.5}
+.g{color:var(--lime)}
+.logo{font-family:var(--sans);font-weight:900;font-size:24px;letter-spacing:-.03em;color:var(--text)}
+.logo span{color:var(--lime)}
+
+/* buttons, chips, controls */
+.btn{background:var(--fill);border-color:var(--fill);color:#0B0B0B;border-radius:999px;font-family:var(--sans);letter-spacing:.06em}
+.btn:hover{background:#A6E22E}
+.btn.ghost{background:#fff;color:var(--text);border-color:var(--line-2)}
+.btn.ghost:hover{background:var(--fill-2);border-color:var(--fill)}
+.chip{font-family:var(--sans);border-radius:999px;background:#fff;color:var(--muted)}
+.chip.on{background:var(--fill);border-color:var(--fill);color:#0B0B0B;font-weight:600}
+.seg{border-radius:999px;overflow:hidden;background:#fff}
+.seg button{font-family:var(--sans)}
+.seg button.on{background:var(--fill);color:#0B0B0B}
+.numbox{background:#fff;border-radius:10px}
+.numbox input{font-family:var(--sans)}
+input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(to right,var(--lime) var(--p,50%),var(--line-2) var(--p,50%))}
+input[type=range]::-webkit-slider-thumb{background:var(--fill);border:4px solid #fff;box-shadow:0 0 0 1px var(--lime),0 2px 6px rgba(0,0,0,.15)}
+input[type=range]::-moz-range-thumb{background:var(--fill);border:4px solid #fff;box-shadow:0 0 0 1px var(--lime)}
+details.adv summary{font-family:var(--sans)}
+
+/* panels */
+.calc,.tablewrap,.steps,.vs,.econ,.split,.grp,.more-calcs .grid{border-radius:18px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.02),0 12px 30px -18px rgba(0,0,0,.18)}
+.calc{background:var(--panel)}
+.tablewrap,.grp,.econ,.split{background:#fff}
+table{font-family:var(--sans)}
+td.hl{color:var(--lime)}
+tr.cur td{background:var(--lime-dim)}
+td.cell-on{outline-color:var(--lime);color:var(--lime)}
+.barcell div{background:var(--fill);opacity:1}
+.disclose{color:var(--muted);font-family:var(--sans)}
+.disclose strong{color:var(--text);font-weight:600}
+.disclose .more,.disclose a{color:var(--lime)}
+.steps{background:#fff}
+.step .n{font-family:var(--sans);font-weight:700;color:var(--lime)}
+.step h3{font-family:var(--sans);font-weight:800}
+.quote{border-left-color:var(--fill)}
+.quote p{font-family:var(--sans)}
+.quote p em{color:var(--lime)}
+
+/* without / with blocks */
+.vs .with{background:linear-gradient(160deg,#FFFFFF 0%,#F1FBDD 100%)}
+.vs .row b{font-family:var(--sans)}
+.vs .row b.zero{color:#C8321F}
+.vs .row b.y{color:var(--rw)}
+.y{color:var(--around)}
+td.y{color:var(--rw)}
+.split .stack div:first-child{color:#0B0B0B}
+.split .stack div:last-child{color:#fff}
+
+/* cta & footer */
+.cta{border-radius:22px;border:1px solid #CFEA9A;background:linear-gradient(120deg,#FFFFFF 0%,#EAF9C8 60%,#C9F178 100%)}
+.cta h2{font-size:clamp(30px,4vw,52px)}
+.cta p{color:var(--muted)}
+footer{border-top-color:var(--line)}
+footer .fine{color:var(--muted);font-family:var(--sans)}
+footer .fine strong{color:var(--text)}
+footer .row{font-family:var(--sans)}
+
+/* nav */
+header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--line)}
+.tabs a{font-family:var(--sans);font-weight:600;letter-spacing:.12em}
+.tabs a.on{color:var(--text);border-bottom-color:var(--fill);border-bottom-width:3px}
+.more-calcs a{background:#fff}
+.more-calcs a:hover{background:#F4FBE6}
+.more-calcs h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:26px;letter-spacing:0}
+.more-calcs .arr{font-family:var(--sans)}
+
+/* ---- hub ---- */
+.hub-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:40px;align-items:center;padding:72px 0 40px}
+.hub-hero h1{font-size:clamp(42px,5.2vw,72px)}
+.hub-hero .tag{font-family:var(--sans);font-weight:500;font-size:clamp(16px,1.7vw,22px);letter-spacing:.02em;margin-top:22px}
+.hub-hero .tag b{font-weight:800}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+
+/* card visual */
+.cardviz{position:relative;aspect-ratio:1/1;max-width:440px;justify-self:end;width:100%}
+.ycard{position:absolute;width:86%;aspect-ratio:1.586/1;border-radius:22px;background:linear-gradient(145deg,#1A1A1A 0%,#060606 70%);box-shadow:0 40px 60px -30px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.06);overflow:hidden;color:#fff}
+.ycard svg.wave{position:absolute;inset:0;width:100%;height:100%}
+.ycard .wm{position:absolute;left:8%;top:12%;font-family:var(--sans);font-weight:900;font-size:clamp(22px,3vw,34px);letter-spacing:-.03em}
+.ycard .chip-s{position:absolute;left:8%;top:42%;width:15%;aspect-ratio:1.3/1;border-radius:6px;background:linear-gradient(135deg,#E9D9A6,#B99A52 60%,#E9D9A6)}
+.ycard .kind{position:absolute;left:8%;bottom:11%;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.22em;color:var(--fill)}
+.ycard.back{right:0;top:4%;transform:rotate(9deg);opacity:.95;background:linear-gradient(145deg,#2A3A12,#0F1608)}
+.ycard.front{left:0;bottom:8%;transform:rotate(-6deg)}
+.bubble{position:absolute;right:2%;bottom:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 18px 40px -20px rgba(0,0,0,.35);font-family:var(--sans);min-width:190px}
+.bubble .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.bubble .v{font-family:var(--display);font-size:30px;line-height:1.1;margin-top:4px}
+.bubble .v span{color:var(--lime)}
+.bubble .s{font-size:12px;color:var(--muted)}
+
+/* problem flow */
+.headline-xl{font-size:clamp(34px,5.2vw,72px)}
+.headline-xl .g{color:var(--lime)}
+.band{margin:26px 0 22px;background:var(--fill);border-radius:14px;padding:16px 22px;font-family:var(--sans);font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:clamp(13px,1.5vw,18px)}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:stretch}
+.fstep{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px}
+.fstep .ico{width:44px;height:44px;border-radius:50%;background:var(--fill-2);display:grid;place-items:center}
+.fstep h3{font-family:var(--sans);font-weight:800;text-transform:uppercase;font-size:17px;letter-spacing:.02em;margin-top:14px}
+.fstep .sub{font-family:var(--sans);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px;font-weight:600}
+.fstep p{font-size:14px;color:var(--muted);margin-top:10px}
+.fstep:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:50%;transform:translate(50%,-50%);font-family:var(--sans);color:var(--dim);font-size:18px;z-index:2}
+.fstep.out{background:#F3F2EA}
+.miss{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;font-family:var(--sans);font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:14px}
+.miss i{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid #C8321F;color:#C8321F;font-size:14px}
+
+/* wallet insight */
+.insight{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.ilist{display:grid;gap:12px}
+.irow{display:flex;gap:16px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.irow .num{flex:0 0 44px;height:44px;border-radius:50%;background:var(--fill);display:grid;place-items:center;font-family:var(--sans);font-weight:800}
+.irow h4{font-family:var(--sans);font-weight:800;text-transform:uppercase;font-size:15px;letter-spacing:.03em}
+.irow p{font-size:14px;color:var(--muted);margin-top:2px}
+.opp{background:linear-gradient(150deg,#F1FBDD,#DDF7A8);border:1px solid #CFEA9A;border-radius:18px;padding:30px 28px;display:flex;flex-direction:column;justify-content:center}
+.opp h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(28px,3vw,40px);line-height:1}
+.opp p{font-size:16px;margin-top:14px;color:#222}
+
+/* features */
+.feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fcard{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.fcard .ico{flex:0 0 48px;height:48px;border-radius:12px;background:var(--fill-2);display:grid;place-items:center}
+.fcard h4{font-family:var(--sans);font-weight:800;font-size:17px}
+.fcard p{font-size:13.5px;color:var(--muted)}
+.wallet-types{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.wallet-types span{font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;background:#0B0B0B;color:#fff;border-radius:999px;padding:9px 14px}
+.wallet-types span b{color:var(--fill);font-weight:700}
+.reg{font-size:13px;color:var(--muted);margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+
+/* calculator cards */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{position:relative;display:flex;flex-direction:column;padding:28px 26px 26px;background:#fff;border:1px solid var(--line);border-radius:20px;text-decoration:none;transition:transform .2s,box-shadow .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--fill);box-shadow:0 24px 40px -26px rgba(46,139,14,.55)}
+.card .wt{display:inline-block;align-self:flex-start;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;background:#0B0B0B;color:var(--fill);border-radius:999px;padding:6px 11px}
+.card h2{font-size:clamp(30px,2.8vw,40px);margin:16px 0 8px}
+.card p{color:var(--muted);font-size:15px}
+.card .who{font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.6}
+.card .spacer{flex:1}
+.card .ex{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.card .ex .k{font-size:12.5px;color:var(--muted);font-weight:600}
+.card .ex .v{font-family:var(--display);font-size:clamp(40px,4vw,56px);line-height:1;margin-top:8px}
+.card .ex .v .cur{color:var(--lime)}
+.card .ex .v small{font-family:var(--sans);font-size:.32em;color:var(--muted);font-weight:700;margin-left:4px}
+.card .ex .s{font-size:12.5px;color:var(--muted);margin-top:6px}
+.card .go{margin-top:22px;align-self:flex-start;font-family:var(--sans);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0B0B0B;background:var(--fill);padding:11px 16px;border-radius:999px}
+.card .dis{font-size:11px;color:var(--dim);margin-top:10px}
+
+/* flywheel */
+.fly{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;counter-reset:f}
+.fly > div{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px;position:relative}
+.fly .n{width:34px;height:34px;border-radius:50%;background:var(--fill);display:grid;place-items:center;font-family:var(--sans);font-weight:800}
+.fly h4{font-family:var(--sans);font-weight:800;text-transform:uppercase;font-size:16px;margin-top:14px;letter-spacing:.03em}
+.fly p{font-size:14px;color:var(--muted);margin-top:4px}
+.fly .loop{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-top:12px}
+.stack-h{font-size:clamp(38px,6vw,84px);line-height:.92}
+
+/* closing */
+.closing{margin-top:80px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.closing div{padding:22px 18px;border-left:1px solid var(--line);text-align:center}
+.closing div:first-child{border-left:0}
+.closing h4{font-family:var(--sans);font-weight:800;text-transform:uppercase;font-size:13.5px;letter-spacing:.04em}
+.closing p{font-size:13px;color:var(--muted);margin-top:4px}
+.pie{font-family:var(--sans);font-weight:500;letter-spacing:.4em;text-transform:uppercase;font-size:14px;margin-top:14px;color:var(--muted)}
+
+@media (max-width:980px){
+  .hub-hero{grid-template-columns:1fr;padding-top:48px}
+  .cardviz{justify-self:center;max-width:380px}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fstep:nth-child(2)::after{display:none}
+  .insight{grid-template-columns:1fr}
+  .feat{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards{grid-template-columns:1fr}
+  .fly{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .closing{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .closing div:nth-child(3){border-left:0}
+  .closing div:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .flow,.feat,.fly{grid-template-columns:1fr}
+  .fstep::after{display:none}
+  .band{padding:14px 16px}
+  .card{padding:24px 18px 20px}
+  .bubble{min-width:0}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="/" aria-label="YPOP home">YPOP</a>
+    <nav class="tabs" aria-label="Calculators"><a href="/creators/"><span class="tl">Creators &amp; Athletes</span><span class="ts">Creators</span></a><a href="/events/"><span class="tl">Event Hosts</span><span class="ts">Events</span></a><a href="/communities/"><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a><a href="/roster/"><span class="tl">Roster</span><span class="ts">Roster</span></a></nav>
+    <a class="btn sm" href="https://getypop.com" target="_blank" rel="noopener">Work With Us</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- HERO -->
+  <div class="hub-hero">
+    <div>
+      <div class="label">The next economic shift</div>
+      <h1 style="margin-top:18px">Everyone has influence.<br>Everyone can build a business.<br><span class="g">Who powers the money?</span></h1>
+      <p class="tag"><b>$YPOP</b>: the financial infrastructure of influence.</p>
+      <p class="lede" style="margin-top:12px;max-width:640px">Branded wallets and Visa cards that let creators, athletes, events and communities own the transaction, not just the audience.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#calculators">Run your numbers ↓</a>
+        <a class="btn ghost" href="https://getypop.com" target="_blank" rel="noopener">Work With Us</a>
+      </div>
+    </div>
+    <div class="cardviz" aria-hidden="true">
+      <div class="ycard back"><div class="wm">YPOP</div><div class="kind">Community wallet</div></div>
+      <div class="ycard front">
+        <svg class="wave" viewBox="0 0 320 200" preserveAspectRatio="none"><path d="M-10 170 C 90 160, 150 120, 200 80 S 300 20, 340 10" fill="none" stroke="#B6F03F" stroke-width="2.2"/><path d="M-10 182 C 100 170, 160 135, 210 95 S 300 38, 340 26" fill="none" stroke="#B6F03F" stroke-opacity=".35" stroke-width="1.4"/></svg>
+        <div class="wm">YPOP</div><div class="chip-s"></div><div class="kind">Creator wallet</div>
+      </div>
+      <div class="bubble"><div class="k">Turn influence into</div><div class="v">Ownership<span>.</span></div><div class="s">Your brand · your wallet · your card</div></div>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section>
+    <h2 class="headline-xl">They own the audience.<br>They influence the spending.<br>But <span class="g">they don't own the transaction.</span></h2>
+    <p class="lede" style="font-size:17px;max-width:860px;margin-top:18px;color:var(--muted)">Creators monetize through sponsorships, merch, subscriptions and platform payouts. Yet most of the everyday commerce their influence generates happens outside their financial ecosystem.</p>
+    <div class="band">They create demand. Others capture most of the transaction economics.</div>
+    <div class="flow">
+      <div class="fstep"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><h3>Creator</h3><div class="sub">Drives influence</div><p>Builds the audience and the trust.</p></div>
+      <div class="fstep"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2 20c1-3 3.5-5 6-5s5 2 6 5M12 20c1-3 2.5-5 4-5 2.5 0 5 2 6 5"/></svg></div><h3>Fans</h3><div class="sub">Discover &amp; engage</div><p>Follow, watch and act on recommendations.</p></div>
+      <div class="fstep"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><path d="M3 9h18l-1.5 11h-15z"/><path d="M8 9V6a4 4 0 0 1 8 0v3"/></svg></div><h3>Merchants</h3><div class="sub">Where they spend</div><p>Retail, restaurants, travel and events.</p></div>
+      <div class="fstep out"><div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><h3>Payments</h3><div class="sub">Others own the rails</div><p>The transaction economics flow elsewhere.</p></div>
+    </div>
+    <div class="miss"><i>✕</i> The creator doesn't own the transaction data or economics.</div>
+  </section>
+
+  <!-- WALLET INSIGHT -->
+  <section>
+    <div class="sec-head"><div>
+      <div class="label">The proven consumer behavior</div>
+      <h2 class="headline-xl" style="margin-top:12px">Starbucks didn't just build loyalty.<br><span class="g">It built a wallet.</span></h2>
+    </div></div>
+    <div class="insight">
+      <div class="ilist">
+        <div class="irow"><div class="num">01</div><div><h4>Prepaid balances</h4><p>Customers load funds before making purchases.</p></div></div>
+        <div class="irow"><div class="num">02</div><div><h4>Repeat purchases</h4><p>Rewards create reasons for customers to return.</p></div></div>
+        <div class="irow"><div class="num">03</div><div><h4>Direct relationships</h4><p>The brand gains a recurring customer engagement channel.</p></div></div>
+        <div class="irow"><div class="num">04</div><div><h4>Transaction insight</h4><p>Payments inform loyalty and customer experiences.</p></div></div>
+      </div>
+      <div class="opp">
+        <div class="label" style="color:#2B4D10">The YPOP opportunity</div>
+        <h3 style="margin-top:12px">What one coffee brand built for itself, YPOP makes accessible to everyone with influence.</h3>
+        <p>Creators, athletes, entertainers and businesses get the same playbook through branded financial programs: wallets, cards, rewards and a direct line to their community.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCIAL LAYER -->
+  <section>
+    <div class="sec-head"><div>
+      <div class="label">The financial layer</div>
+      <h2 class="headline-xl" style="margin-top:12px">We make influence <span class="g">transactable.</span></h2>
+      <p style="font-size:18px;color:var(--text);font-weight:500;max-width:none">Your brand. Your wallet. Your card. Your community.</p>
+    </div></div>
+    <div class="feat">
+      <div class="fcard"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><path d="M3 7h15a3 3 0 0 1 3 3v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l12-4v4"/><circle cx="16.5" cy="14" r="1.2" fill="#0B0B0B"/></svg></div><div><h4>Wallets</h4><p>Branded financial experiences</p></div></div>
+      <div class="fcard"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div><div><h4>Cards</h4><p>Everyday spending access</p></div></div>
+      <div class="fcard"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"/></svg></div><div><h4>Rewards</h4><p>Loyalty and engagement</p></div></div>
+      <div class="fcard"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><path d="M6 20V12M12 20V6M18 20v-9"/></svg></div><div><h4>Attribution</h4><p>Eligible spending insights</p></div></div>
+      <div class="fcard"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><circle cx="12" cy="6" r="3"/><circle cx="5" cy="18" r="3"/><circle cx="19" cy="18" r="3"/><path d="M10.5 8.5 6.5 15.5M13.5 8.5l4 7M8 18h8"/></svg></div><div><h4>Distribution</h4><p>Creators, fans and partners</p></div></div>
+      <div class="fcard"><div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0B0B0B" stroke-width="2"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></div><div><h4>Revenue</h4><p>Recurring transaction economics</p></div></div>
+    </div>
+    <div class="wallet-types"><span><b>●</b> Creator wallet</span><span><b>●</b> Athlete wallet</span><span><b>●</b> Music wallet</span><span><b>●</b> Event wallet</span><span><b>●</b> Community wallet</span></div>
+    <p class="reg">YPOP delivers the branded program and technology layer, while regulated partners provide applicable banking and payment services.</p>
+  </section>
+
+  <!-- CALCULATORS -->
+  <section id="calculators" style="scroll-margin-top:90px">
+    <div class="sec-head"><div>
+      <div class="label">Run your numbers</div>
+      <h2 class="headline-xl" style="margin-top:12px">What could <span class="g">your piece</span> look like?</h2>
+      <p>Three calculators, one for each kind of community. Pick yours and adjust every assumption.</p>
+    </div></div>
+    <div class="cards">
+      <a class="card" href="/creators/">
+        <span class="wt">Creator · Athlete wallet</span>
+        <h2>Creators &amp; Athletes</h2>
+        <p>Your fans route the spending they already do through your branded wallet and card.</p>
+        <div class="who">Content creators · NIL athletes · Pro athletes · Agencies</div>
+        <div class="spacer"></div>
+        <div class="ex"><div class="k">Example: 100 fans × $1,000/mo</div><div class="v"><span class="cur">$</span>30,000<small>/yr</small></div><div class="s">up to $2,500 per month</div></div>
+        <span class="go">Open calculator →</span>
+      </a>
+      <a class="card" href="/events/">
+        <span class="wt">Event · Music wallet</span>
+        <h2>Event Hosts</h2>
+        <p>Get paid on the whole event economy, not just the ticket.</p>
+        <div class="who">Festivals · Concerts · Conventions · Card &amp; collectible shows</div>
+        <div class="spacer"></div>
+        <div class="ex"><div class="k">Example: 600,000 attendees · 1 event</div><div class="v"><span class="cur">$</span>5.73M<small>/event</small></div><div class="s">$2.06M at the event + $3.68M around it</div></div>
+        <span class="go">Open calculator →</span>
+      </a>
+      <a class="card" href="/communities/">
+        <span class="wt">Community wallet</span>
+        <h2>Brands &amp; Communities</h2>
+        <p>Turn member spend into brand revenue and membership rewards.</p>
+        <div class="who">Lifestyle · Hospitality · Gyms · Clubs · Memberships</div>
+        <div class="spacer"></div>
+        <div class="ex"><div class="k">Example: 1,000 members · 50% on the card</div><div class="v"><span class="cur">$</span>90,000<small>/yr</small></div><div class="s">plus $60,000/yr back to members as rewards</div></div>
+        <span class="go">Open calculator →</span>
+      </a>
+    </div>
+    <p class="reg" style="border:0;margin-top:14px">Examples are illustrative, use the assumptions shown in each calculator, and are not guaranteed earnings.</p>
+  </section>
+
+  <!-- FLYWHEEL -->
+  <section>
+    <div class="sec-head"><div>
+      <div class="label">The network effect</div>
+      <h2 class="stack-h" style="margin-top:12px">More creators. More wallets.<br>More transactions. <span class="g">More value.</span></h2>
+    </div></div>
+    <div class="fly">
+      <div><div class="n">1</div><h4>Creators</h4><p>More brands join the network.</p><div class="loop">→ Drive fan activation</div></div>
+      <div><div class="n">2</div><h4>Fans</h4><p>More fans open branded wallets.</p><div class="loop">→ More wallets, more transactions</div></div>
+      <div><div class="n">3</div><h4>Transactions</h4><p>More spending across everyday commerce.</p><div class="loop">→ More data improves campaigns</div></div>
+      <div><div class="n">4</div><h4>Data &amp; insights</h4><p>Better insight for creators, merchants and partners.</p><div class="loop">→ Better economics attract creators</div></div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div><h4>Smartphones created influence</h4><p>Connected the world.</p></div>
+    <div><h4>AI created entrepreneurs</h4><p>Empowered everyone to build.</p></div>
+    <div><h4>YPOP builds the financial network</h4><p>Turns influence into ownership.</p></div>
+    <div><h4>A more inclusive economy</h4><p>For creators, fans, merchants and communities.</p></div>
+  </div>
+
+  <div class="cta">
+    <div>
+      <div class="label">Own the transaction</div>
+      <h2 style="margin-top:10px">Own the transaction.<br><span class="g">Own the economy.</span></h2>
+      <p class="pie">Your piece of pie.</p>
+    </div>
+    <a class="btn" href="https://getypop.com" target="_blank" rel="noopener">Work With Us →</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="fine" id="terms"><strong>Disclosure.</strong> Illustrative estimates only. These calculators are provided to demonstrate how $YPOP revenue models may work based on the assumptions selected. Estimated amounts are not guaranteed earnings or a promise of future compensation. Actual revenue may vary based on cardholder adoption and activity, transaction volume and type, applicable interchange rates, program economics, revenue-sharing terms, fees, and other factors. See Program Terms for details. YPOP delivers the branded program and technology layer, while regulated partners provide applicable banking and payment services. Visa is a trademark of Visa International Service Association; Starbucks is a trademark of Starbucks Corporation and is referenced for illustration only, with no affiliation implied.</p>
+    <div class="row"><span>YPOP · The financial infrastructure of influence</span><span><a href="https://getypop.com" style="text-decoration:none">getypop.com</a></span></div>
+  </div>
+</footer>
+</body>
+</html>

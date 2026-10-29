@@ -1,0 +1,35 @@
+[build]
+  publish = "."
+
+# Short links
+[[redirects]]
+  from = "/athletes"
+  to = "/creators/"
+  status = 301
+
+[[redirects]]
+  from = "/event"
+  to = "/events/"
+  status = 301
+
+[[redirects]]
+  from = "/members"
+  to = "/communities/"
+  status = 301
+
+[[redirects]]
+  from = "/team"
+  to = "/roster/"
+  status = 301
+
+[[headers]]
+  for = "/roster/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
