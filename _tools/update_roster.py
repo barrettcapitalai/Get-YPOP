@@ -2,7 +2,9 @@
 # YPOP roster sync. Reads the "Full List" tab of the YPOP roster Google Sheet,
 # rebuilds the encrypted roster data, and commits roster/index.html to GitHub
 # only when something changed. Run inside the Composio workbench with PASS set.
-import re, json, os, base64, hmac, hashlib, datetime
+import re, json, os, io, base64, hmac, hashlib, datetime, concurrent.futures
+import requests
+from PIL import Image
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -11,6 +13,66 @@ SHEET_ID = '1A6u1Xy7N4F_BQZNl8fIkXoBkoyUOr2zQg0LeQFJ2U0Q'
 OWNER, REPO, BRANCH, PAGE = 'barrettcapitalai', 'Get-YPOP', 'main', 'roster/index.html'
 BLOCKS = ['Celebrities','Artists & Musicians','Creators & Entertainment','Fitness Influencers','Athletes & Sports','SRGN League Players','Fashion & Sneakers','Business, Finance & Real Estate','Brands & Businesses','Gyms & Fitness Brands','Agencies & NIL','Platforms & Tech','Government & Tourism','Connectors & Partners','To categorize']
 DRY = globals().get('DRY', False)
+MAX_NEW = globals().get('MAX_NEW', 40)      # new photo lookups per run
+IMG_DIR = 'roster/img'
+UA = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36', 'Accept-Language': 'en-US,en;q=0.9'}
+
+# ---------- photos & logos ----------
+def _clean(h):
+    h = re.sub(r'\s*\+\d+$', '', h.split('~')[0]); h = re.sub(r'\s*\(.*?\)', '', h).strip()
+    return h[2:].strip() if h.lower().startswith('x @') else h
+def _img(b):
+    try:
+        im = Image.open(io.BytesIO(b)); im.load()
+        return im if min(im.size) >= 48 else None
+    except Exception: return None
+def _yt(h):
+    h = _clean(h)
+    if not h: return None
+    m = re.search(r'(UC[\w-]{20,})', h)
+    url = 'https://www.youtube.com/channel/' + m.group(1) if m else ('https://www.youtube.com/@' + h.lstrip('@') if re.fullmatch(r'@?[A-Za-z0-9._-]+', h) else None)
+    if not url: return None
+    r = requests.get(url, headers=UA, timeout=15)
+    m = re.search(r'<meta property="og:image" content="([^"]+)"', r.text) if r.ok else None
+    if not m: return None
+    i = requests.get(m.group(1), headers=UA, timeout=15)
+    return _img(i.content) if i.ok else None
+def _una(kind, h):
+    h = _clean(h).lstrip('@')
+    if not h or not re.fullmatch(r'[A-Za-z0-9._-]+', h): return None
+    r = requests.get('https://unavatar.io/%s/%s?fallback=false' % (kind, h), headers=UA, timeout=15)
+    return _img(r.content) if r.ok and r.headers.get('content-type', '').startswith('image') else None
+def _site(w):
+    if not w: return None
+    r = requests.get('https://www.google.com/s2/favicons?domain=%s&sz=256' % w.split('/')[0], headers=UA, timeout=15)
+    im = _img(r.content) if r.ok else None
+    return im if im and min(im.size) >= 64 else None
+def find_photo(f):
+    for fn in (lambda: _yt(f[6]), lambda: _una('tiktok', f[5]), lambda: _una('x', f[7]), lambda: _site(f[9])):
+        try:
+            im = fn()
+            if im: return im
+        except Exception: pass
+    return None
+def to_jpeg(im):
+    im = im.convert('RGBA'); bg = Image.new('RGBA', im.size, (255, 255, 255, 255)); bg.alpha_composite(im); im = bg.convert('RGB')
+    w, h = im.size; s = min(w, h); im = im.crop(((w - s) // 2, (h - s) // 2, (w - s) // 2 + s, (h - s) // 2 + s)).resize((160, 160), Image.LANCZOS)
+    out = io.BytesIO(); im.save(out, 'JPEG', quality=82, optimize=True); return base64.b64encode(out.getvalue()).decode()
+def list_dir(path):
+    r, e = run_composio_tool('GITHUB_GET_REPOSITORY_CONTENT', {'owner': OWNER, 'repo': REPO, 'path': path, 'ref': BRANCH})
+    if e: return []
+    c = _data(r).get('content', [])
+    return [x.get('name') for x in c] if isinstance(c, list) else []
+def read_text(path):
+    r, e = run_composio_tool('GITHUB_GET_REPOSITORY_CONTENT', {'owner': OWNER, 'repo': REPO, 'path': path, 'ref': BRANCH})
+    if e: return ''
+    c = _data(r).get('content', {})
+    c = c.get('content') if isinstance(c, dict) else None
+    return base64.b64decode(c).decode('utf-8') if c else ''
+def commit(files, message):
+    r, e = run_composio_tool('GITHUB_COMMIT_MULTIPLE_FILES', {'owner': OWNER, 'repo': REPO, 'branch': BRANCH, 'message': message, 'upserts': files})
+    if e: raise RuntimeError('commit failed: %s' % e)
+
 
 def _data(r):
     return r.get('data', r) if isinstance(r, dict) else r
@@ -101,6 +163,28 @@ def run(PASS):
     vals = read_sheet()
     lines, total = build_lines(vals)
     if len(lines) < 25: raise RuntimeError('Only %d rows parsed; refusing to publish (sheet may be empty or restructured).' % len(lines))
+    # photos: one file per person, named by a keyed hash so names are not exposed
+    have = set(n[:-4] for n in list_dir(IMG_DIR) if n.endswith('.jpg'))
+    miss_txt = read_text(IMG_DIR + '/_miss.txt'); misses = set(miss_txt.split())
+    retry = datetime.datetime.utcnow().hour == 9          # retry earlier misses once a day
+    keys, todo = [], []
+    for l in lines:
+        f = l.split('|'); k = hmac.new(PASS.encode(), ('img:' + f[0]).encode(), hashlib.sha256).hexdigest()[:20]; keys.append(k)
+        if k not in have and (retry or k not in misses) and len(todo) < MAX_NEW: todo.append((k, f))
+    new_imgs = {}
+    with concurrent.futures.ThreadPoolExecutor(8) as ex:
+        for k, im in zip([t[0] for t in todo], ex.map(lambda t: find_photo(t[1]), todo)):
+            if im:
+                try: new_imgs[k] = to_jpeg(im)
+                except Exception: pass
+    misses = (misses | set(k for k, _ in todo)) - set(new_imgs) - have
+    lines = [l + '|' + (k if (k in have or k in new_imgs) else '') for l, k in zip(lines, keys)]
+    img_files = [{'path': '%s/%s.jpg' % (IMG_DIR, k), 'content': b, 'encoding': 'base64'} for k, b in new_imgs.items()]
+    if not DRY:
+        for i in range(0, len(img_files), 25):
+            commit(img_files[i:i + 25], 'Roster photos: %d new' % len(img_files[i:i + 25]))
+        if todo and '\n'.join(sorted(misses)) != '\n'.join(sorted(miss_txt.split())):
+            commit([{'path': IMG_DIR + '/_miss.txt', 'content': '\n'.join(sorted(misses)) + '\n', 'encoding': 'utf-8'}], 'Roster photos: update lookup list')
     txt = '\n'.join(lines)
     sig = hmac.new(PASS.encode(), txt.encode('utf-8'), hashlib.sha256).hexdigest()
     page = get_page()
@@ -116,7 +200,5 @@ def run(PASS):
     else: new = new.replace('<meta name="robots"', '<meta name="ypop-roster-sig" content="%s">\n<meta name="robots"' % sig, 1)
     new = re.sub(r'(Figures checked [^.<]*\.|Last synced from the roster sheet [^.<]*\.)', 'Last synced from the roster sheet %s.' % stamp.replace(',', ''), new, count=1)
     if DRY: return 'DRY RUN: would publish %s' % summary
-    r, e = run_composio_tool('GITHUB_COMMIT_MULTIPLE_FILES', {'owner': OWNER, 'repo': REPO, 'branch': BRANCH,
-        'message': 'Roster sync: %s' % summary, 'upserts': [{'path': PAGE, 'content': new, 'encoding': 'utf-8'}]})
-    if e: raise RuntimeError('commit failed: %s' % e)
-    return 'UPDATED: published %s.' % summary
+    commit([{'path': PAGE, 'content': new, 'encoding': 'utf-8'}], 'Roster sync: %s' % summary)
+    return 'UPDATED: published %s (%d new photos).' % (summary, len(new_imgs))
