@@ -111,6 +111,18 @@ def group(cat, niche, name):
     if not c: return 'Connectors & Partners' if name == 'Stearns Bank' else 'To categorize'
     return 'Business, Finance & Real Estate'
 
+CAT_OF = {}
+def top_cat(block, cat):
+    c = cat.strip().upper()
+    if block == 'Celebrities': return 'CE'
+    if block == 'Artists & Musicians': return 'EN'
+    if block == 'Creators & Entertainment': return 'IN' if c in ('CREATOR', 'FOOD') else 'EN'
+    if block in ('Fitness Influencers', 'Business, Finance & Real Estate', 'Fashion & Sneakers'): return 'IN'
+    if block in ('Athletes & Sports', 'SRGN League Players'): return 'AT'
+    if block == 'Agencies & NIL': return 'AG'
+    if block == 'Platforms & Tech': return 'PL'
+    return 'BP'
+
 def web(o):
     m = re.search(r'(https?://[^\s|]+|\b[a-z0-9][a-z0-9.-]*\.(?:com|tv|net|io|co|org|ai|cc)\b)', o or '', re.I)
     if not m: return ''
@@ -137,7 +149,8 @@ def build_lines(vals):
         tot += count(G(r, 'Twitch followers')) + count(G(r, 'Discord members'))
         cat, niche = str(G(r, 'Category')), str(G(r, 'Industry / niche'))
         ind = (niche.strip() or cat.strip()).replace('|', '/')
-        g = BLOCKS.index(group(cat, niche, name))
+        blk = group(cat, niche, name); g = BLOCKS.index(blk)
+        CAT_OF[name] = top_cat(blk, cat)
         line = '|'.join([name, str(g), ind, str(G(r, 'Status')).strip().replace('|', '/')] + cells + [web(G(r, 'Other platforms')), str(tot) if tot else ''])
         if name in recs and recs[name][1] >= tot: continue
         recs[name] = (line, tot)
@@ -178,7 +191,7 @@ def run(PASS):
                 try: new_imgs[k] = to_jpeg(im)
                 except Exception: pass
     misses = (misses | set(k for k, _ in todo)) - set(new_imgs) - have
-    lines = [l + '|' + (k if (k in have or k in new_imgs) else '') for l, k in zip(lines, keys)]
+    lines = [l + '|' + (k if (k in have or k in new_imgs) else '') + '|' + CAT_OF.get(l.split('|')[0], 'BP') for l, k in zip(lines, keys)]
     img_files = [{'path': '%s/%s.jpg' % (IMG_DIR, k), 'content': b, 'encoding': 'base64'} for k, b in new_imgs.items()]
     if not DRY:
         for i in range(0, len(img_files), 25):

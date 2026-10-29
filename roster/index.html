@@ -307,7 +307,17 @@ header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--
 .lock .err{color:#C8321F;font-size:13px;font-weight:600;margin-top:10px;min-height:18px}
 
 /* kpis */
-.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.kpis{display:grid;grid-template-columns:1.25fr repeat(4,minmax(0,1fr));grid-auto-rows:minmax(108px,auto);gap:12px}
+.kpi.pipe{grid-row:span 2;display:flex;flex-direction:column;justify-content:space-between;padding:22px 22px}
+.kpi.pipe .v{font-size:clamp(64px,7vw,104px);line-height:.95;margin-top:10px}
+.kpi.pipe .sub{font-size:13px;color:#A3A39A;margin-top:8px}
+button.kpi{font:inherit;text-align:left;cursor:pointer;color:inherit;transition:border-color .15s,box-shadow .15s,transform .15s}
+button.kpi:hover{border-color:var(--fill);transform:translateY(-1px)}
+button.kpi.on{border-color:#0B0B0B;box-shadow:0 0 0 2px #0B0B0B}
+.kpi .r{font-size:12px;color:var(--muted);margin-top:4px;font-weight:600}
+.kpi .bar{height:5px;border-radius:3px;background:#EFEEE6;margin-top:10px;overflow:hidden}.kpi .bar i{display:block;height:100%;background:var(--fill)}
+.kpi.reach{background:#F1FBDD;border-color:#CFEA9A}
+.kpi-note{font-size:12px;color:var(--muted);margin-top:10px}
 .kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px}
 .kpi .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .kpi .v{font-family:var(--display);font-size:clamp(28px,3vw,40px);line-height:1.05;margin-top:6px}
@@ -380,7 +390,7 @@ header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--
 .cd-plat .cd-cell{text-align:center;background:#151a10;border-color:#2B3A12}
 .cd .note{color:#8A8A82;font-size:12px;text-align:center;margin-top:22px;line-height:1.6}
 
-@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.kpi.pipe{grid-row:auto;grid-column:1/-1}}
 @media (max-width:900px){.toolbar{top:96px}.blk{scroll-margin-top:210px}.cd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cd-plat{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){
   .rt thead{display:none}
@@ -399,6 +409,7 @@ header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--
 @media (max-width:560px){
   .r-hero{padding-top:40px}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi.pipe .v{font-size:64px}
   .cd{padding:34px 16px 26px;border-radius:20px}
   .cd-grid{grid-template-columns:1fr}
   .cd-plat{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -437,7 +448,8 @@ header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--
   </div>
 
   <div id="app" hidden>
-    <div class="kpis" id="kpis"></div>
+    <div class="kpis" id="kpis" aria-label="Pipeline by category"></div>
+    <p class="kpi-note">Tap a category to show only those people. Tap it again to show everyone.</p>
     <div class="toolbar">
       <div class="tabs-b" id="btabs" role="tablist" aria-label="Roster blocks"></div>
       <div class="filters">
@@ -507,19 +519,22 @@ function link(p,raw){
 }
 function stClass(s){return {'Signed contract':'sg','Onboarding':'sg','Contract needed':'ct','Contract Sent':'ct','Deck Sent':'ct','Pending':'ct','Meeting set':'mt','Follow up needed':'fu','Outreach':'ot','Intro':'ot','Declined':'dc','Ghosted':'dc'}[s]||''}
 
-var DATA=[],state={block:-1,q:'',st:'',open:{}};
+var CATS=[['CE','Celebrity'],['EN','Entertainer'],['IN','Influencer'],['AT','Athlete'],['AG','Agency'],['PL','Platforms'],['BP','Brands & Partners']];
+var DATA=[],state={block:-1,q:'',st:'',cat:'',open:{}};
 function load(txt){
   DATA=txt.trim().split('\n').map(function(l){var f=l.split('|');
-    var r={n:f[0],g:+f[1],i:f[2],s:f[3]||'Not contacted',w:f[9],t:+f[10]||0,im:f[11]||'',p:{}};
+    var r={n:f[0],g:+f[1],i:f[2],s:f[3]||'Not contacted',w:f[9],t:+f[10]||0,im:f[11]||'',c:f[12]||'BP',p:{}};
     PL.forEach(function(p,k){r.p[p[0]]=parseCell(f[4+k])});
     r.hay=(r.n+' '+r.i+' '+f.slice(4,10).join(' ')).toLowerCase();return r});
   DATA.sort(function(a,b){return b.t-a.t||a.n.localeCompare(b.n)});
 }
 function kpis(){
-  var c=function(arr){return DATA.filter(function(r){return arr.indexOf(r.s)>=0}).length};
-  var total=DATA.reduce(function(a,r){return a+r.t},0);
-  var K=[['Roster',fmtN(DATA.length),''],['Potential reach',fmtC(total),'hot'],['Meetings set',c(['Meeting set']),''],['Contracts in progress',c(['Contract needed','Contract Sent','Deck Sent','Pending']),''],['Signed / onboarding',c(['Signed contract','Onboarding']),''],['Not contacted',c(['Not contacted']),'']];
-  $('kpis').innerHTML=K.map(function(k){return '<div class="kpi '+k[2]+'"><div class="k">'+k[0]+'</div><div class="v">'+k[1]+'</div></div>'}).join('');
+  var total=DATA.reduce(function(a,r){return a+r.t},0),n=DATA.length;
+  var h='<div class="kpi hot pipe"><div class="k">In the pipeline</div><div><div class="v">'+fmtN(n)+'</div><div class="sub">creators, entertainers, athletes and partners</div></div></div>';
+  CATS.forEach(function(c){var rs=DATA.filter(function(r){return r.c===c[0]}),cnt=rs.length,rch=rs.reduce(function(a,r){return a+r.t},0);
+    h+='<button type="button" class="kpi'+(state.cat===c[0]?' on':'')+'" data-cat="'+c[0]+'" aria-pressed="'+(state.cat===c[0])+'"><div class="k">'+c[1]+'</div><div class="v">'+cnt+'</div><div class="r">'+(rch?fmtC(rch)+' reach':'&nbsp;')+'</div><div class="bar"><i style="width:'+(n?Math.max(2,cnt/n*100):0)+'%"></i></div></button>'});
+  h+='<div class="kpi reach"><div class="k">Combined reach</div><div class="v">'+fmtC(total)+'</div><div class="r">followers across every platform</div></div>';
+  $('kpis').innerHTML=h;
 }
 function tabs(){
   var h='<button type="button" data-b="-1" class="'+(state.block<0?'on':'')+'">All<b>'+DATA.length+'</b></button>';
@@ -558,11 +573,11 @@ function render(){
   BLOCKS.forEach(function(g,i){
     if(state.block>=0&&state.block!==i)return;
     var all=DATA.filter(function(r){return r.g===i});if(!all.length)return;
-    var rows=all.filter(function(r){return(!q||r.hay.indexOf(q)>=0)&&(!state.st||r.s===state.st)});
+    var rows=all.filter(function(r){return(!q||r.hay.indexOf(q)>=0)&&(!state.st||r.s===state.st)&&(!state.cat||r.c===state.cat)});
     if(!rows.length)return;
     shown+=rows.length;
     var reach=all.reduce(function(a,r){return a+r.t},0);
-    var lim=(state.open[i]||q||state.st||state.block>=0)?rows.length:Math.min(rows.length,LIMIT);
+    var lim=(state.open[i]||q||state.st||state.cat||state.block>=0)?rows.length:Math.min(rows.length,LIMIT);
     out+='<section class="blk" id="blk'+i+'"><div class="blk-h"><h2>'+esc(g)+'</h2><div class="meta">'+all.length+(all.length===1?' person':' people')+' · reach<span>'+(fmtC(reach)||'0')+'</span></div></div>';
     out+='<div style="overflow-x:auto"><table class="rt"><thead><tr><th>Talent · industry</th><th>YPOP status</th><th>Instagram</th><th>TikTok</th><th>YouTube</th><th>X</th><th>Facebook</th><th>Web</th><th class="r">Total reach</th></tr></thead><tbody>';
     out+=rows.slice(0,lim).map(row).join('')+'</tbody></table></div>';
@@ -590,6 +605,7 @@ function countdown(){
 function start(txt){
   load(txt);$('lock').hidden=true;$('app').hidden=false;
   kpis();tabs();statusOpts();render();countdown();
+  $('kpis').addEventListener('click',function(e){var b=e.target.closest('button.kpi');if(!b)return;var c=b.getAttribute('data-cat');state.cat=(state.cat===c?'':c);kpis();render();});
   $('btabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.block=+b.getAttribute('data-b');tabs();render();
     var top=$('app').getBoundingClientRect().top+scrollY-80;if(scrollY>top)scrollTo({top:top,behavior:'smooth'})});
   $('blocks').addEventListener('click',function(e){var b=e.target.closest('.more');if(!b)return;state.open[b.getAttribute('data-open')]=1;render()});
