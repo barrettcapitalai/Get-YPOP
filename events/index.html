@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$YPOP Event Revenue Calculator</title>
+<meta name="description" content="Your event moves millions. See what a host could earn when attendees use a preloaded $YPOP event wallet and card for tickets, food, merch, and everything around the event.">
+<meta property="og:title" content="$YPOP Event Revenue Calculator">
+<meta property="og:description" content="You only get paid on the ticket. See the money walking past your event.">
+<meta name="theme-color" content="#F6F5EE">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0A0A; --panel:#121212; --panel-2:#171717; --line:#262626; --line-2:#333;
+  --text:#ECECEC; --muted:#8A8A8A; --dim:#5C5C5C;
+  --lime:#ADFF5A; --lime-dim:rgba(173,255,90,.12); --gold:#E8F500;
+  --sans:"Archivo",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono)}
+.g{color:var(--lime)}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.label::before{content:"// ";color:var(--dim)}
+
+/* header */
+header{border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-family:var(--sans);font-weight:800;font-size:22px;letter-spacing:-.01em;text-decoration:none}
+.logo span{color:var(--lime)}
+.bar .mono{font-size:12px;letter-spacing:.14em;color:var(--lime);text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:1px solid var(--lime);color:var(--bg);background:var(--lime);padding:12px 18px;border-radius:2px;cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--lime)}
+.btn.ghost:hover{background:var(--lime-dim)}
+.btn.sm{padding:9px 14px;font-size:12px}
+
+/* hero */
+.hero{padding:64px 0 40px}
+.hero .lede{font-family:var(--mono);color:var(--muted);font-size:clamp(15px,2vw,20px);max-width:760px;margin-top:18px}
+h1{font-weight:800;font-size:clamp(40px,7vw,88px);line-height:.95;letter-spacing:-.03em}
+h2{font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.05;letter-spacing:-.02em}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);border:1px solid var(--line);background:var(--panel)}
+.inputs{padding:32px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:30px}
+.field .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.numbox{display:flex;align-items:center;background:var(--bg);border:1px solid var(--line-2);border-radius:2px;padding:0 12px;min-width:0}
+.numbox:focus-within{border-color:var(--lime)}
+.numbox span{font-family:var(--mono);color:var(--muted);font-size:15px}
+.numbox input{background:transparent;border:0;outline:0;color:var(--text);font-family:var(--mono);font-size:18px;font-weight:700;width:120px;padding:10px 4px;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--lime) var(--p,50%),var(--line-2) var(--p,50%));border-radius:2px}
+input[type=range]::-moz-range-track{height:4px;background:var(--line-2);border-radius:2px}
+input[type=range]::-moz-range-progress{height:4px;background:var(--lime)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;border-radius:50%;background:var(--lime);border:4px solid var(--bg);box-shadow:0 0 0 1px var(--lime)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--lime);border:4px solid var(--bg);box-shadow:0 0 0 1px var(--lime)}
+.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{font-family:var(--mono);font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line-2);padding:6px 10px;border-radius:2px;cursor:pointer}
+.chip:hover{color:var(--text);border-color:var(--muted)}
+.chip.on{color:var(--bg);background:var(--lime);border-color:var(--lime)}
+details.adv{border-top:1px solid var(--line);padding-top:18px}
+details.adv summary{list-style:none;cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+details.adv summary::-webkit-details-marker{display:none}
+details.adv summary::before{content:"+ ";color:var(--lime)}
+details.adv[open] summary::before{content:"– "}
+details.adv .field{margin-top:16px}
+.hint{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:8px}
+
+.outputs{padding:32px;display:flex;flex-direction:column;gap:28px;min-width:0}
+.headline{border-bottom:1px solid var(--line);padding-bottom:26px}
+.big{font-weight:800;font-size:clamp(48px,8vw,104px);line-height:.95;letter-spacing:-.035em;margin-top:10px;word-break:break-word}
+.big .cur{color:var(--lime)}
+.big small{font-size:.3em;font-weight:700;color:var(--muted);letter-spacing:0;margin-left:6px}
+.eq{font-family:var(--mono);font-size:14px;color:var(--muted);margin-top:16px;line-height:1.7}
+.eq b{color:var(--text);font-weight:700}
+.eq i{font-style:normal;color:var(--lime)}
+.disclose{font-family:var(--mono);font-size:10.5px;line-height:1.45;color:#9A9A9A;margin-top:10px}
+.disclose strong{color:#C8C8C8;font-weight:500}
+.disclose .more{background:none;border:0;padding:0;font:inherit;color:var(--lime);text-decoration:underline;cursor:pointer}
+.disclose a{color:var(--lime)}
+footer .fine strong{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.stat{padding:0 18px;border-left:1px solid var(--line-2)}
+.stat:first-child{padding-left:0;border-left:0}
+.stat .v{font-weight:800;font-size:clamp(22px,2.8vw,32px);letter-spacing:-.02em;margin-top:6px;word-break:break-word}
+.stat .v .cur{color:var(--lime)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.toast{font-family:var(--mono);font-size:12px;color:var(--lime);align-self:center;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+
+/* sections */
+section{padding:72px 0 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.sec-head p{font-family:var(--mono);font-size:13px;color:var(--muted);max-width:520px;margin-top:10px}
+.tablewrap{border:1px solid var(--line);background:var(--panel);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:right;padding:14px 18px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:14px 18px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.hl{color:var(--lime);font-weight:700}
+tr.cur td{background:var(--lime-dim)}
+tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--lime)}
+.barcell{width:28%;min-width:140px}
+.barcell div{height:8px;background:var(--lime);border-radius:1px;opacity:.85;min-width:2px}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:2px}
+.seg button{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:0;color:var(--muted);padding:8px 14px;cursor:pointer}
+.seg button.on{background:var(--lime);color:var(--bg);font-weight:700}
+td.cell-on{outline:1px solid var(--lime);outline-offset:-1px;color:var(--lime);font-weight:700}
+
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);background:var(--panel)}
+.step{padding:28px 24px;border-left:1px solid var(--line)}
+.step:first-child{border-left:0}
+.step .n{font-family:var(--mono);font-size:13px;color:var(--lime)}
+.step h3{font-weight:800;font-size:18px;letter-spacing:-.01em;margin:10px 0 8px;text-transform:uppercase}
+.step p{color:var(--muted);font-size:14px}
+
+.quote{border-left:3px solid var(--lime);padding:8px 0 8px 28px}
+.quote p{font-weight:700;font-size:clamp(20px,2.6vw,30px);line-height:1.25;letter-spacing:-.015em}
+.quote p em{font-style:normal;color:var(--lime)}
+
+.cta{margin-top:72px;border:1px solid var(--line);background:linear-gradient(135deg,#121212 0%,#0d140a 100%);padding:48px 40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cta p{font-family:var(--mono);color:var(--muted);margin-top:10px}
+
+footer{margin-top:72px;border-top:1px solid var(--line);padding:28px 0 48px}
+footer .fine{font-family:var(--mono);font-size:12px;line-height:1.7;color:#7A7A7A;max-width:900px}
+footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:20px}
+
+@media (max-width:900px){
+  .calc{grid-template-columns:1fr}
+  .inputs{border-right:0;border-bottom:1px solid var(--line)}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .step:nth-child(3){border-left:0}
+  .step:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .hero{padding:40px 0 28px}
+  .inputs,.outputs{padding:22px 18px}
+  .stats{grid-template-columns:1fr;gap:16px}
+  .stat{padding:0;border-left:0}
+  .steps{grid-template-columns:1fr}
+  .step{border-left:0!important;border-top:1px solid var(--line)}
+  .step:first-child{border-top:0}
+  .cta{padding:32px 22px}
+  .bar .mono{display:none}
+  .numbox input{width:96px;font-size:16px}
+  th,td{padding:12px 12px}
+  .barcell{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+:root{--around:#E8F500;--around-dim:rgba(232,245,0,.12)}
+.big{font-size:clamp(44px,6.6vw,88px)}
+.stat .v{font-size:clamp(20px,2.1vw,27px);white-space:nowrap}
+.stat{padding:0 14px}
+.y{color:var(--around)}
+
+/* without / with */
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);background:var(--panel)}
+.vs > div{padding:28px 28px 30px}
+.vs .without{border-right:1px solid var(--line)}
+.vs h3{font-weight:800;font-size:22px;letter-spacing:-.01em;margin:10px 0 18px}
+.vs .row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:12px 0;border-top:1px solid var(--line);font-family:var(--mono);font-size:13px;color:var(--muted)}
+.vs .row b{font-family:var(--sans);font-weight:800;font-size:20px;color:var(--text);white-space:nowrap}
+.vs .row b.zero{color:#FF6B6B}
+.vs .row b.g{color:var(--lime)}
+.vs .with{background:linear-gradient(160deg,#121212 0%,#0f170b 100%)}
+
+.econ{margin-top:20px;border:1px solid var(--line);background:var(--panel);padding:24px 28px 26px}
+.econ .top{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.econ .tot{font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em}
+.stack{display:flex;height:44px;margin-top:16px;border-radius:2px;overflow:hidden;background:var(--line)}
+.stack div{height:100%;border-right:2px solid var(--panel);min-width:2px;transition:width .25s}
+.stack div:last-child{border-right:0}
+.stackcap{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;margin-top:10px;color:var(--muted);flex-wrap:wrap}
+.stackcap span::before{content:"";display:inline-block;width:10px;height:10px;margin-right:7px;vertical-align:-1px;border-radius:1px;background:var(--c)}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 24px;margin-top:20px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.legend div{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:8px}
+.legend i{display:inline-block;width:9px;height:9px;margin-right:8px;border-radius:1px;vertical-align:0}
+.legend b{color:var(--text);font-weight:500;white-space:nowrap}
+
+/* breakdown editor */
+.grp{border:1px solid var(--line);background:var(--panel)}
+.grp + .grp{margin-top:20px}
+.grp-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding:18px 22px;border-bottom:1px solid var(--line)}
+.grp-h h3{font-weight:800;font-size:20px;letter-spacing:-.01em}
+.grp-h .sum{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.grp-h .sum b{font-weight:700}
+.li{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1fr) minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1.1fr);gap:16px;align-items:center;padding:12px 22px;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li.hd{padding-top:10px;padding-bottom:10px}
+.li.hd span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:right}
+.li.hd span:first-child{text-align:left}
+.li .nm{font-weight:700;font-size:15px}
+.li .nm small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;color:var(--dim);margin-top:2px}
+.li .cell{display:flex;justify-content:flex-end}
+.li .numbox{padding:0 8px}
+.li .numbox input{width:64px;font-size:14px;padding:7px 2px}
+.li .numbox span{font-size:12px}
+.li .out{font-family:var(--mono);font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+.li .out.earn{font-weight:700}
+.li .ml{display:none}
+.at .earn{color:var(--lime)}
+.around .earn{color:var(--around)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.tixnote{font-family:var(--mono);font-size:11px;color:var(--dim);padding:10px 22px 14px}
+
+.adopt-out{font-family:var(--mono);font-size:18px;font-weight:700}
+
+@media (max-width:900px){
+  .vs{grid-template-columns:1fr}
+  .vs .without{border-right:0;border-bottom:1px solid var(--line)}
+}
+@media (max-width:720px){
+  .li{grid-template-columns:1fr 1fr;gap:8px 14px;padding:14px 18px}
+  .li .nm{grid-column:1/-1}
+  .li.hd{display:none}
+  .li .cell,.li .out{display:flex;justify-content:space-between;align-items:center;text-align:left}
+  .li .ml{display:inline;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:400;margin-right:8px}
+  .vs > div,.econ{padding:22px 18px}
+  .grp-h{padding:16px 18px}
+}
+@media (max-width:560px){.stat{padding:0!important}}
+
+/* site nav */
+header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.bar{gap:20px}
+.tabs{display:flex;gap:2px;align-self:stretch;margin-right:auto;margin-left:20px}
+.tabs a{display:flex;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:0 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.tabs a:hover{color:var(--text)}
+.tabs a.on{color:var(--lime);border-bottom-color:var(--lime)}
+.tabs .ts{display:none}
+.more-calcs{margin-top:72px}
+.more-calcs .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line)}
+.more-calcs a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px;background:var(--panel);text-decoration:none;border-left:1px solid var(--line);transition:background .2s}
+.more-calcs a:first-child{border-left:0}
+.more-calcs a:hover{background:#151a10}
+.more-calcs h3{font-weight:800;font-size:20px;letter-spacing:-.01em;margin-top:6px}
+.more-calcs .arr{font-family:var(--mono);color:var(--lime);font-size:20px}
+@media (max-width:900px){
+  .bar{flex-wrap:wrap;height:auto;padding-top:12px;gap:0 12px}
+  .tabs{order:3;width:100%;margin:8px 0 0;overflow-x:auto;scrollbar-width:none;align-self:auto}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs a{padding:12px 12px 10px}
+  .tabs a:first-child{padding-left:0}
+}
+@media (max-width:640px){
+  .tabs .tl{display:none}
+  .tabs .ts{display:inline}
+  .tabs{justify-content:space-between}
+  .tabs a{padding:12px 4px 10px}
+  .bar .btn{margin-left:auto}
+}
+@media (max-width:560px){
+  .more-calcs .grid{grid-template-columns:1fr}
+  .more-calcs a{border-left:0;border-top:1px solid var(--line)}
+  .more-calcs a:first-child{border-top:0}
+}
+
+/* ===== 2026-10 deck theme: "Financial Infrastructure of Influence" ===== */
+:root{
+  --bg:#F6F5EE; --panel:#FFFFFF; --panel-2:#FAFAF5; --line:#E3E2D8; --line-2:#D3D2C7;
+  --text:#0B0B0B; --muted:#55554F; --dim:#8A8A82;
+  --lime:#2E8B0E;            /* green ink: text accents on cream */
+  --fill:#B6F03F;            /* lime fill: buttons, highlights */
+  --fill-2:#D9F99D;
+  --lime-dim:rgba(182,240,63,.28);
+  --around:#1F5C0B; --around-dim:rgba(31,92,11,.12);
+  --rw:#0B0B0B;
+  --sans:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --display:"Anton","Arial Narrow",Impact,sans-serif;
+}
+body{background:
+  radial-gradient(900px 520px at 100% 0%,rgba(182,240,63,.40),transparent 62%),
+  radial-gradient(700px 500px at 0% 100%,rgba(182,240,63,.22),transparent 60%),
+  var(--bg)}
+h1,h2,.big,.vs h3,.grp-h h3,.card h2,.tot,.econ .tot,.split .tot{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:0}
+h1{line-height:.92;font-size:clamp(46px,7.6vw,104px)}
+h2{line-height:.98}
+.big{letter-spacing:0;line-height:.95}
+.big small{font-family:var(--sans);font-weight:700;text-transform:none}
+.label{font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.22em;color:var(--muted)}
+.label::before{content:none}
+.hero .lede,.sec-head p,.cta p,.eq,.hint,.ticks,.stackcap,.legend,.tixnote,.vs .row{font-family:var(--sans)}
+.hero .lede{color:var(--muted);font-size:clamp(16px,1.6vw,20px);line-height:1.5}
+.g{color:var(--lime)}
+.logo{font-family:var(--sans);font-weight:900;font-size:24px;letter-spacing:-.03em;color:var(--text)}
+.logo span{color:var(--lime)}
+
+/* buttons, chips, controls */
+.btn{background:var(--fill);border-color:var(--fill);color:#0B0B0B;border-radius:999px;font-family:var(--sans);letter-spacing:.06em}
+.btn:hover{background:#A6E22E}
+.btn.ghost{background:#fff;color:var(--text);border-color:var(--line-2)}
+.btn.ghost:hover{background:var(--fill-2);border-color:var(--fill)}
+.chip{font-family:var(--sans);border-radius:999px;background:#fff;color:var(--muted)}
+.chip.on{background:var(--fill);border-color:var(--fill);color:#0B0B0B;font-weight:600}
+.seg{border-radius:999px;overflow:hidden;background:#fff}
+.seg button{font-family:var(--sans)}
+.seg button.on{background:var(--fill);color:#0B0B0B}
+.numbox{background:#fff;border-radius:10px}
+.numbox input{font-family:var(--sans)}
+input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(to right,var(--lime) var(--p,50%),var(--line-2) var(--p,50%))}
+input[type=range]::-webkit-slider-thumb{background:var(--fill);border:4px solid #fff;box-shadow:0 0 0 1px var(--lime),0 2px 6px rgba(0,0,0,.15)}
+input[type=range]::-moz-range-thumb{background:var(--fill);border:4px solid #fff;box-shadow:0 0 0 1px var(--lime)}
+details.adv summary{font-family:var(--sans)}
+
+/* panels */
+.calc,.tablewrap,.steps,.vs,.econ,.split,.grp,.more-calcs .grid{border-radius:18px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.02),0 12px 30px -18px rgba(0,0,0,.18)}
+.calc{background:var(--panel)}
+.tablewrap,.grp,.econ,.split{background:#fff}
+table{font-family:var(--sans)}
+td.hl{color:var(--lime)}
+tr.cur td{background:var(--lime-dim)}
+td.cell-on{outline-color:var(--lime);color:var(--lime)}
+.barcell div{background:var(--fill);opacity:1}
+.disclose{color:var(--muted);font-family:var(--sans)}
+.disclose strong{color:var(--text);font-weight:600}
+.disclose .more,.disclose a{color:var(--lime)}
+.steps{background:#fff}
+.step .n{font-family:var(--sans);font-weight:700;color:var(--lime)}
+.step h3{font-family:var(--sans);font-weight:800}
+.quote{border-left-color:var(--fill)}
+.quote p{font-family:var(--sans)}
+.quote p em{color:var(--lime)}
+
+/* without / with blocks */
+.vs .with{background:linear-gradient(160deg,#FFFFFF 0%,#F1FBDD 100%)}
+.vs .row b{font-family:var(--sans)}
+.vs .row b.zero{color:#C8321F}
+.vs .row b.y{color:var(--rw)}
+.y{color:var(--around)}
+td.y{color:var(--rw)}
+.split .stack div:first-child{color:#0B0B0B}
+.split .stack div:last-child{color:#fff}
+
+/* cta & footer */
+.cta{border-radius:22px;border:1px solid #CFEA9A;background:linear-gradient(120deg,#FFFFFF 0%,#EAF9C8 60%,#C9F178 100%)}
+.cta h2{font-size:clamp(30px,4vw,52px)}
+.cta p{color:var(--muted)}
+footer{border-top-color:var(--line)}
+footer .fine{color:var(--muted);font-family:var(--sans)}
+footer .fine strong{color:var(--text)}
+footer .row{font-family:var(--sans)}
+
+/* nav */
+header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--line)}
+.tabs a{font-family:var(--sans);font-weight:600;letter-spacing:.12em}
+.tabs a.on{color:var(--text);border-bottom-color:var(--fill);border-bottom-width:3px}
+.more-calcs a{background:#fff}
+.more-calcs a:hover{background:#F4FBE6}
+.more-calcs h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:26px;letter-spacing:0}
+.more-calcs .arr{font-family:var(--sans)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="/" aria-label="YPOP home">YPOP</a>
+    <nav class="tabs" aria-label="Calculators"><a href="/creators/"><span class="tl">Creators &amp; Athletes</span><span class="ts">Creators</span></a><a href="/events/" class="on" aria-current="page"><span class="tl">Event Hosts</span><span class="ts">Events</span></a><a href="/communities/"><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a><a href="/roster/"><span class="tl">Roster</span><span class="ts">Roster</span></a></nav>
+    <a class="btn sm" href="https://getypop.com" target="_blank" rel="noopener">Work With Us</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="label">Event &amp; music wallet</div>
+    <h1 style="margin-top:18px">Your event moves millions.<br>You only get paid on the <span class="g">ticket.</span></h1>
+    <p class="lede">When attendees use a preloaded $YPOP event wallet and card for tickets, food, drinks and merch, plus the hotels, rides and dinners around your event, you can earn up to $2.50 on every $100 they spend.</p>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="calc" id="calc">
+    <div class="inputs">
+      <div class="field">
+        <div class="top">
+          <label class="label" for="attN">Attendees per event</label>
+          <div class="numbox"><input id="attN" type="text" inputmode="numeric" autocomplete="off" aria-label="Attendees per event"></div>
+        </div>
+        <input id="attR" type="range" min="0" max="1000" step="1" aria-label="Attendees slider">
+        <div class="ticks"><span>1K</span><span>10K</span><span>100K</span><span>1M</span></div>
+        <div class="chips" id="attChips"></div>
+      </div>
+
+      <div class="field">
+        <div class="top">
+          <label class="label" for="adoptR">Attendees using a $YPOP card</label>
+          <span class="adopt-out" id="adoptOut"></span>
+        </div>
+        <input id="adoptR" type="range" min="5" max="100" step="5" aria-label="Card adoption percent">
+        <div class="ticks"><span>5%</span><span>50%</span><span>100%</span></div>
+      </div>
+
+      <div class="field">
+        <div class="top">
+          <label class="label" for="evN">Events per year</label>
+          <div class="numbox"><input id="evN" type="text" inputmode="numeric" autocomplete="off" aria-label="Events per year"></div>
+        </div>
+        <div class="chips" id="evChips"></div>
+      </div>
+
+      <details class="adv" id="adv">
+        <summary>Payout &amp; partner split</summary>
+        <div class="field">
+          <div class="top">
+            <label class="label" for="rateN">Earned per $100 spend</label>
+            <div class="numbox"><span>$</span><input id="rateN" type="text" inputmode="decimal" autocomplete="off" aria-label="Payout per $100"></div>
+          </div>
+          <p class="hint">Model default: up to $2.50 per $100 (2.5%) of eligible spend.</p>
+        </div>
+        <div class="field">
+          <div class="top">
+            <label class="label" for="splitN">Split with vendors / partners</label>
+            <div class="numbox"><input id="splitN" type="text" inputmode="numeric" autocomplete="off" aria-label="Percent split with vendors and partners"><span>%</span></div>
+          </div>
+          <p class="hint">Share of your earnings you pass to vendors, promoters or venue partners. Default 0%.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="outputs">
+      <div class="headline">
+        <div class="label">Host earnings per event · up to</div>
+        <div class="big" id="oEvent"></div>
+        <div class="eq" id="eq"></div>
+        <p class="disclose"><strong>Illustrative estimate only.</strong> Not guaranteed earnings; attendee spend figures are assumptions and actual revenue may vary. <button type="button" class="more" id="discMore" aria-expanded="false">Details</button><span id="discFull" hidden> This calculator is provided to demonstrate how the $YPOP event revenue model may work based on the assumptions you select. Estimated amounts are not guaranteed earnings or a promise of future compensation. Actual revenue may vary based on cardholder adoption and activity, transaction volume and type, applicable interchange rates, program economics, revenue-sharing terms, fees, and other factors. Earnings apply only to eligible purchases made with a $YPOP card. See <a href="#terms">Program Terms</a> for details.</span></p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="label">At the event</div><div class="v" id="oAt"></div></div>
+        <div class="stat"><div class="label">Around the event</div><div class="v" id="oAround"></div></div>
+        <div class="stat"><div class="label" id="oYearLbl">Per year</div><div class="v" id="oYear"></div></div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost sm" id="share" type="button">Copy link to these numbers</button>
+        <button class="btn ghost sm" id="reset" type="button">Reset to 600K example</button>
+        <span class="toast" id="toast" role="status">Link copied</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISSING MONEY -->
+  <section>
+    <div class="sec-head">
+      <div>
+        <div class="label">The money walking past you</div>
+        <h2 style="margin-top:10px">You sell the ticket.<br>Everyone else gets the rest.</h2>
+        <p>Your event drives every hotel night, ride, dinner and drink around it. Without $YPOP, none of that spend pays you.</p>
+      </div>
+    </div>
+
+    <div class="vs">
+      <div class="without">
+        <div class="label">Without $YPOP</div>
+        <h3>Paid on the ticket. That's it.</h3>
+        <div class="row"><span>Ticket sales (you already collect)</span><b id="wTix"></b></div>
+        <div class="row"><span>Concessions, drinks, merch</span><b class="zero">$0</b></div>
+        <div class="row"><span>Hotels, rides, dinners, parking</span><b class="zero">$0</b></div>
+        <div class="row"><span id="wMissLbl">Attendee spend you never touch</span><b id="wMiss"></b></div>
+      </div>
+      <div class="with">
+        <div class="label">With $YPOP</div>
+        <h3>Paid on <span class="g">every swipe.</span></h3>
+        <div class="row"><span>Ticket sales (unchanged)</span><b id="yTix"></b></div>
+        <div class="row"><span>Earned at the event</span><b class="g" id="yAt"></b></div>
+        <div class="row"><span>Earned around the event</span><b class="g" id="yAround"></b></div>
+        <div class="row"><span>New host earnings / event · up to</span><b class="g" id="yTot"></b></div>
+      </div>
+    </div>
+
+    <div class="econ">
+      <div class="top">
+        <div class="label">Total event economy · per event</div>
+        <div class="tot" id="econTot"></div>
+      </div>
+      <div class="stack" id="stack" role="img" aria-label="Event spend by category"></div>
+      <div class="stackcap">
+        <span style="--c:#B9B8AE">Ticket: what you're paid on today</span>
+        <span style="--c:var(--fill)">At the event</span>
+        <span style="--c:var(--around)">Around the event</span>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </section>
+
+  <!-- BREAKDOWN -->
+  <section>
+    <div class="sec-head">
+      <div>
+        <div class="label">Spend breakdown</div>
+        <h2 style="margin-top:10px">Edit any line to fit your event</h2>
+        <p>Set what share of attendees buy each item and what they spend. Totals assume the card adoption you picked above.</p>
+      </div>
+      <button class="btn ghost sm" id="resetCats" type="button">Reset spend defaults</button>
+    </div>
+    <div class="grp at" id="grpAt"></div>
+    <div class="grp around" id="grpAround"></div>
+  </section>
+
+  <!-- SCALE -->
+  <section>
+    <div class="sec-head">
+      <div>
+        <div class="label">Event scale</div>
+        <h2 style="margin-top:10px">From club nights to festivals</h2>
+        <p id="scaleNote"></p>
+      </div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Attendees</th><th>Event spend</th><th>At the event</th><th>Around the event</th><th>Host earns / event</th><th id="scaleYr">Per year</th><th class="barcell"></th></tr></thead>
+        <tbody id="scaleBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section>
+    <div class="sec-head">
+      <div>
+        <div class="label">How it works</div>
+        <h2 style="margin-top:10px">One card. <span class="g">The whole weekend.</span></h2>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Preload the card</h3><p>Attendees load a $YPOP card branded to your event for tickets and everything inside.</p></div>
+      <div class="step"><div class="n">02</div><h3>Spend everywhere</h3><p>Food, drinks and merch at the venue, plus the hotel, ride and dinner around it.</p></div>
+      <div class="step"><div class="n">03</div><h3>Every swipe counts</h3><p>Up to $2.50 earned for every $100 of eligible card spend.</p></div>
+      <div class="step"><div class="n">04</div><h3>The host gets paid</h3><p>Earn from the whole event economy, not just the gate.</p></div>
+    </div>
+  </section>
+
+  <div class="more-calcs"><div class="label" style="margin-bottom:14px">More $YPOP calculators</div><div class="grid"><a href="/creators/"><div><div class="label">Calculator</div><h3>Creators &amp; Athletes</h3></div><span class="arr">→</span></a><a href="/communities/"><div><div class="label">Calculator</div><h3>Brands &amp; Communities</h3></div><span class="arr">→</span></a></div></div>
+
+  <div class="cta">
+    <div>
+      <div class="label">Get your bigger piece</div>
+      <h2 style="margin-top:10px">Put your next event on $YPOP.</h2>
+      <p>Create more. Earn more.</p>
+    </div>
+    <a class="btn" href="https://getypop.com" target="_blank" rel="noopener">Work With Us →</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="fine" id="terms"><strong>Disclosure.</strong> Illustrative estimate only. This calculator is provided to demonstrate how the $YPOP event revenue model may work based on the assumptions you select. Estimated amounts are not guaranteed earnings or a promise of future compensation. Attendee participation rates and spending amounts are illustrative assumptions, not measured data. Actual revenue may vary based on cardholder adoption and activity, transaction volume and type, applicable interchange rates, program economics, revenue-sharing terms, fees, and other factors. Earnings apply only to eligible purchases made with a $YPOP card, including purchases made away from the event venue. The model assumes up to $2.50 earned per $100 of eligible card spend. Ticket sales figures are shown for comparison and are not affected by this model. Nothing on this page guarantees cardholder adoption, transaction volume or revenue. See Program Terms for details. YPOP delivers the branded program and technology layer, while regulated partners provide applicable banking and payment services.</p>
+    <div class="row"><span>$YPOP · Event Host Revenue Calculator</span><span><a href="https://getypop.com" style="text-decoration:none">getypop.com</a></span></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var CATS=[
+    {k:'tix',  g:'at',     name:'Tickets',               note:'Preloaded on the card',         pct:100, amt:75},
+    {k:'food', g:'at',     name:'Food & concessions',    note:'Vendors inside the venue',      pct:90,  amt:30},
+    {k:'bar',  g:'at',     name:'Drinks at the venue',   note:'Bars & beverage stands',        pct:70,  amt:25},
+    {k:'merch',g:'at',     name:'Merchandise',           note:'Shirts, posters, collectibles', pct:35,  amt:50},
+    {k:'hotel',g:'around', name:'Hotels',                note:'Per stay',                      pct:40,  amt:250},
+    {k:'fly',  g:'around', name:'Flights',               note:'Out-of-town attendees',         pct:15,  amt:300},
+    {k:'car',  g:'around', name:'Car rentals',           note:'Per rental',                    pct:10,  amt:150},
+    {k:'ride', g:'around', name:'Ubers & rideshare',     note:'To, from & around town',        pct:50,  amt:40},
+    {k:'dine', g:'around', name:'Dinners & restaurants', note:'Before & after the event',      pct:60,  amt:60},
+    {k:'park', g:'around', name:'Parking',               note:'Lots & garages',                pct:30,  amt:30},
+    {k:'night',g:'around', name:'Bars & nightlife',      note:'After-parties & drinks out',    pct:50,  amt:40}
+  ];
+  var DEF={att:600000,adopt:100,ev:1,rate:2.5,split:0};
+  var st=JSON.parse(JSON.stringify(DEF));
+  CATS.forEach(function(c){c.dp=c.pct;c.da=c.amt});
+  var SCALE=[1000,5000,10000,25000,50000,100000,250000,600000,1000000];
+  var AMIN=Math.log10(1000),AMAX=Math.log10(1000000);
+  var AT_SHADES=['#B6F03F','#98D832','#7CBF26','#5FA31A'];
+  var AR_SHADES=['#1F5C0B','#2B6F12','#38801A','#4A8F2A','#5F9E40','#77AD5C','#8FBC78'];
+  var $=function(id){return document.getElementById(id)};
+
+  function money(n){return '$'+Math.round(n).toLocaleString('en-US')}
+  function bigMoney(n){return '<span class="cur">$</span>'+Math.round(n).toLocaleString('en-US')}
+  function num(n){return Math.round(n).toLocaleString('en-US')}
+  function compactN(n){return n>=1e6?(n/1e6).toFixed(n%1e6?1:0)+'M':n>=1e3?(n/1e3).toFixed(n%1e3?1:0)+'K':String(n)}
+  function compactM(n){
+    if(n>=1e9) return '$'+(n/1e9).toFixed(2).replace(/\.?0+$/,'')+'B';
+    if(n>=1e6) return '$'+(n/1e6).toFixed(n>=1e8?0:1).replace(/\.0$/,'')+'M';
+    if(n>=1e3) return '$'+(n/1e3).toFixed(n>=1e5?0:1).replace(/\.0$/,'')+'K';
+    return money(n);
+  }
+  function parse(v){var n=parseFloat(String(v).replace(/[^0-9.]/g,''));return isFinite(n)?n:NaN}
+  function clamp(n,a,b){return Math.min(b,Math.max(a,n))}
+  function attToSlider(a){return Math.round((Math.log10(clamp(a,1000,1000000))-AMIN)/(AMAX-AMIN)*1000)}
+  function sliderToAtt(v){var a=Math.pow(10,AMIN+(v/1000)*(AMAX-AMIN));var m=Math.pow(10,Math.max(0,Math.floor(Math.log10(a))-1));return Math.round(a/m)*m}
+  function setFill(r){r.style.setProperty('--p',((r.value-r.min)/(r.max-r.min)*100)+'%')}
+
+  // spend per attendee for a category (assumes every attendee is a potential buyer)
+  function perHead(c){return c.pct/100*c.amt}
+  function calc(att){
+    var users=att*st.adopt/100, rate=st.rate/100, keep=1-st.split/100;
+    var r={att:att,at:0,around:0,spendAt:0,spendAround:0,ticketsGross:att*perHead(CATS[0]),cats:[]};
+    CATS.forEach(function(c){
+      var spendAll=att*perHead(c), spend=users*perHead(c), earn=spend*rate*keep;
+      r.cats.push({c:c,spendAll:spendAll,spend:spend,earn:earn});
+      if(c.g==='at'){r.at+=earn;r.spendAt+=spendAll}else{r.around+=earn;r.spendAround+=spendAll}
+    });
+    r.total=r.at+r.around; r.spendAll=r.spendAt+r.spendAround;
+    r.cardSpend=r.spendAll*st.adopt/100;
+    return r;
+  }
+
+  // chips
+  function chips(el,vals,fmt,key){
+    el.innerHTML=vals.map(function(v){return '<button type="button" class="chip" data-v="'+v+'">'+fmt(v)+'</button>'}).join('');
+    el.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;st[key]=+b.dataset.v;render(true)});
+  }
+  chips($('attChips'),[5000,25000,100000,250000,600000,1000000],function(v){return compactN(v)},'att');
+  chips($('evChips'),[1,4,12,26,52],function(v){return v===1?'1 event':v+' / yr'},'ev');
+
+  // breakdown rows
+  function buildGroup(el,g,title,sub){
+    var rows=CATS.filter(function(c){return c.g===g});
+    var color=g==='at'?'var(--fill)':'var(--around)';
+    var h='<div class="grp-h"><h3><span class="dot" style="background:'+color+'"></span>'+title+'</h3><div class="sum" id="sum_'+g+'"></div></div>'+
+      '<div class="li hd"><span>'+sub+'</span><span>% who buy</span><span>Avg. spend</span><span>Event spend</span><span>Host earns</span></div>';
+    rows.forEach(function(c){
+      h+='<div class="li"><div class="nm">'+c.name+'<small>'+c.note+'</small></div>'+
+        '<div class="cell"><span class="ml">% who buy</span><div class="numbox"><input data-k="'+c.k+'" data-f="pct" inputmode="numeric" aria-label="'+c.name+' percent of attendees"><span>%</span></div></div>'+
+        '<div class="cell"><span class="ml">Avg. spend</span><div class="numbox"><span>$</span><input data-k="'+c.k+'" data-f="amt" inputmode="numeric" aria-label="'+c.name+' average spend"></div></div>'+
+        '<div class="out"><span class="ml">Event spend</span><span id="sp_'+c.k+'"></span></div>'+
+        '<div class="out earn"><span class="ml">Host earns</span><span id="er_'+c.k+'"></span></div></div>';
+    });
+    if(g==='at') h+='<div class="tixnote">Ticket sales are revenue you already collect. Buying them on a $YPOP card adds card earnings on top.</div>';
+    el.innerHTML=h;
+  }
+  buildGroup($('grpAt'),'at','At the event','Inside the venue');
+  buildGroup($('grpAround'),'around','Around the event','Money you\'re missing today');
+  document.querySelectorAll('.li input').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      var c=CATS.filter(function(x){return x.k===inp.dataset.k})[0], n=parse(inp.value);
+      if(isNaN(n))return;
+      c[inp.dataset.f]=inp.dataset.f==='pct'?clamp(Math.round(n),0,100):clamp(Math.round(n),0,1000000);
+      render(false);
+    });
+    inp.addEventListener('blur',function(){render(true)});
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter')inp.blur()});
+  });
+
+  function render(sync){
+    var r=calc(st.att);
+    var evs=st.ev, keepTxt=st.split?' after a '+st.split+'% partner split':'';
+    $('oEvent').innerHTML=bigMoney(r.total);
+    $('oAt').innerHTML=bigMoney(r.at);
+    $('oAround').innerHTML=bigMoney(r.around);
+    $('oYearLbl').textContent=evs===1?'Per year · 1 event':'Per year · '+evs+' events';
+    $('oYear').innerHTML=bigMoney(r.total*evs);
+    var avg=r.spendAll/st.att;
+    $('eq').innerHTML='<b>'+num(st.att)+'</b> attendees'+(st.adopt<100?' · <b>'+st.adopt+'%</b> on $YPOP':'')+' × <b>'+money(avg)+'</b> avg. spend<br><i>→</i> <b>'+money(r.cardSpend)+'</b> on $YPOP cards <i>→</i> up to <b>'+money(r.total)+'</b> per event'+keepTxt;
+
+    // vs
+    $('wTix').textContent=money(r.ticketsGross);
+    $('yTix').textContent=money(r.ticketsGross);
+    $('wMiss').textContent=money(r.spendAll-r.ticketsGross);
+    $('yAt').textContent=money(r.at);
+    $('yAround').textContent=money(r.around);
+    $('yTot').textContent=money(r.total);
+
+    // economy stack
+    $('econTot').textContent=money(r.spendAll);
+    var ai=0,ri=0, stack='', leg='';
+    r.cats.forEach(function(x){
+      var col=x.c.k==='tix'?'#B9B8AE':(x.c.g==='at'?AT_SHADES[(ai++)%4]:AR_SHADES[(ri++)%7]);
+      var w=r.spendAll?x.spendAll/r.spendAll*100:0;
+      stack+='<div style="width:'+w+'%;background:'+col+'" title="'+x.c.name+': '+money(x.spendAll)+'"></div>';
+      leg+='<div><span><i style="background:'+col+'"></i>'+x.c.name+'</span><b>'+compactM(x.spendAll)+'</b></div>';
+    });
+    $('stack').innerHTML=stack; $('legend').innerHTML=leg;
+
+    // breakdown
+    r.cats.forEach(function(x){$('sp_'+x.c.k).textContent=money(x.spendAll);$('er_'+x.c.k).textContent=money(x.earn)});
+    $('sum_at').innerHTML='Spend '+compactM(r.spendAt)+' · you earn <b class="g">'+money(r.at)+'</b>';
+    $('sum_around').innerHTML='Spend '+compactM(r.spendAround)+' · you earn <b class="y">'+money(r.around)+'</b>';
+    if(sync!==false){
+      document.querySelectorAll('.li input').forEach(function(inp){
+        if(document.activeElement===inp)return;
+        var c=CATS.filter(function(x){return x.k===inp.dataset.k})[0];
+        inp.value=num(c[inp.dataset.f]);
+      });
+    }
+
+    // inputs
+    if(sync!==false){
+      if(document.activeElement!==$('attN')) $('attN').value=num(st.att);
+      if(document.activeElement!==$('evN')) $('evN').value=num(st.ev);
+      if(document.activeElement!==$('rateN')) $('rateN').value=st.rate;
+      if(document.activeElement!==$('splitN')) $('splitN').value=st.split;
+    }
+    $('attR').value=attToSlider(st.att); setFill($('attR'));
+    $('adoptR').value=st.adopt; setFill($('adoptR')); $('adoptOut').textContent=st.adopt+'%';
+    document.querySelectorAll('#attChips .chip').forEach(function(c){c.classList.toggle('on',+c.dataset.v===st.att)});
+    document.querySelectorAll('#evChips .chip').forEach(function(c){c.classList.toggle('on',+c.dataset.v===st.ev)});
+
+    // scale
+    var rows=SCALE.slice(); if(rows.indexOf(st.att)<0) rows.push(st.att); rows.sort(function(a,b){return a-b});
+    var maxT=calc(rows[rows.length-1]).total;
+    $('scaleYr').textContent=evs===1?'Per year (1 event)':'Per year ('+evs+' events)';
+    $('scaleNote').textContent='Uses your current spend breakdown, '+st.adopt+'% card adoption and $'+(+st.rate).toFixed(2)+' per $100. Your event size is highlighted.';
+    $('scaleBody').innerHTML=rows.map(function(a){
+      var x=calc(a);
+      return '<tr'+(a===st.att?' class="cur"':'')+'><td>'+num(a)+'</td><td>'+money(x.spendAll)+'</td><td>'+money(x.at)+'</td><td>'+money(x.around)+'</td><td class="hl">'+money(x.total)+'</td><td>'+money(x.total*evs)+'</td><td class="barcell"><div style="width:'+(maxT?Math.max(1,x.total/maxT*100):0)+'%"></div></td></tr>';
+    }).join('');
+
+    // URL
+    try{
+      var q=new URLSearchParams();
+      if(st.att!==DEF.att)q.set('a',st.att);
+      if(st.adopt!==DEF.adopt)q.set('u',st.adopt);
+      if(st.ev!==DEF.ev)q.set('e',st.ev);
+      if(st.rate!==DEF.rate)q.set('r',st.rate);
+      if(st.split!==DEF.split)q.set('s',st.split);
+      CATS.forEach(function(c){if(c.pct!==c.dp||c.amt!==c.da)q.set(c.k,c.pct+'-'+c.amt)});
+      var qs=q.toString(); history.replaceState(null,'',location.pathname+(qs?'?'+qs:'')+location.hash);
+    }catch(e){}
+  }
+
+  function bindNum(id,key,min,max,isInt){
+    var el=$(id);
+    el.addEventListener('input',function(){var n=parse(el.value);if(isNaN(n))return;st[key]=clamp(isInt?Math.round(n):n,min,max);render(false)});
+    el.addEventListener('blur',function(){render(true)});
+    el.addEventListener('keydown',function(e){if(e.key==='Enter')el.blur()});
+  }
+  bindNum('attN','att',1,100000000,true);
+  bindNum('evN','ev',1,365,true);
+  bindNum('rateN','rate',0,100,false);
+  bindNum('splitN','split',0,100,true);
+  $('attR').addEventListener('input',function(){st.att=sliderToAtt(+this.value);render(true)});
+  $('adoptR').addEventListener('input',function(){st.adopt=+this.value;render(true)});
+
+  $('discMore').addEventListener('click',function(){var f=$('discFull'),o=f.hidden;f.hidden=!o;this.textContent=o?'Less':'Details';this.setAttribute('aria-expanded',o)});
+  $('resetCats').addEventListener('click',function(){CATS.forEach(function(c){c.pct=c.dp;c.amt=c.da});render(true)});
+  $('reset').addEventListener('click',function(){
+    Object.keys(DEF).forEach(function(k){st[k]=DEF[k]});
+    CATS.forEach(function(c){c.pct=c.dp;c.amt=c.da});render(true);
+  });
+  $('share').addEventListener('click',function(){
+    var t=$('toast');function done(m){t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(location.href).then(function(){done('Link copied')},function(){done('Copy the address bar link')});
+    else done('Copy the address bar link');
+  });
+
+  try{
+    var p=new URLSearchParams(location.search), v;
+    v=parse(p.get('a')); if(!isNaN(v)) st.att=clamp(Math.round(v),1,100000000);
+    v=parse(p.get('u')); if(!isNaN(v)) st.adopt=clamp(Math.round(v/5)*5,5,100);
+    v=parse(p.get('e')); if(!isNaN(v)) st.ev=clamp(Math.round(v),1,365);
+    v=parse(p.get('r')); if(!isNaN(v)) st.rate=clamp(v,0,100);
+    v=parse(p.get('s')); if(!isNaN(v)) st.split=clamp(Math.round(v),0,100);
+    if(st.rate!==DEF.rate||st.split!==DEF.split) $('adv').open=true;
+    CATS.forEach(function(c){var s=p.get(c.k);if(!s)return;var parts=s.split('-');var a=parse(parts[0]),b=parse(parts[1]);if(!isNaN(a))c.pct=clamp(Math.round(a),0,100);if(!isNaN(b))c.amt=clamp(Math.round(b),0,1000000)});
+  }catch(e){}
+  render(true);
+})();
+</script>
+</body>
+</html>
