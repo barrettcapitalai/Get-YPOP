@@ -543,7 +543,7 @@ function cell(p,c,label){
 function ini(n){var w=n.replace(/["()]/g,'').split(/\s+/).filter(Boolean);return ((w[0]||'?')[0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase()}
 function av(r){var i='<span class="av ini" aria-hidden="true">'+esc(ini(r.n))+'</span>';
   if(!r.im)return i;
-  return '<span class="avw"><img class="av" src="/roster/img/'+r.im+'.jpg" alt="" loading="lazy" decoding="async" onerror="this.parentNode.innerHTML=this.parentNode.getAttribute(\'data-i\')" ></span>'.replace('<span class="avw">','<span class="avw" data-i="'+esc(i)+'">');}
+  return '<span class="avw" data-i="'+esc(i)+'"><img class="av" src="/roster/img/'+r.im+'.jpg" alt="" loading="lazy" decoding="async" onerror="this.parentNode.innerHTML=this.parentNode.getAttribute(\'data-i\')"></span>';}
 function row(r){
   var h='<tr><td class="who"><div class="wh">'+av(r)+'<div class="wt"><b>'+esc(r.n)+'</b>'+(r.i?'<span class="tag" title="'+esc(r.i)+'">'+esc(r.i)+'</span>':'')+'</div></div></td>';
   h+='<td class="stc"><span class="st '+stClass(r.s)+'">'+esc(r.s)+'</span></td>';
