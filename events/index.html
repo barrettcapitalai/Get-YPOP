@@ -84,8 +84,11 @@
         <div class="home-hero-actions"><a class="btn" href="/work-with-us/" data-intake>Work with us →</a><a class="btn ghost" href="/calculator/events/">Run the numbers</a></div>
       </div>
       <div class="niche-slots">
-        <figure class="niche-slot" data-slot="events-hero" data-ratio="3/4" data-path="/assets/niches/events-hero.jpg" aria-label="Photo slot reserved for approved image">
-          <span class="slot-meta">Slot · events-hero · 3:4</span>
+        <figure class="niche-photo niche-slot is-filled" data-slot="events-hero" data-ratio="3/4" data-path="/assets/niches/events-hero.jpg">
+          <picture>
+            <source type="image/webp" srcset="/assets/niches/events-hero-480w.webp 480w, /assets/niches/events-hero-768w.webp 768w, /assets/niches/events-hero.webp 900w" sizes="(max-width:900px) 100vw, 42vw">
+            <img src="/assets/niches/events-hero.jpg" srcset="/assets/niches/events-hero-480w.jpg 480w, /assets/niches/events-hero-768w.jpg 768w, /assets/niches/events-hero.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="A fan filming a festival concert on a phone" loading="lazy" decoding="async">
+          </picture>
         </figure>
       </div>
     </section>
