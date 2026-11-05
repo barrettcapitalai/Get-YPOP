@@ -29,7 +29,7 @@ h2{font-size:clamp(26px,3.6vw,44px)}
 
 /* ========== SHARED HEADER ========== */
 .site-header{position:sticky;top:0;z-index:50;height:var(--header-h);backdrop-filter:saturate(140%) blur(16px);-webkit-backdrop-filter:saturate(140%) blur(16px);background:rgba(16,17,16,.92)!important;border-bottom:1px solid var(--line)}
-.site-header .bar{display:flex;align-items:center;justify-content:space-between;height:var(--header-h);gap:16px;flex-wrap:nowrap!important;padding:0!important}
+.site-header .bar{display:flex;align-items:center;justify-content:space-between;height:var(--header-h);gap:16px;flex-wrap:nowrap!important;padding:0 24px!important}
 .logo{font-weight:800;font-size:22px;font-style:italic;letter-spacing:-.02em;color:var(--ww)!important;flex:none}
 .logo span{color:var(--lime);font-style:normal}
 .nav-desk{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;min-width:0}
@@ -289,8 +289,8 @@ footer .fine strong{color:#d8dbd0!important}
 .nav-dd-panel{
   position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
   min-width:320px;max-width:min(380px,92vw);padding:8px;
-  background:rgba(20,21,20,.92);border:1px solid rgba(255,255,255,.10);border-radius:18px;
-  box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.04) inset;
+  background:rgba(22,23,21,.96);border:1px solid rgba(255,255,255,.08);border-radius:18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04) inset;
   backdrop-filter:saturate(140%) blur(18px);-webkit-backdrop-filter:saturate(140%) blur(18px);
   z-index:60;display:none;
 }
@@ -332,3 +332,5 @@ footer .fine strong{color:#d8dbd0!important}
   background:rgba(175,229,4,.14);border:1px solid rgba(175,229,4,.35);color:var(--lime);
   font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;vertical-align:middle;
 }
+
+@media (max-width:560px){.site-header .bar{padding:0 16px!important}}
