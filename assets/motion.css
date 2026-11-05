@@ -74,6 +74,11 @@ html[data-ypop-motion] .reveal-stagger.is-waiting.in > *{
 /* Heading line mask — only hide while waiting */
 .motion-lines{display:block}
 .motion-lines .line{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
+/* After the rise, stop clipping — Safari/wider glyphs were cutting path headlines mid-word */
+.motion-lines.is-in .line,
+.motion-lines.in .line,
+html[data-ypop-revealed] .motion-lines .line,
+.reveal.in .motion-lines .line{overflow:visible}
 .motion-lines .line__in{display:block;transform:none}
 html[data-ypop-motion] .motion-lines.is-waiting .line__in{
   transform:translate3d(0,110%,0);
