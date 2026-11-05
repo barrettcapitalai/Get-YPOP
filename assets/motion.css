@@ -654,8 +654,8 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .pitch-item{
   position:absolute;
   left:clamp(1.35rem,3.5vw,3rem);
-  right:auto;
-  width:min(11.5ch, calc(100% - 2.5rem));
+  right:clamp(1.35rem,3.5vw,3rem);
+  width:auto;
   top:50%;
   margin:0;
   opacity:0;
@@ -678,7 +678,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   font-weight:700;
   letter-spacing:-.045em;
   line-height:1.02;
-  max-width:11.5ch;
+  max-width:10.5ch; /* ch relative to THIS font → ~ headline measure that straddles seam */
 }
 .pitch-line .em{font-style:normal}
 .pitch-sub{
@@ -748,7 +748,8 @@ html.light .pitch-progress__bars i{background:rgba(16,17,16,.14)}
   }
   .pitch-item{
     left:1.15rem;
-    width:min(10.5ch, calc(100% - 2.2rem));
+    right:1.15rem;
+    width:auto;
   }
   [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
     height:calc(100svh * 3.85);
