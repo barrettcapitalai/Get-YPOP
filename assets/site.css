@@ -677,13 +677,23 @@ html[data-theme="light"] .film-frame{background:#0d0e0d}
 @media (max-width:700px){.photo-strip{grid-template-columns:1fr}}
 
 .income-block{padding:56px 0 40px;border-top:1px solid var(--line)}
-.income-block .sec-head{margin-bottom:clamp(1.25rem,3vw,2rem)}
+.income-block .sec-head{
+  display:block;
+  margin-bottom:clamp(1.25rem,3vw,2rem);
+  margin-inline:auto;
+  text-align:center;
+  max-width:40rem;
+}
 .income-block .sec-head h2{
   font-size:clamp(2rem,4.8vw,3.25rem);
   letter-spacing:-.04em;line-height:1.05;
   margin:0;
+  flex:none;min-width:0;width:auto;
 }
-.income-block .sec-head .lede{margin:.9rem auto 0;max-width:36rem}
+.income-block .sec-head .lede{
+  margin:.9rem auto 0;max-width:36rem;
+  flex:none;min-width:0;
+}
 .income-frame{
   position:relative;margin:0 auto;max-width:min(420px,92vw);border-radius:1.5rem;overflow:hidden;
   border:1px solid var(--line);background:var(--brand-ob);box-shadow:var(--shadow-lift,var(--shadow));aspect-ratio:1/1;
