@@ -527,7 +527,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .partners .wrap{overflow:hidden}
 .marquee{
   /* Target ~160px logo width at 1440; height follows contain */
-  --logo-w:clamp(110px,12vw,170px);
+  --logo-w:clamp(140px,13vw,180px);
   --gap:clamp(40px,5.5vw,72px);
   --band-pad:clamp(1.75rem,3.5vw,2.75rem);
   overflow:hidden!important;
@@ -576,11 +576,11 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 [data-ypop-motion] .reveal .partners-band .marquee{opacity:0}
 [data-ypop-motion] .reveal.in .partners-band .marquee{opacity:1}
-@media (max-width:1023px){
-  .marquee{--logo-w:clamp(100px,14vw,140px);--gap:clamp(32px,5vw,56px)}
+@media (max-width:900px){
+  .marquee{--logo-w:clamp(120px,18vw,150px);--gap:clamp(28px,5vw,48px)}
 }
 @media (max-width:560px){
-  .marquee{--logo-w:clamp(88px,28vw,120px);--gap:clamp(28px,8vw,40px);--band-pad:1.5rem}
+  .marquee{--logo-w:clamp(100px,30vw,130px);--gap:clamp(24px,7vw,36px);--band-pad:1.5rem}
 }
 .partners .marquee-track li{margin:0}
 
