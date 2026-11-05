@@ -252,6 +252,10 @@
         if (on) {
           el.style.opacity = '1';
           el.style.transform = 'none';
+        } else {
+          /* Clear fail-open inline styles so inactive panels can hide */
+          el.style.opacity = '';
+          el.style.transform = '';
         }
       });
       rootPath.style.setProperty('--path-i', String(i));
