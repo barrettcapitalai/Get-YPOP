@@ -1,0 +1,263 @@
+/* $YPOP motion — Linea-inspired (MIT), brand colors kept.
+   Animate transform/opacity only. One ease. Reduced-motion safe. */
+:root{
+  --motion-ease:cubic-bezier(.2,.7,.2,1);
+  --motion-dur:.7s;
+  --motion-dur-fast:.5s;
+  --motion-dur-slow:.9s;
+}
+
+/* ---------- Reveals (IO sets .in; stagger via --i) ---------- */
+.reveal{
+  opacity:0;
+  transform:translate3d(0,22px,0);
+  transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
+  transition-delay:calc(var(--i,0) * 70ms);
+  will-change:opacity,transform;
+}
+.reveal.in{opacity:1;transform:none}
+.reveal-left{transform:translate3d(-18px,0,0)}
+.reveal-left.in{transform:none}
+.reveal-scale{transform:translate3d(0,16px,0) scale(.985)}
+.reveal-scale.in{transform:none}
+
+/* Stagger children once parent is .in */
+.reveal-stagger > *{
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
+  transition-delay:calc(var(--i,0) * 80ms);
+  will-change:opacity,transform;
+}
+.reveal-stagger.in > *,
+.reveal.in.reveal-stagger > *{opacity:1;transform:none}
+
+/* Heading line mask reveal (split by JS into .line > .line__in) */
+.motion-lines{display:block}
+.motion-lines .line{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
+.motion-lines .line__in{
+  display:block;
+  transform:translate3d(0,110%,0);
+  transition:transform var(--motion-dur-slow) var(--motion-ease);
+  transition-delay:calc(var(--i,0) * 90ms);
+  will-change:transform;
+}
+.motion-lines.is-in .line__in,
+.reveal.in .motion-lines .line__in{transform:none}
+
+/* ---------- Sheet band rise (scroll-driven when live) ---------- */
+.sheet{
+  transform-origin:50% 0%;
+}
+[data-ypop-live] .sheet:not(.sheet-hero){
+  animation-name:ypop-sheet-settle;
+  animation-timeline:view();
+  animation-range:entry 0% entry 40%;
+  animation-timing-function:linear;
+  animation-fill-mode:both;
+}
+@keyframes ypop-sheet-settle{
+  0%{transform:translate3d(0,28px,0);opacity:.92}
+  100%{transform:none;opacity:1}
+}
+
+/* ---------- Nav pill on scroll ---------- */
+.site-header .bar{
+  transition:background-color .45s var(--motion-ease), box-shadow .45s var(--motion-ease), border-color .45s var(--motion-ease), transform .45s var(--motion-ease);
+}
+html.is-scrolled .site-header .bar{
+  background:color-mix(in srgb,var(--ob) 88%,transparent)!important;
+  border-color:color-mix(in srgb,var(--ww) 22%,transparent);
+  box-shadow:0 18px 40px -20px rgba(0,0,0,.55);
+}
+html[data-theme="light"].is-scrolled .site-header .bar{
+  background:color-mix(in srgb,var(--brand-ww) 90%,transparent)!important;
+  box-shadow:0 18px 40px -22px rgba(16,17,16,.18);
+}
+
+/* ---------- Hover lifts (subtle, transform only) ---------- */
+@media (hover:hover) and (pointer:fine){
+  .who-card,.card,.fcard,.fstep,.cta,.niche-photo,.niche-feature{
+    transition:transform var(--motion-dur-fast) var(--motion-ease), border-color .25s var(--motion-ease), box-shadow .35s var(--motion-ease);
+  }
+  .who-card:hover,.card:hover,.fcard:hover,.cta:hover{
+    transform:translate3d(0,-3px,0);
+  }
+  .btn:hover{transform:translate3d(0,-1px,0)}
+  .btn:active{transform:scale(.98)}
+}
+
+/* ---------- Parallax targets ---------- */
+[data-parallax]{
+  will-change:transform;
+  transition:none;
+}
+@media (max-width:900px){
+  [data-parallax]{transform:none!important}
+}
+
+/* ---------- Sticky golden-path phone scrub ---------- */
+.path{
+  --path-phone-h:36rem;
+}
+.path .path-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  gap:clamp(2rem,5vw,4.5rem);
+  align-items:start;
+  margin-top:clamp(2rem,4vw,3rem);
+}
+.path-steps{
+  list-style:none;
+  margin:0;padding:0;
+  display:flex;flex-direction:column;
+}
+.path-step{
+  min-height:min(52vh,28rem);
+  display:flex;flex-direction:column;justify-content:center;
+  gap:.7rem;
+  padding:1.75rem 0 1.75rem 1.35rem;
+  border-left:2px solid color-mix(in srgb,var(--ww) 12%,transparent);
+  opacity:.34;
+  transform:translate3d(0,8px,0);
+  transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease), border-color var(--motion-dur) var(--motion-ease);
+}
+.path-step.is-active,
+.path-step.is-done{
+  opacity:1;
+  transform:none;
+  border-left-color:var(--lime);
+}
+.path-step.is-done:not(.is-active){opacity:.55}
+.path-step .n{
+  font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-text);
+}
+.path-step h3{
+  font-size:clamp(22px,2.4vw,32px);font-weight:600;letter-spacing:-.035em;line-height:1.1;
+}
+.path-step p{font-size:15.5px;color:var(--mut);max-width:32rem;line-height:1.55}
+
+.path-aside{position:relative;min-height:100%}
+.path-sticky{
+  position:sticky;
+  top:calc(50vh - (var(--path-phone-h) / 2));
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  padding:8px 0 24px;
+}
+.path-phone .phone{
+  width:17.5rem;height:35rem;border-radius:2.75rem;padding:.65rem;
+  background:#0c0c0d;
+  box-shadow:var(--shadow-lift),0 0 0 1px rgba(255,255,255,.08) inset,0 0 0 1.5px #2a2b2a,0 0 70px rgba(175,229,4,.16);
+  transform-origin:50% 60%;
+  transition:transform var(--motion-dur-slow) var(--motion-ease);
+}
+.path.is-exit .path-phone .phone{transform:scale(.86) rotate(-4deg)}
+.path-phone .phone-screen{
+  position:relative;width:100%;height:100%;border-radius:2.15rem;overflow:hidden;
+  background:#0e0f0e;color:var(--brand-ww);
+}
+.path-panel{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:1.35rem 1.1rem 1.5rem;
+  opacity:0;
+  transform:translate3d(0,14px,0);
+  transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
+  pointer-events:none;
+  background:
+    radial-gradient(220px 180px at 85% 8%,rgba(175,229,4,.38),transparent 65%),
+    linear-gradient(180deg,#121312,#0d0e0d);
+}
+.path-panel.is-active{opacity:1;transform:none;pointer-events:auto}
+.path-panel .scard{
+  width:100%;aspect-ratio:1.586;border-radius:14px;margin-bottom:1.2rem;padding:14px 16px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(135deg,#2a2b2a,#0a0a0a);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 18px 40px rgba(0,0,0,.45);
+  transform:rotate(-6deg);
+  filter:drop-shadow(0 0 18px rgba(175,229,4,.16));
+}
+.path-panel .scard .top{display:flex;justify-content:flex-end;font-weight:800;font-style:italic;font-size:20px}
+.path-panel .scard .bot{display:flex;justify-content:space-between;align-items:flex-end;font-size:11px}
+.path-panel .scard .visa{font-weight:900;font-style:italic;font-size:22px}
+.path-panel h4{font-size:1.25rem;letter-spacing:-.03em;font-weight:600;margin:0 0 .35rem;line-height:1.15}
+.path-panel .panel-body{font-size:.82rem;color:#c3c6bc;margin:0 0 .9rem;line-height:1.45}
+.path-panel .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.85rem}
+.path-panel .mini{
+  font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#d8dbd0;
+}
+.path-panel .mini.on{background:var(--lime);color:#101110;border-color:transparent}
+.path-panel .amt{font-size:1.75rem;font-weight:700;letter-spacing:-.04em;margin:.15rem 0 .55rem}
+.path-panel .amt span{color:var(--lime)}
+.path-panel .bar{
+  height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:.35rem
+}
+.path-panel .bar > i{display:block;height:100%;width:62%;background:var(--lime);border-radius:99px}
+.path-note{font-size:12px;color:var(--mut);text-align:center}
+
+/* Scroll-driven step emphasis when supported */
+[data-ypop-live] .path-step{
+  animation-name:ypop-path-in,ypop-path-out;
+  animation-timeline:view();
+  animation-timing-function:linear;
+  animation-fill-mode:both,forwards;
+  animation-range:entry 15% cover 35%, cover 70% exit 90%;
+}
+[data-ypop-live] .path-step.is-active{
+  animation:none;
+  opacity:1;transform:none;
+}
+@keyframes ypop-path-in{0%{opacity:.28;transform:translate3d(0,10px,0)}100%{opacity:1;transform:none}}
+@keyframes ypop-path-out{0%{opacity:1}100%{opacity:.4}}
+
+@media (max-width:1023px){
+  .path .path-grid{grid-template-columns:1fr;gap:1.5rem}
+  .path-sticky{position:relative;top:auto;order:-1;padding-bottom:8px}
+  .path-phone .phone{width:15.5rem;height:31rem}
+  .path-step{min-height:auto;padding:1.4rem 0 1.4rem 1.1rem}
+  .path.is-exit .path-phone .phone{transform:none}
+}
+@media (max-width:560px){
+  .path-phone .phone{width:14rem;height:28rem;border-radius:2.4rem}
+  .path-phone .phone-screen{border-radius:1.9rem}
+  .path-step h3{font-size:22px}
+}
+
+/* Film / photo soft settle */
+.film-frame,.income-frame,.niche-photo,.who-card .who-media{
+  overflow:hidden;
+}
+.film-frame img,.film-frame video,
+.income-frame img,.income-frame video,
+.niche-photo img,
+.who-card .who-media img{
+  transform:translate3d(0,0,0) scale(1.001);
+  will-change:transform;
+}
+
+/* Typographic rhythm polish where templated */
+.sheet .sec-head{margin-bottom:clamp(1.5rem,3vw,2.25rem)}
+.sheet .label{letter-spacing:.12em}
+.home-hero-copy h1{max-width:14ch}
+
+/* Reduced motion: show finished state, no motion */
+@media (prefers-reduced-motion:reduce){
+  .reveal,.reveal-stagger > *,.reveal-left,.reveal-scale,.motion-lines .line__in{
+    opacity:1!important;transform:none!important;transition:none!important;
+  }
+  [data-ypop-live] .sheet:not(.sheet-hero),
+  [data-ypop-live] .path-step{animation:none!important}
+  .path-step{opacity:1;transform:none}
+  .path-panel{opacity:1;transform:none;position:relative;min-height:100%}
+  .path-phone .phone-screen{display:flex;flex-direction:column;gap:0;overflow:auto}
+  .path-panel + .path-panel{border-top:1px solid rgba(255,255,255,.08)}
+  .path.is-exit .path-phone .phone{transform:none}
+  [data-parallax]{transform:none!important}
+  .who-card:hover,.card:hover,.fcard:hover,.cta:hover,.btn:hover{transform:none}
+}
+
+/* Phone UI is always dark — keep lime readable inside panels even in light theme */
+.path-panel .lime,.path-panel .g{color:var(--lime)!important}
+.path-panel .amt span{color:var(--lime)!important}

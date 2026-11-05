@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){try{var k='ypop-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}})();</script>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/motion.css">
 </head>
 <body>
 <header class="site-header">
@@ -79,14 +80,14 @@
     <section class="calc-hero niche-hero reveal" id="startups">
       <div class="niche-copy">
         <div class="label"><span class="dot"></span>For Startups &amp; Investors</div>
-        <h1>Spend that<br>can&apos;t <span class="lime">outrun</span> your revenue.</h1>
+        <h1 data-split="lines">Spend that<br>can&apos;t <span class="lime">outrun</span> your revenue.</h1>
         <p class="lede">You&apos;re carrying payroll, tooling, and a runway you can&apos;t afford to blow. $YPOP is the one line item that only grows when your sales do — so it never eats the runway your investors are counting on.</p>
         <div class="home-hero-actions"><a class="btn" href="/work-with-us/" data-intake>Protect your runway →</a><a class="btn ghost" href="/calculator/">Run the numbers</a></div>
       </div>
       <figure class="niche-photo niche-slot is-filled" data-slot="startups-hero" data-ratio="3/4" data-path="/assets/niches/startups.jpg">
         <picture>
           <source type="image/webp" srcset="/assets/niches/startups-480w.webp 480w, /assets/niches/startups-768w.webp 768w" sizes="(max-width:900px) 100vw, 42vw">
-          <img src="/assets/niches/startups.jpg" srcset="/assets/niches/startups-480w.jpg 480w, /assets/niches/startups-768w.jpg 768w" sizes="(max-width:900px) 100vw, 42vw" width="768" height="1152" alt="A laptop showing a financial dashboard on a desk" loading="lazy" decoding="async">
+          <img data-parallax="12" data-parallax-scale src="/assets/niches/startups.jpg" srcset="/assets/niches/startups-480w.jpg 480w, /assets/niches/startups-768w.jpg 768w" sizes="(max-width:900px) 100vw, 42vw" width="768" height="1152" alt="A laptop showing a financial dashboard on a desk" loading="lazy" decoding="async">
         </picture>
       </figure>
     </section>
@@ -148,6 +149,7 @@
   </div>
 </footer>
 <script src="/assets/site.js"></script>
+<script src="/assets/motion.js"></script>
 
 </body>
 </html>

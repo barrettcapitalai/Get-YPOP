@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){try{var k='ypop-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}})();</script>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/motion.css">
 </head>
 <body>
 <header class="site-header">
@@ -77,7 +78,7 @@
   <div class="wrap">
     <section class="calc-hero reveal intake-page" id="work-with-us">
       <div class="label"><span class="dot"></span>Work with us</div>
-      <h1>Get your <span class="lime">Piece.</span></h1>
+      <h1 data-split="lines">Get your <span class="lime">Piece.</span></h1>
       <p class="lede">Tell us who you are and we'll be in touch.</p>
       <div class="intake-card"><form class="intake" data-intake-form action="/work-with-us/?sent=1" method="get" novalidate>
   <div class="fld"><label for="pg-name">Name</label><input id="pg-name" name="firstname" type="text" autocomplete="name" required maxlength="120"><span class="err" id="pg-name-err" aria-live="polite"></span></div>
@@ -111,5 +112,6 @@
   </div>
 </footer>
 <script src="/assets/site.js"></script>
+<script src="/assets/motion.js"></script>
 </body>
 </html>

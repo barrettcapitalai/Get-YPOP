@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){try{var k='ypop-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}})();</script>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/motion.css">
 </head>
 <body>
 <header class="site-header">
@@ -78,14 +79,14 @@
     <section class="calc-hero niche-hero reveal" id="restaurants">
       <div class="niche-copy">
         <div class="label"><span class="dot"></span>For Restaurants &amp; Merchants</div>
-        <h1>Turn our creators into your<br><span class="lime">best-performing channel.</span></h1>
+        <h1 data-split="lines">Turn our creators into your<br><span class="lime">best-performing channel.</span></h1>
         <p class="lede">You fund the commission only when a sale lands — a marketing channel that runs itself, with no one skimming your margin in between.</p>
         <div class="home-hero-actions"><a class="btn" href="/work-with-us/" data-intake>Cut your costs →</a><a class="btn ghost" href="/calculator/">Run the numbers</a></div>
       </div>
       <figure class="niche-photo niche-slot is-filled" data-slot="restaurants-hero" data-ratio="3/4" data-path="/assets/niches/merchants.jpg">
         <picture>
           <source type="image/webp" srcset="/assets/niches/merchants-480w.webp 480w, /assets/niches/merchants-768w.webp 768w" sizes="(max-width:900px) 100vw, 42vw">
-          <img src="/assets/niches/merchants.jpg" srcset="/assets/niches/merchants-480w.jpg 480w, /assets/niches/merchants-768w.jpg 768w" sizes="(max-width:900px) 100vw, 42vw" width="768" height="1152" alt="A card tapped on a payment terminal at a restaurant" loading="lazy" decoding="async">
+          <img data-parallax="12" data-parallax-scale src="/assets/niches/merchants.jpg" srcset="/assets/niches/merchants-480w.jpg 480w, /assets/niches/merchants-768w.jpg 768w" sizes="(max-width:900px) 100vw, 42vw" width="768" height="1152" alt="A card tapped on a payment terminal at a restaurant" loading="lazy" decoding="async">
         </picture>
       </figure>
     </section>
@@ -165,5 +166,6 @@
   </div>
 </footer>
 <script src="/assets/site.js"></script>
+<script src="/assets/motion.js"></script>
 </body>
 </html>

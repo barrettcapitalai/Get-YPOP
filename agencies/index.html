@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){try{var k='ypop-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}})();</script>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/motion.css">
 </head>
 <body>
 <header class="site-header">
@@ -78,14 +79,14 @@
     <section class="calc-hero niche-hero reveal" id="agencies">
       <div class="niche-copy">
         <div class="label"><span class="dot"></span>For Agencies</div>
-        <h1>Your roster already moves money.<br>Now <span class="lime">maximize</span> it.</h1>
+        <h1 data-split="lines">Your roster already moves money.<br>Now <span class="lime">maximize</span> it.</h1>
         <p class="lede">You manage the talent and the brand relationships. $YPOP turns your creators' audience spend into an attributed, recurring revenue line — and hands you the transaction-level proof brands keep asking for.</p>
         <div class="home-hero-actions"><a class="btn" href="/work-with-us/" data-intake>Start Expanding →</a><a class="btn ghost" href="/calculator/">Run the numbers</a></div>
       </div>
       <figure class="niche-photo niche-slot is-filled" data-slot="agencies-hero" data-ratio="3/4" data-path="/assets/niches/agencies.jpg">
         <picture>
           <source type="image/webp" srcset="/assets/niches/agencies-480w.webp 480w, /assets/niches/agencies-768w.webp 768w, /assets/niches/agencies.webp 900w" sizes="(max-width:900px) 100vw, 42vw">
-          <img src="/assets/niches/agencies.jpg" srcset="/assets/niches/agencies-480w.jpg 480w, /assets/niches/agencies-768w.jpg 768w, /assets/niches/agencies.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="Two creatives reviewing work on a laptop and tablet in an art studio" loading="lazy" decoding="async">
+          <img data-parallax="12" data-parallax-scale src="/assets/niches/agencies.jpg" srcset="/assets/niches/agencies-480w.jpg 480w, /assets/niches/agencies-768w.jpg 768w, /assets/niches/agencies.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="Two creatives reviewing work on a laptop and tablet in an art studio" loading="lazy" decoding="async">
         </picture>
       </figure>
     </section>
@@ -152,5 +153,6 @@
   </div>
 </footer>
 <script src="/assets/site.js"></script>
+<script src="/assets/motion.js"></script>
 </body>
 </html>

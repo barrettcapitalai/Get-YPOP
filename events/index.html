@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){try{var k='ypop-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}})();</script>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/motion.css">
 </head>
 <body>
 <header class="site-header">
@@ -79,7 +80,7 @@
     <section class="calc-hero niche-hero-with-slots reveal" id="events">
       <div class="niche-copy">
         <div class="label"><span class="dot"></span>For Event Hosts</div>
-        <h1>Your event moves millions.<br>You only get paid on the <span class="lime">ticket.</span></h1>
+        <h1 data-split="lines">Your event moves millions.<br>You only get paid on the <span class="lime">ticket.</span></h1>
         <p class="lede">When attendees use a preloaded $YPOP event wallet and card for tickets, food, drinks and merch, plus the hotels, rides and dinners around your event, you can earn up to $2.50 on every $100 they spend.</p>
         <div class="home-hero-actions"><a class="btn" href="/work-with-us/" data-intake>Work with us →</a><a class="btn ghost" href="/calculator/events/">Run the numbers</a></div>
       </div>
@@ -87,7 +88,7 @@
         <figure class="niche-photo niche-slot is-filled" data-slot="events-hero" data-ratio="3/4" data-path="/assets/niches/events-hero.jpg">
           <picture>
             <source type="image/webp" srcset="/assets/niches/events-hero-480w.webp 480w, /assets/niches/events-hero-768w.webp 768w, /assets/niches/events-hero.webp 900w" sizes="(max-width:900px) 100vw, 42vw">
-            <img src="/assets/niches/events-hero.jpg" srcset="/assets/niches/events-hero-480w.jpg 480w, /assets/niches/events-hero-768w.jpg 768w, /assets/niches/events-hero.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="A fan filming a festival concert on a phone" loading="lazy" decoding="async">
+            <img data-parallax="12" data-parallax-scale src="/assets/niches/events-hero.jpg" srcset="/assets/niches/events-hero-480w.jpg 480w, /assets/niches/events-hero-768w.jpg 768w, /assets/niches/events-hero.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="A fan filming a festival concert on a phone" loading="lazy" decoding="async">
           </picture>
         </figure>
       </div>
@@ -127,6 +128,7 @@
   </div>
 </footer>
 <script src="/assets/site.js"></script>
+<script src="/assets/motion.js"></script>
 
 </body>
 </html>

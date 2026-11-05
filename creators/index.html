@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>(function(){try{var k='ypop-theme',t=localStorage.getItem(k);if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}document.documentElement.setAttribute('data-theme',t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute('data-theme','dark');document.documentElement.style.colorScheme='dark';}})();</script>
 <link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/motion.css">
 </head>
 <body>
 <header class="site-header">
@@ -79,14 +80,14 @@
     <section class="calc-hero niche-hero reveal" id="creators">
       <div class="niche-copy">
         <div class="label"><span class="dot"></span>For Creators</div>
-        <h1>You already drive the sale.<br>Now <span class="lime">get your slice.</span></h1>
+        <h1 data-split="lines">You already drive the sale.<br>Now <span class="lime">get your slice.</span></h1>
         <p class="lede">Every recommendation you make moves money. $YPOP attributes it and pays you on the transaction — not the view. No promo codes, no brand-deal chasing.</p>
         <div class="home-hero-actions"><a class="btn" href="/work-with-us/" data-intake>Start Earning →</a><a class="btn ghost" href="/calculator/#creators">Run the numbers</a></div>
       </div>
       <figure class="niche-photo niche-slot is-filled" data-slot="creators-hero" data-ratio="3/4" data-path="/assets/niches/creators.jpg">
         <picture>
           <source type="image/webp" srcset="/assets/niches/creators-480w.webp 480w, /assets/niches/creators-768w.webp 768w" sizes="(max-width:900px) 100vw, 42vw">
-          <img src="/assets/niches/creators.jpg" srcset="/assets/niches/creators-480w.jpg 480w, /assets/niches/creators-768w.jpg 768w" sizes="(max-width:900px) 100vw, 42vw" width="768" height="1152" alt="Someone filming a plated meal on a phone at a restaurant table" loading="lazy" decoding="async">
+          <img data-parallax="12" data-parallax-scale src="/assets/niches/creators.jpg" srcset="/assets/niches/creators-480w.jpg 480w, /assets/niches/creators-768w.jpg 768w" sizes="(max-width:900px) 100vw, 42vw" width="768" height="1152" alt="Someone filming a plated meal on a phone at a restaurant table" loading="lazy" decoding="async">
         </picture>
       </figure>
     </section>
@@ -120,7 +121,7 @@
         <figure class="niche-photo niche-slot is-filled" data-slot="athletes-hero" data-ratio="3/4" data-path="/assets/niches/athletes.jpg">
         <picture>
           <source type="image/webp" srcset="/assets/niches/athletes-480w.webp 480w, /assets/niches/athletes-768w.webp 768w, /assets/niches/athletes.webp 900w" sizes="(max-width:900px) 100vw, 42vw">
-          <img src="/assets/niches/athletes.jpg" srcset="/assets/niches/athletes-480w.jpg 480w, /assets/niches/athletes-768w.jpg 768w, /assets/niches/athletes.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="A basketball player shooting on an urban court at sunset" loading="lazy" decoding="async">
+          <img data-parallax="12" data-parallax-scale src="/assets/niches/athletes.jpg" srcset="/assets/niches/athletes-480w.jpg 480w, /assets/niches/athletes-768w.jpg 768w, /assets/niches/athletes.jpg 900w" sizes="(max-width:900px) 100vw, 42vw" width="900" height="1200" alt="A basketball player shooting on an urban court at sunset" loading="lazy" decoding="async">
         </picture>
       </figure>
       </div>
@@ -182,6 +183,7 @@
   </div>
 </footer>
 <script src="/assets/site.js"></script>
+<script src="/assets/motion.js"></script>
 
 </body>
 </html>
