@@ -99,12 +99,18 @@ html[data-ypop-revealed] .path-panel.is-active{
 .sheet{
   transform-origin:50% 0%;
 }
-[data-ypop-live] .sheet:not(.sheet-hero){
+[data-ypop-live] .sheet:not(.sheet-hero):not(#who):not(#path):not(.path){
   animation-name:ypop-sheet-settle;
   animation-timeline:view();
   animation-range:entry 0% entry 40%;
   animation-timing-function:linear;
   animation-fill-mode:both;
+}
+/* Sticky/pinned sheets must not get scroll-driven transforms — fights position:sticky */
+#who.sheet, #path.sheet, .path.sheet{animation:none!important;transform:none;opacity:1}
+@media (hover:none), (pointer:coarse){
+  [data-ypop-live] .sheet:not(.sheet-hero){animation:none!important;transform:none;opacity:1}
+  [data-ypop-live] .path-step{animation:none!important}
 }
 @keyframes ypop-sheet-settle{
   0%{transform:translate3d(0,28px,0);opacity:.92}
@@ -113,7 +119,11 @@ html[data-ypop-revealed] .path-panel.is-active{
 
 /* ---------- Nav pill on scroll ---------- */
 .site-header .bar{
-  transition:background-color .45s var(--motion-ease), box-shadow .45s var(--motion-ease), border-color .45s var(--motion-ease), transform .45s var(--motion-ease);
+  transition:background-color .35s var(--motion-ease), box-shadow .35s var(--motion-ease), border-color .35s var(--motion-ease);
+  /* Isolate frosted layer so scroll doesn't repaint backdrop-filter every frame */
+  transform:translate3d(0,0,0);
+  contain:layout style paint;
+  will-change:auto;
 }
 html.is-scrolled .site-header .bar{
   background:color-mix(in srgb,var(--ob) 88%,transparent)!important;
@@ -139,11 +149,12 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 
 /* ---------- Parallax targets ---------- */
 [data-parallax]{
-  will-change:transform;
   transition:none;
+  backface-visibility:hidden;
 }
-@media (max-width:900px){
-  [data-parallax]{transform:none!important}
+[data-parallax].is-parallaxing{will-change:transform}
+@media (max-width:900px), (hover:none), (pointer:coarse){
+  [data-parallax]{transform:none!important;will-change:auto!important}
 }
 
 /* ---------- Sticky golden-path phone scrub ---------- */
@@ -257,18 +268,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .path-panel .bar > i{display:block;height:100%;width:62%;background:var(--lime);border-radius:99px}
 .path-note{font-size:12px;color:var(--mut);text-align:center}
 
-/* Scroll-driven step emphasis when supported */
-[data-ypop-live] .path-step{
-  animation-name:ypop-path-in,ypop-path-out;
-  animation-timeline:view();
-  animation-timing-function:linear;
-  animation-fill-mode:both,forwards;
-  animation-range:entry 15% cover 35%, cover 70% exit 90%;
-}
-[data-ypop-live] .path-step.is-active{
-  animation:none;
-  opacity:1;transform:none;
-}
+/* Path step emphasis is JS-driven (.is-active) — no scroll timeline (avoids double-drive) */
 @keyframes ypop-path-in{0%{opacity:.28;transform:translate3d(0,10px,0)}100%{opacity:1;transform:none}}
 @keyframes ypop-path-out{0%{opacity:1}100%{opacity:.4}}
 
@@ -293,8 +293,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .income-frame img,.income-frame video,
 .niche-photo img,
 .who-card .who-media img{
-  transform:translate3d(0,0,0) scale(1.001);
-  will-change:transform;
+  transform:translate3d(0,0,0);
 }
 
 /* Typographic rhythm polish where templated */
@@ -349,10 +348,11 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .who-rail__title{
   margin:0;
-  font-size:clamp(2rem,4.2vw,3.35rem);
-  letter-spacing:-.04em;
-  line-height:1.05;
-  max-width:14ch;
+  font-size:clamp(2.5rem,5.4vw,5rem);
+  letter-spacing:-.045em;
+  line-height:.98;
+  max-width:12ch;
+  font-weight:700;
 }
 .who-rail__lead{
   margin:0;
@@ -431,15 +431,17 @@ html[data-theme="light"].is-scrolled .site-header .bar{
     min-height:100vh;padding:5.5rem 0 2rem;
     overflow:clip;
   }
+  /* JS owns track translate3d — do not also bind via --who-p (Safari jitter) */
   [data-ypop-motion] #who:not(.who-rail--static) .who-rail__track{
-    transform:translate3d(calc(var(--who-p, 0) * var(--who-travel, 0px) * -1),0,0);
+    transform:translate3d(0,0,0);
+    backface-visibility:hidden;
   }
 }
 
 /* Phone: native horizontal swipe, no pin */
 @media (max-width:700px){
   .who-rail__head{grid-template-columns:1fr;gap:.85rem;margin-bottom:1rem}
-  .who-rail__title{max-width:none;font-size:clamp(1.75rem,8vw,2.25rem)}
+  .who-rail__title{max-width:none;font-size:clamp(2.1rem,9vw,2.75rem)}
   .who-rail__hold{height:auto!important}
   .who-rail__stage{position:relative!important;min-height:0!important;padding:0 0 .5rem;overflow:visible}
   .who-rail__track{

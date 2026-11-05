@@ -738,6 +738,8 @@ body{background:var(--sheet-1,var(--ob))}
   background:color-mix(in srgb,var(--ob) 78%,transparent)!important;
   backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px);
   box-shadow:var(--shadow-lift,0 24px 48px -24px rgba(0,0,0,.55)),0 0 0 1px color-mix(in srgb,var(--ww) 6%,transparent) inset;
+  transform:translate3d(0,0,0);
+  contain:layout style paint;
 }
 html[data-theme="light"] .site-header .bar{
   background:color-mix(in srgb,var(--brand-ww) 82%,transparent)!important;

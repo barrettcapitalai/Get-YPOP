@@ -6,22 +6,35 @@
   try { supportsTimeline = CSS.supports('animation-timeline: view()'); } catch (e) {}
   /* Gate applied after first in-view pass (enableMotion) to avoid FOUC */
   var motionEnabled = false;
+  var coarsePointer = false;
+  try { coarsePointer = window.matchMedia('(hover:none), (pointer:coarse)').matches; } catch (e) {}
   function enableMotion() {
     if (reduce || motionEnabled) return;
     motionEnabled = true;
     document.documentElement.setAttribute('data-ypop-motion', '');
-    if (supportsTimeline) document.documentElement.setAttribute('data-ypop-live', '');
+    /* Skip view() timelines on touch — they fight sticky/JS transforms on iPad Safari */
+    if (supportsTimeline && !coarsePointer) document.documentElement.setAttribute('data-ypop-live', '');
   }
 
   var ease = 'cubic-bezier(.2,.7,.2,1)';
   var root = document.documentElement;
 
-  /* Nav scrolled state */
-  function onScrollNav() {
-    if (window.scrollY > 18) root.classList.add('is-scrolled');
-    else root.classList.remove('is-scrolled');
+  /* Nav scrolled state — rAF-throttled; only toggle when changed (avoids frosted bar thrash) */
+  var navScrolled = null;
+  var navTick = false;
+  function applyNav() {
+    navTick = false;
+    var on = window.scrollY > 18;
+    if (on === navScrolled) return;
+    navScrolled = on;
+    root.classList.toggle('is-scrolled', on);
   }
-  onScrollNav();
+  function onScrollNav() {
+    if (navTick) return;
+    navTick = true;
+    requestAnimationFrame(applyNav);
+  }
+  applyNav();
   window.addEventListener('scroll', onScrollNav, { passive: true });
 
   /* Number stagger children */
@@ -177,11 +190,15 @@
     else el.classList.add('is-waiting');
   });
 
-  /* Subtle parallax on [data-parallax] — transform only */
+  /* Subtle parallax on [data-parallax] — transform only; off on touch / narrow */
   function armParallax() {
     if (reduce) return;
+    if (coarsePointer) return;
     if (window.matchMedia('(max-width:900px)').matches) return;
-    var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+    var nodes = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]')).filter(function (el) {
+      /* Never parallax inside sticky/pinned hosts — fights position:sticky */
+      return !el.closest('.who-rail__stage, .path-sticky, [data-who-rail], [data-path]');
+    });
     if (!nodes.length) return;
     var ticking = false;
     function update() {
@@ -189,12 +206,17 @@
       var vh = window.innerHeight;
       nodes.forEach(function (el) {
         var rect = el.getBoundingClientRect();
+        if (rect.bottom < -80 || rect.top > vh + 80) {
+          el.classList.remove('is-parallaxing');
+          return;
+        }
+        el.classList.add('is-parallaxing');
         var mid = rect.top + rect.height / 2;
-        var p = (mid - vh / 2) / vh; // -1..1 around center
-        var amp = parseFloat(el.getAttribute('data-parallax')) || 12;
+        var p = (mid - vh / 2) / vh;
+        var amp = Math.min(8, (parseFloat(el.getAttribute('data-parallax')) || 12) * 0.55);
         var y = Math.max(-amp, Math.min(amp, -p * amp));
-        var scale = el.hasAttribute('data-parallax-scale') ? 1.06 : 1;
-        el.style.transform = 'translate3d(0,' + y.toFixed(2) + 'px,0) scale(' + scale + ')';
+        /* No scale — layout-adjacent and amplifies jitter */
+        el.style.transform = 'translate3d(0,' + y.toFixed(2) + 'px,0)';
       });
     }
     function onScroll() {
@@ -314,17 +336,20 @@
     var ticking = false;
 
     function progress() {
-      if (useStatic()) return;
+      if (useStatic()) {
+        track.style.willChange = 'auto';
+        return;
+      }
       var rect = hold.getBoundingClientRect();
       var vh = window.innerHeight || 1;
-      // While sticky: hold.top goes from 0 to -(holdHeight - vh)
       var scrollable = Math.max(1, hold.offsetHeight - vh);
       var p = 0;
+      var active = rect.top <= 0 && rect.bottom >= vh;
       if (rect.top <= 0) {
         p = Math.min(1, Math.max(0, (-rect.top) / scrollable));
       }
-      root.style.setProperty('--who-p', p.toFixed(4));
-      // JS transform for Safari / no timeline support
+      /* JS-only translate3d — no CSS var binding on the same element */
+      track.style.willChange = active ? 'transform' : 'auto';
       track.style.transform = 'translate3d(' + (-p * travel).toFixed(2) + 'px,0,0)';
     }
 
