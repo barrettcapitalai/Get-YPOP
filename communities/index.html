@@ -7,16 +7,16 @@
 <meta name="description" content="Launch a branded $YPOP card for your members. See what your brand could earn on member spend, and the rewards it could fund back to your community.">
 <meta property="og:title" content="$YPOP Membership Card Calculator">
 <meta property="og:description" content="Your members already spend every day. Turn that spend into brand revenue and member rewards.">
-<meta name="theme-color" content="#F6F5EE">
+<meta name="theme-color" content="#101110">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0A0A0A; --panel:#121212; --panel-2:#171717; --line:#262626; --line-2:#333;
   --text:#ECECEC; --muted:#8A8A8A; --dim:#5C5C5C;
-  --lime:#ADFF5A; --lime-dim:rgba(173,255,90,.12); --gold:#E8F500;
+  --lime:#AFE504; --lime-dim:rgba(173,255,90,.12); --gold:#E8F500;
   --sans:"Archivo",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
@@ -239,7 +239,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-f
   --bg:#F6F5EE; --panel:#FFFFFF; --panel-2:#FAFAF5; --line:#E3E2D8; --line-2:#D3D2C7;
   --text:#0B0B0B; --muted:#55554F; --dim:#8A8A82;
   --lime:#2E8B0E;            /* green ink: text accents on cream */
-  --fill:#B6F03F;            /* lime fill: buttons, highlights */
+  --fill:#AFE504;            /* lime fill: buttons, highlights */
   --fill-2:#D9F99D;
   --lime-dim:rgba(182,240,63,.28);
   --around:#1F5C0B; --around-dim:rgba(31,92,11,.12);
@@ -328,14 +328,57 @@ header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--
 .more-calcs a:hover{background:#F4FBE6}
 .more-calcs h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:26px;letter-spacing:0}
 .more-calcs .arr{font-family:var(--sans)}
+
+/* redesign chrome overrides */
+:root{
+  --bg:#101110; --panel:#141514; --panel-2:#1a1b1a; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --text:#F7F8F2; --muted:#9a9d94; --dim:#6c6f68;
+  --lime:#AFE504; --lime-dim:rgba(175,229,4,.12); --gold:#D4A84A;
+  --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:Inter,system-ui,sans-serif;
+  --display:Inter,system-ui,sans-serif;
+  --rw:#D4A84A; --around:#AFE504;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans)}
+.g{color:var(--lime)}
+header,.site-header{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);background:rgba(16,17,16,.86);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{font-weight:800;font-size:22px;font-style:italic;letter-spacing:-.02em;text-decoration:none;color:inherit}
+.logo span{color:var(--lime);font-style:normal}
+.tabs{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.tabs a{font-size:13.5px;font-weight:600;color:var(--muted);padding:8px 12px;border-radius:10px;min-height:38px;display:inline-flex;align-items:center;text-decoration:none}
+.tabs a:hover,.tabs a.on{color:var(--text);background:rgba(255,255,255,.06)}
+.tabs .ts{display:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;border-radius:14px;background:linear-gradient(180deg,#c3f52a,var(--lime));color:#0d0e0d;font-weight:700;font-size:15px;box-shadow:0 8px 30px rgba(175,229,4,.22),inset 0 1px 0 rgba(255,255,255,.35);text-decoration:none;cursor:pointer}
+.btn.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.btn.sm{min-height:38px;padding:0 14px;font-size:13px;border-radius:10px}
+.calc,.tablewrap,.steps,.vs,.econ,.split,.grp,.more-calcs .grid{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:none}
+.tablewrap,.grp,.econ,.split{background:var(--panel)}
+.more-calcs a{background:var(--panel)}
+.more-calcs a:hover{background:#1a1f14}
+.vs .with{background:linear-gradient(160deg,#121312 0%,#141a0c 100%)}
+.chip.on,.seg button.on{background:var(--lime);color:#111;border-color:var(--lime)}
+input[type=range]::-webkit-slider-thumb{background:var(--lime);border-color:var(--bg)}
+h1,h2,.big,.vs h3,.grp-h h3,.card h2,.tot,.econ .tot,.split .tot{font-family:var(--sans);font-weight:800;text-transform:none;letter-spacing:-.03em}
+.label{font-family:var(--sans);letter-spacing:.14em}
+.disclose,.eq,.hint,.ticks,.stackcap,.legend{font-family:var(--sans)}
+footer{border-top:1px solid var(--line);background:transparent}
+@media (max-width:860px){.tabs .tl{display:none}.tabs .ts{display:inline}}
+
 </style>
 </head>
 <body>
 
-<header>
+<header class="site-header">
   <div class="wrap bar">
-    <a class="logo" href="/" aria-label="YPOP home">YPOP</a>
-    <nav class="tabs" aria-label="Calculators"><a href="/creators/"><span class="tl">Creators &amp; Athletes</span><span class="ts">Creators</span></a><a href="/events/"><span class="tl">Event Hosts</span><span class="ts">Events</span></a><a href="/communities/" class="on" aria-current="page"><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a><a href="/roster/"><span class="tl">Roster</span><span class="ts">Roster</span></a></nav>
+    <a class="logo" href="/" aria-label="$YPOP home">$<span>YPOP</span></a>
+    <nav class="tabs" aria-label="Site">
+      <a href="/creators/" class=""><span class="tl">Creators &amp; Athletes</span><span class="ts">Creators</span></a>
+      <a href="/events/" class=""><span class="tl">Event Hosts</span><span class="ts">Events</span></a>
+      <a href="/communities/" class="on"><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a>
+      <a href="/demo/"><span class="tl">App demo</span><span class="ts">Demo</span></a>
+      <a href="/roster/"><span class="tl">Roster</span><span class="ts">Roster</span></a>
+    </nav>
     <a class="btn sm" href="https://getypop.com" target="_blank" rel="noopener">Work With Us</a>
   </div>
 </header>
