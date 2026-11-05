@@ -732,11 +732,11 @@ body{background:var(--sheet-1,var(--ob))}
 .site-header .bar{
   max-width:1408px;margin:0 auto;height:auto;min-height:56px;
   padding:7px 7px 7px 20px!important;gap:1.25rem;
-  border:1px solid color-mix(in srgb,var(--ww) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--ww) 18%,transparent);
   border-radius:var(--radius-pill,999px);
-  background:color-mix(in srgb,var(--ob) 80%,transparent)!important;
+  background:color-mix(in srgb,var(--ob) 78%,transparent)!important;
   backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px);
-  box-shadow:var(--shadow-lift,0 24px 48px -24px rgba(0,0,0,.45));
+  box-shadow:var(--shadow-lift,0 24px 48px -24px rgba(0,0,0,.55)),0 0 0 1px color-mix(in srgb,var(--ww) 6%,transparent) inset;
 }
 html[data-theme="light"] .site-header .bar{
   background:color-mix(in srgb,var(--brand-ww) 82%,transparent)!important;
