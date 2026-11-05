@@ -145,10 +145,15 @@
 })();
 
 /* ===== HubSpot intake config =====
-   To connect: create a HubSpot form with fields firstname, lastname, email and a
-   custom contact property for industry, then paste the IDs below.
-   industryField must match the internal name of that custom property. */
-window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || { portalId: '', formGuid: '', industryField: 'industry' };
+   Creator Banker portal 48972179 (NA2). With no formGuid we use HubSpot
+   non-HubSpot / collected forms via the tracking code. Optional formGuid
+   switches the submit path to the Forms API v3. */
+window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
+  portalId: '48972179',
+  formGuid: '',
+  industryField: 'industry',
+  scriptHost: 'js-na2.hs-scripts.com'
+};
 
 (function(){
   // FAQ accordion
@@ -166,9 +171,26 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || { portalId: '', formGuid: '', indus
     if(t && t.hasAttribute('data-faq') && t.getAttribute('aria-expanded')!=='true') t.click();
   }
 
-  var FORM_HTML = "<form class=\"intake\" data-intake-form novalidate>\n  <div class=\"fld\"><label for=\"md-name\">Name</label><input id=\"md-name\" name=\"name\" type=\"text\" autocomplete=\"name\" required maxlength=\"120\"><span class=\"err\" id=\"md-name-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-ind\">Industry</label><select id=\"md-ind\" name=\"industry\" required><option value=\"\">Select your industry</option><option>Creator</option><option>Athlete</option><option>Brand</option><option>Agency</option><option>Restaurant</option><option>Event</option><option>Community</option><option>Other</option></select><span class=\"err\" id=\"md-ind-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-email\">Email</label><input id=\"md-email\" name=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"200\"><span class=\"err\" id=\"md-email-err\" aria-live=\"polite\"></span></div>\n  <button class=\"btn\" type=\"submit\">Send</button>\n  <p class=\"form-status\" role=\"status\" aria-live=\"polite\"></p>\n  <p class=\"privacy-note\">We use your details only to reply about working with $YPOP. See our <a href=\"/faq/#gen-1-q\">privacy policy</a>.</p>\n</form>";
+  var cfg0 = window.YPOP_HUBSPOT || {};
+  // Tracking code must load for collected forms. Inject once, after the
+  // intake form is in the DOM so HubSpot's scan can find it.
+  function injectTracking(){
+    if(!cfg0.portalId || document.getElementById('hs-script-loader')) return;
+    var host = cfg0.scriptHost || 'js-na2.hs-scripts.com';
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.id = 'hs-script-loader';
+    s.async = true;
+    s.defer = true;
+    s.src = 'https://' + host + '/' + encodeURIComponent(cfg0.portalId) + '.js';
+    document.body.appendChild(s);
+  }
+
+  // firstname (not "name") so collected forms map to HubSpot's firstname property.
+  var FORM_HTML = "<form class=\"intake\" data-intake-form action=\"/work-with-us/?sent=1\" method=\"get\" novalidate>\n  <div class=\"fld\"><label for=\"md-name\">Name</label><input id=\"md-name\" name=\"firstname\" type=\"text\" autocomplete=\"name\" required maxlength=\"120\"><span class=\"err\" id=\"md-name-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-ind\">Industry</label><select id=\"md-ind\" name=\"industry\" required><option value=\"\">Select your industry</option><option>Creator</option><option>Athlete</option><option>Brand</option><option>Agency</option><option>Restaurant</option><option>Event</option><option>Community</option><option>Other</option></select><span class=\"err\" id=\"md-ind-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-email\">Email</label><input id=\"md-email\" name=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"200\"><span class=\"err\" id=\"md-email-err\" aria-live=\"polite\"></span></div>\n  <button class=\"btn\" type=\"submit\">Send</button>\n  <p class=\"form-status\" role=\"status\" aria-live=\"polite\"></p>\n  <p class=\"privacy-note\">We use your details only to reply about working with $YPOP. See our <a href=\"/faq/#gen-1-q\">privacy policy</a>.</p>\n</form>";
   var modal=null, lastFocus=null;
   function buildModal(){
+    if(modal) return;
     modal=document.createElement('div');
     modal.className='intake-modal'; modal.setAttribute('data-intake-modal','');
     modal.innerHTML='<div class="intake-dialog" role="dialog" aria-modal="true" aria-labelledby="intake-title">'+
@@ -209,6 +231,7 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || { portalId: '', formGuid: '', indus
     openModal();
   });
 
+  function nameField(form){ return form.elements.firstname || form.elements.name; }
   function setErr(form, el, msg){
     var e=form.querySelector('#'+el.id+'-err');
     el.setAttribute('aria-invalid', msg?'true':'false');
@@ -216,7 +239,8 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || { portalId: '', formGuid: '', indus
     if(e) e.textContent=msg||'';
   }
   function validate(form){
-    var n=form.elements.name, i=form.elements.industry, m=form.elements.email, ok=true, first=null;
+    var n=nameField(form), i=form.elements.industry, m=form.elements.email, ok=true, first=null;
+    if(!n || !i || !m) return false;
     var nv=n.value.trim(), mv=m.value.trim();
     if(!nv){ setErr(form,n,'Please enter your name.'); ok=false; first=first||n; } else setErr(form,n,'');
     if(!i.value){ setErr(form,i,'Please choose your industry.'); ok=false; first=first||i; } else setErr(form,i,'');
@@ -226,34 +250,64 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || { portalId: '', formGuid: '', indus
     if(first) first.focus();
     return ok;
   }
+  function showThanks(form){
+    var status=form.querySelector('.form-status');
+    form.reset();
+    form.querySelectorAll('[aria-invalid]').forEach(function(el){ el.removeAttribute('aria-invalid'); el.removeAttribute('aria-describedby'); });
+    form.querySelectorAll('.err').forEach(function(e){ e.textContent=''; });
+    if(status){ status.className='form-status ok'; status.textContent='Thanks — we got it. We\'ll be in touch soon.'; }
+  }
   function wireForm(form){
     if(!form || form.__wired) return; form.__wired=true;
+    // Collected-forms friendly defaults (no hidden fields).
+    if(!form.getAttribute('action')) form.setAttribute('action','/work-with-us/?sent=1');
+    if(!form.getAttribute('method')) form.setAttribute('method','get');
+    var nf=nameField(form);
+    if(nf && nf.name==='name') nf.name='firstname';
     var status=form.querySelector('.form-status'), btn=form.querySelector('button[type=submit]');
-    function say(cls,msg){ status.className='form-status '+cls; status.textContent=msg; }
+    function say(cls,msg){ if(!status) return; status.className='form-status '+cls; status.textContent=msg; }
+
+    // Thank-you landing after a native collected-forms submit.
+    if(/[?&]sent=1(?:&|$)/.test(location.search) && location.pathname.indexOf('/work-with-us')===0){
+      showThanks(form);
+    }
+
     form.addEventListener('submit', function(e){
-      e.preventDefault(); say('','');
-      if(!validate(form)) return;
+      say('','');
+      if(!validate(form)){ e.preventDefault(); return; }
       var cfg=window.YPOP_HUBSPOT||{};
-      if(!cfg.portalId || !cfg.formGuid){
-        say('warn','Form not connected yet (preview). Nothing was sent. For now, email info@getypop.com.');
+      // Forms API path when a HubSpot form GUID is configured.
+      if(cfg.portalId && cfg.formGuid){
+        e.preventDefault();
+        var full=nameField(form).value.trim(), parts=full.split(/\s+/);
+        var first=parts.shift(), last=parts.join(' ');
+        var fields=[{objectTypeId:'0-1',name:'firstname',value:first},{objectTypeId:'0-1',name:'email',value:form.elements.email.value.trim()},{objectTypeId:'0-1',name:cfg.industryField||'industry',value:form.elements.industry.value}];
+        if(last) fields.push({objectTypeId:'0-1',name:'lastname',value:last});
+        var body={fields:fields,context:{pageUri:location.href,pageName:document.title}};
+        var hm=document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/); if(hm) body.context.hutk=hm[1];
+        btn.disabled=true; var old=btn.textContent; btn.textContent='Sending…';
+        fetch('https://api.hsforms.com/submissions/v3/integration/submit/'+encodeURIComponent(cfg.portalId)+'/'+encodeURIComponent(cfg.formGuid),{
+          method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+        }).then(function(r){
+          if(!r.ok) throw new Error('HTTP '+r.status);
+          showThanks(form);
+        }).catch(function(){
+          say('bad','Something went wrong and your details were not sent. Please try again, or email info@getypop.com.');
+        }).finally(function(){ btn.disabled=false; btn.textContent=old; });
         return;
       }
-      var name=form.elements.name.value.trim(), parts=name.split(/\s+/);
-      var first=parts.shift(), last=parts.join(' ');
-      var fields=[{objectTypeId:'0-1',name:'firstname',value:first},{objectTypeId:'0-1',name:'email',value:form.elements.email.value.trim()},{objectTypeId:'0-1',name:cfg.industryField||'industry',value:form.elements.industry.value}];
-      if(last) fields.push({objectTypeId:'0-1',name:'lastname',value:last});
-      var body={fields:fields,context:{pageUri:location.href,pageName:document.title}};
-      var hm=document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/); if(hm) body.context.hutk=hm[1];
-      btn.disabled=true; var old=btn.textContent; btn.textContent='Sending…';
-      fetch('https://api.hsforms.com/submissions/v3/integration/submit/'+encodeURIComponent(cfg.portalId)+'/'+encodeURIComponent(cfg.formGuid),{
-        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
-      }).then(function(r){
-        if(!r.ok) throw new Error('HTTP '+r.status);
-        form.reset(); say('ok','Thanks — we got it. We\'ll be in touch soon.');
-      }).catch(function(){
-        say('bad','Something went wrong and your details were not sent. Please try again, or email info@getypop.com.');
-      }).finally(function(){ btn.disabled=false; btn.textContent=old; });
+      // Collected / non-HubSpot forms path.
+      // HubSpot's collector listens for the submit-button click on forms that were
+      // present at page load (modal is built before the tracking script injects).
+      // preventDefault runs on the submit event so we can show an on-brand thank-you
+      // without putting the lead's email in the URL; the click already fired.
+      e.preventDefault();
+      showThanks(form);
     });
   }
+  // Build the modal form at initial load so HubSpot's collected-forms scan can see it.
+  if(location.pathname.indexOf('/work-with-us')!==0) buildModal();
   document.querySelectorAll('[data-intake-form]').forEach(wireForm);
+  injectTracking();
 })();
+

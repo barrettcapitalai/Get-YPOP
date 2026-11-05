@@ -70,8 +70,8 @@
       <div class="label"><span class="dot"></span>Work with us</div>
       <h1>Get your <span class="lime">Piece.</span></h1>
       <p class="lede">Tell us who you are and we'll be in touch.</p>
-      <div class="intake-card"><form class="intake" data-intake-form novalidate>
-  <div class="fld"><label for="pg-name">Name</label><input id="pg-name" name="name" type="text" autocomplete="name" required maxlength="120"><span class="err" id="pg-name-err" aria-live="polite"></span></div>
+      <div class="intake-card"><form class="intake" data-intake-form action="/work-with-us/?sent=1" method="get" novalidate>
+  <div class="fld"><label for="pg-name">Name</label><input id="pg-name" name="firstname" type="text" autocomplete="name" required maxlength="120"><span class="err" id="pg-name-err" aria-live="polite"></span></div>
   <div class="fld"><label for="pg-ind">Industry</label><select id="pg-ind" name="industry" required><option value="">Select your industry</option><option>Creator</option><option>Athlete</option><option>Brand</option><option>Agency</option><option>Restaurant</option><option>Event</option><option>Community</option><option>Other</option></select><span class="err" id="pg-ind-err" aria-live="polite"></span></div>
   <div class="fld"><label for="pg-email">Email</label><input id="pg-email" name="email" type="email" autocomplete="email" required maxlength="200"><span class="err" id="pg-email-err" aria-live="polite"></span></div>
   <button class="btn" type="submit">Send</button>
