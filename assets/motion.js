@@ -442,17 +442,15 @@
       if (!copyDark || !copyLime) return;
       var pw = cache.pw;
       var ph = cache.ph;
+      /* Always full panel width — clearing width on absolute copies collapses % children */
       copyDark.style.width = pw + 'px';
       copyLime.style.width = pw + 'px';
       if (cache.vertical) {
-        /* lime on top: copy fills full panel height, offset so text aligns */
+        /* lime on top: copy fills full panel height; dark copy top-shifted in applySplit */
         copyDark.style.height = ph + 'px';
         copyLime.style.height = ph + 'px';
-        copyDark.style.width = '';
-        copyLime.style.width = '';
         copyDark.style.left = '0';
         copyLime.style.left = '0';
-        copyDark.style.top = ''; /* JS sets each frame via split */
         copyLime.style.top = '0';
       } else {
         copyDark.style.height = '';
@@ -460,7 +458,6 @@
         copyDark.style.left = '0';
         copyDark.style.top = '0';
         copyLime.style.top = '0';
-        /* lime copy shifted left by dark width so text coincides */
       }
     }
 

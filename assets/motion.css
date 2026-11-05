@@ -741,7 +741,7 @@ html.light .pitch-progress__bars i{background:rgba(16,17,16,.14)}
   }
   .pitch-line{
     font-size:clamp(2.4rem, 10.8vw, 2.75rem); /* ~38–44px */
-    max-width:10.5ch;
+    max-width:none;
   }
   .pitch-sub{font-size:1.05rem;max-width:26ch}
   .pitch-copy{
@@ -749,9 +749,8 @@ html.light .pitch-progress__bars i{background:rgba(16,17,16,.14)}
   }
   .pitch-item{
     left:50%;
-    width:min(20rem, 86%);
+    width:min(18.5rem, calc(100% - 2rem));
   }
-  .pitch-line{font-size:clamp(2.4rem, 10.8vw, 2.75rem)}
   [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
     height:calc(100svh * 3.85);
   }
