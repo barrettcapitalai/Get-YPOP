@@ -427,13 +427,13 @@
         el.classList.toggle('is-done', j < i);
         if (j === i) {
           el.style.opacity = '1';
-          el.style.transform = 'translate3d(0,-50%,0)';
+          el.style.transform = 'translate3d(-50%,-50%,0)';
         } else if (j < i) {
           el.style.opacity = '0';
-          el.style.transform = 'translate3d(0,calc(-50% - 28px),0)';
+          el.style.transform = 'translate3d(-50%,calc(-50% - 28px),0)';
         } else {
           el.style.opacity = '0';
-          el.style.transform = 'translate3d(0,calc(-50% + 32px),0)';
+          el.style.transform = 'translate3d(-50%,calc(-50% + 32px),0)';
         }
       });
     }

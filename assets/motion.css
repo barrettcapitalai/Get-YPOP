@@ -653,24 +653,25 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 
 .pitch-item{
   position:absolute;
-  left:clamp(1.35rem,3.5vw,3rem);
-  right:clamp(1.35rem,3.5vw,3rem);
-  width:auto;
+  left:50%;
+  right:auto;
+  width:min(42rem, 72%);
   top:50%;
   margin:0;
   opacity:0;
-  transform:translate3d(0,calc(-50% + 36px),0);
+  transform:translate3d(-50%,calc(-50% + 36px),0);
   pointer-events:none;
   will-change:opacity,transform;
+  text-align:left;
 }
 .pitch-item.is-active{
   opacity:1;
-  transform:translate3d(0,-50%,0);
+  transform:translate3d(-50%,-50%,0);
   pointer-events:auto;
 }
 .pitch-item.is-done{
   opacity:0;
-  transform:translate3d(0,calc(-50% - 32px),0);
+  transform:translate3d(-50%,calc(-50% - 32px),0);
 }
 .pitch-line{
   margin:0;
@@ -678,7 +679,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   font-weight:700;
   letter-spacing:-.045em;
   line-height:1.02;
-  max-width:10.5ch; /* ch relative to THIS font → ~ headline measure that straddles seam */
+  max-width:none;
 }
 .pitch-line .em{font-style:normal}
 .pitch-sub{
@@ -747,10 +748,10 @@ html.light .pitch-progress__bars i{background:rgba(16,17,16,.14)}
     padding:1.25rem 1.15rem;
   }
   .pitch-item{
-    left:1.15rem;
-    right:1.15rem;
-    width:auto;
+    left:50%;
+    width:min(20rem, 86%);
   }
+  .pitch-line{font-size:clamp(2.4rem, 10.8vw, 2.75rem)}
   [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
     height:calc(100svh * 3.85);
   }
