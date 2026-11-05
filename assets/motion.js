@@ -313,49 +313,61 @@
     var track = root.querySelector('[data-who-track]');
     if (!hold || !track) return;
 
-    /* Pin only on fine desktop pointers. iPad Safari + sticky + translate = jitter. */
-    var mqPhone = window.matchMedia('(max-width:900px), (hover:none), (pointer:coarse)');
+    /* Scroll-driven on every pointer (incl. iPad/phone). Static only for reduced-motion. */
     function useStatic() {
-      return reduce || mqPhone.matches || coarsePointer;
+      return reduce;
     }
+
+    /* Cached geometry — measured on load/resize only, never per scroll frame */
+    var cache = {
+      top: 0,
+      holdH: 0,
+      vh: 0,
+      travel: 0,
+      scrollable: 1,
+      active: false
+    };
+    var ticking = false;
+    var lastX = 0;
 
     function measure() {
       if (useStatic()) {
         root.classList.add('who-rail--static');
-        hold.style.height = '';
         track.style.transform = '';
+        track.style.willChange = 'auto';
         root.style.removeProperty('--who-travel');
         root.style.removeProperty('--who-p');
-        return 0;
-      }
-      root.classList.remove('who-rail--static');
-      // Temporarily clear transform to measure natural width
-      track.style.transform = 'translate3d(0,0,0)';
-      var travel = Math.max(0, track.scrollWidth - window.innerWidth);
-      root.style.setProperty('--who-travel', travel + 'px');
-      hold.style.height = ''; // let CSS calc handle it
-      return travel;
-    }
-
-    var travel = 0;
-    var ticking = false;
-
-    function progress() {
-      if (useStatic()) {
-        track.style.willChange = 'auto';
+        hold.style.height = '';
         return;
       }
-      var rect = hold.getBoundingClientRect();
-      var vh = window.innerHeight || 1;
-      var scrollable = Math.max(1, hold.offsetHeight - vh);
+      root.classList.remove('who-rail--static');
+      /* Clear transform so scrollWidth is natural */
+      track.style.transform = 'translate3d(0,0,0)';
+      var vw = window.innerWidth || 1;
+      var travel = Math.max(0, track.scrollWidth - vw);
+      root.style.setProperty('--who-travel', travel + 'px');
+      /* Flush layout so hold height reflects new --who-travel */
+      void hold.offsetHeight;
+      cache.vh = window.innerHeight || 1;
+      cache.holdH = hold.offsetHeight;
+      /* One layout read on resize/load only — never in the scroll rAF */
+      cache.top = hold.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0);
+      cache.travel = travel;
+      cache.scrollable = Math.max(1, cache.holdH - cache.vh);
+      track.style.willChange = 'transform';
+    }
+
+    function progress() {
+      if (useStatic()) return;
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      var scrolled = y - cache.top;
       var p = 0;
-      var active = rect.top <= 0 && rect.bottom >= vh;
-      if (rect.top <= 0) {
-        p = Math.min(1, Math.max(0, (-rect.top) / scrollable));
-      }
-      /* JS-only translate3d — no CSS var binding on the same element */
-      track.style.willChange = active ? 'transform' : 'auto';
-      track.style.transform = 'translate3d(' + (-p * travel).toFixed(2) + 'px,0,0)';
+      if (scrolled > 0) p = Math.min(1, scrolled / cache.scrollable);
+      var x = -(p * cache.travel);
+      /* Only write when changed enough to matter (~0.25px) */
+      if (Math.abs(x - lastX) < 0.25 && p !== 0 && p !== 1) return;
+      lastX = x;
+      track.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
     }
 
     function onScroll() {
@@ -368,22 +380,20 @@
     }
 
     function refresh() {
-      travel = measure();
+      measure();
+      lastX = -9999;
       progress();
     }
 
     refresh();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', refresh, { passive: true });
-    // Recalc after images load (widths settle)
+    window.addEventListener('orientationchange', function () {
+      setTimeout(refresh, 120);
+    }, { passive: true });
     track.querySelectorAll('img').forEach(function (img) {
       if (!img.complete) img.addEventListener('load', refresh, { once: true });
     });
-    if (typeof mqPhone.addEventListener === 'function') {
-      mqPhone.addEventListener('change', refresh);
-    } else if (mqPhone.addListener) {
-      mqPhone.addListener(refresh);
-    }
   }
   armWhoRail();
 

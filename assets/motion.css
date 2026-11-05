@@ -431,79 +431,60 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .who-place__body .d{font-size:.9rem;color:var(--mut);line-height:1.4}
 .who-place__body .go{margin-top:.25rem;font-size:.85rem;font-weight:700;color:var(--accent-text)}
 
-/* Desktop fine-pointer sticky scrub only — NEVER on touch/coarse (iPad Safari jitter) */
-@media (min-width:901px) and (hover:hover) and (pointer:fine){
-  [data-ypop-motion] #who:not(.who-rail--static) .who-rail__hold{
-    height:calc(100svh + var(--who-travel, 0px) * 1.25);
-  }
-  [data-ypop-motion] #who:not(.who-rail--static) .who-rail__stage{
-    position:sticky;top:0;
-    display:flex;flex-direction:column;justify-content:flex-start;
-    min-height:100svh;padding:5.25rem 0 2rem;
-    overflow:clip;
-    transform:none; /* never transform a sticky ancestor */
-  }
-  [data-ypop-motion] #who:not(.who-rail--static) .who-rail__track{
-    transform:translate3d(0,0,0);
-    backface-visibility:hidden;
-  }
+/* Scroll-driven who-rail — all viewports (incl. iPad/touch/phone).
+   Sticky stage has NO transform. Track alone gets translate3d from JS. */
+[data-ypop-motion] #who:not(.who-rail--static) .who-rail__hold{
+  height:calc(100svh + var(--who-travel, 0px) * 1.2);
 }
-/* iPad / touch / tablet: native horizontal swipe — no pin, no JS translate */
-@media (max-width:900px), (hover:none), (pointer:coarse){
-  #who .who-rail__hold{height:auto!important}
-  #who .who-rail__stage{
-    position:relative!important;min-height:0!important;padding:0 0 1rem;
-    overflow:visible;transform:none!important;
-  }
-  #who .who-rail__track{
-    width:auto;max-width:100%;
-    overflow-x:auto;overflow-y:hidden;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior-x:contain;
-    padding-inline:max(1rem, calc((100vw - var(--wrap, 88rem)) / 2));
-    padding-bottom:.5rem;
-    gap:1rem;
-    transform:none!important;
-    will-change:auto!important;
-  }
-  #who .who-place{width:min(72vw,20rem);scroll-snap-align:start}
+[data-ypop-motion] #who:not(.who-rail--static) .who-rail__stage{
+  position:sticky;
+  top:0;
+  display:flex;flex-direction:column;justify-content:flex-start;
+  min-height:100svh;
+  padding:5.25rem 0 2rem;
+  overflow:clip;
+  transform:none; /* never transform a sticky ancestor */
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+}
+[data-ypop-motion] #who:not(.who-rail--static) .who-rail__track{
+  display:flex;
+  width:max-content;
+  max-width:none;
+  overflow:visible;
+  transform:translate3d(0,0,0);
+  will-change:transform;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  /* no scroll-snap / overflow-x — vertical scroll drives X */
+  scroll-snap-type:none;
 }
 
-/* Phone: native horizontal swipe, no pin */
 @media (max-width:700px){
   .who-rail__head{grid-template-columns:1fr;gap:.85rem;margin-bottom:1rem}
   .who-rail__title{max-width:none;font-size:clamp(2.1rem,9vw,2.75rem)}
-  .who-rail__hold{height:auto!important}
-  .who-rail__stage{position:relative!important;min-height:0!important;padding:0 0 .5rem;overflow:visible}
-  .who-rail__track{
-    width:auto;max-width:100%;
-    overflow-x:auto;overflow-y:hidden;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    overscroll-behavior-x:contain;
-    padding-inline:1rem 1.5rem;
-    padding-bottom:.5rem;
-    gap:.85rem;
-    transform:none!important;
+  [data-ypop-motion] #who:not(.who-rail--static) .who-rail__stage{
+    padding:4.5rem 0 1.25rem;
   }
-  .who-place{width:min(78vw,20rem);scroll-snap-align:start}
+  #who:not(.who-rail--static) .who-place{width:min(78vw,20rem)}
   .who-rail__pill{margin-bottom:1rem}
 }
 
-/* Reduced / static: scrollable row, no pin */
+/* Reduced-motion / static: vertical stack — never manual side-scroll */
 #who.who-rail--static .who-rail__hold{height:auto!important}
 #who.who-rail--static .who-rail__stage{
   position:relative!important;min-height:0!important;padding:0 0 1rem;overflow:visible;
+  transform:none!important;
 }
 #who.who-rail--static .who-rail__track{
-  width:auto;max-width:100%;
-  overflow-x:auto;transform:none!important;
-  scroll-snap-type:x mandatory;
-  padding-inline:max(1rem, calc((100vw - var(--wrap, 88rem)) / 2));
-  padding-bottom:.5rem;
+  display:flex;flex-direction:column;align-items:stretch;
+  width:100%;max-width:min(22rem,100%);
+  margin-inline:max(1rem, calc((100vw - var(--wrap, 88rem)) / 2));
+  gap:1rem;
+  overflow:visible;transform:none!important;will-change:auto!important;
+  padding-inline:0;padding-bottom:.5rem;
 }
-#who.who-rail--static .who-place{scroll-snap-align:start}
+#who.who-rail--static .who-place{width:100%;max-width:22rem}
 
 @media (prefers-reduced-motion:reduce){
   .who-place__media img,.who-place:hover .who-place__media img{transform:none!important;transition:none!important}
