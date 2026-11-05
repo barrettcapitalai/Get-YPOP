@@ -477,15 +477,15 @@ body.modal-open{overflow:hidden}
 .marquee-track li:hover img{opacity:1}
 @keyframes ypop-marquee{to{transform:translateX(-50%)}}
 .partners{overflow-x:clip}
-.partners.reveal .marquee{transform:none;opacity:0;transition:opacity .7s var(--ease)}
-.partners.reveal.in .marquee{transform:none;opacity:1}
+.reveal .partners-band .marquee{transform:none;opacity:0;transition:opacity .7s var(--ease)}
+.reveal.in .partners-band .marquee{transform:none;opacity:1}
 @media (max-width:1023px){.marquee{--h:40px}.partners{padding:0}}
 @media (max-width:560px){.partners{padding:0}.marquee{--gap:56px;--h:34px}.marquee-track{animation-duration:36s}}
 @media (prefers-reduced-motion:reduce){
   .marquee{-webkit-mask-image:none;mask-image:none}
   .marquee-track{animation:none;width:auto;flex-wrap:wrap;justify-content:center;gap:32px 56px;padding:0}
   .marquee-track li[aria-hidden="true"]{display:none}
-  .partners.reveal .marquee{transform:none;opacity:1;transition:none}
+  .partners.reveal .marquee,.reveal .partners-band .marquee{transform:none;opacity:1;transition:none}
 }
 @media (prefers-reduced-motion:reduce) and (max-width:560px){.marquee{--h:36px}.marquee-track{gap:28px 40px}}
 
@@ -860,7 +860,7 @@ main > .wrap{padding-top:clamp(1.5rem,3vw,2.5rem);padding-bottom:2rem}
 }
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
-  .partners.reveal .marquee{opacity:1;transform:none;transition:none}
+  .partners.reveal .marquee,.reveal .partners-band .marquee{opacity:1;transform:none;transition:none}
   .btn:hover{transform:none}
 }
 

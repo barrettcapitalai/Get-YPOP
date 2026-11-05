@@ -499,15 +499,14 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .marquee-track img[src*="proto"],
 .marquee-track img[src*="ibm"],
 .marquee-track img[src*="the-league"]{height:var(--h)!important}
-/* Kill scale-up reveal that collided with sheet overlap */
-.partners.reveal .marquee,
-.partners.reveal.in .marquee{
+/* Marquee: opacity reveal only — no scale that collided with sheets */
+.partners-band .marquee,
+.partners .marquee{
   transform:none!important;
-  opacity:1;
   transition:opacity var(--motion-dur) var(--motion-ease);
 }
-[data-ypop-motion] .partners.reveal .marquee{opacity:0}
-[data-ypop-motion] .partners.reveal.in .marquee{opacity:1}
+[data-ypop-motion] .reveal .partners-band .marquee{opacity:0}
+[data-ypop-motion] .reveal.in .partners-band .marquee{opacity:1}
 html[data-theme="light"] .marquee-track li{
   padding:10px 16px;
   box-sizing:border-box;
