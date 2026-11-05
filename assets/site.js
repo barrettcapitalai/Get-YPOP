@@ -1,3 +1,30 @@
+/* Theme: dark / light. FOUC script in <head> sets data-theme before paint. */
+(function(){
+  var KEY='ypop-theme';
+  var root=document.documentElement;
+  function cur(){ return root.getAttribute('data-theme')==='light' ? 'light' : 'dark'; }
+  function apply(t){
+    if(t!=='light' && t!=='dark') t='dark';
+    root.setAttribute('data-theme', t);
+    root.style.colorScheme=t;
+    try{ localStorage.setItem(KEY, t); }catch(e){}
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', t==='light' ? '#F7F8F2' : '#101110');
+    document.querySelectorAll('[data-theme-toggle]').forEach(function(btn){
+      var light=t==='light';
+      btn.setAttribute('aria-pressed', light ? 'true' : 'false');
+      btn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+    });
+  }
+  // Re-assert from storage / already-set attribute (keeps buttons in sync)
+  apply(cur());
+  document.addEventListener('click', function(e){
+    var b=e.target.closest('[data-theme-toggle]');
+    if(!b) return;
+    apply(cur()==='light' ? 'dark' : 'light');
+  });
+})();
+
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

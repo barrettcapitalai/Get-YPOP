@@ -217,3 +217,15 @@ button.kpi.on{border-color:var(--lime);box-shadow:0 0 0 2px rgba(175,229,4,.35)}
 
 .kpi.pipe,.kpi.reach{grid-column:span 1}
 @media (min-width:1101px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* Light theme tweaks — tokens come from site.css */
+html[data-theme="light"] .lock{
+  box-shadow:0 24px 60px rgba(16,17,16,.1),0 0 0 1px rgba(16,17,16,.04) inset;
+}
+html[data-theme="light"] .kpi{
+  box-shadow:0 10px 30px rgba(16,17,16,.06);
+}
+html[data-theme="light"] .lock .ic{
+  color:var(--accent-text);
+}
+
