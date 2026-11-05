@@ -528,7 +528,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .marquee{
   /* Shared logo height → natural widths ~140–180px at desktop */
   --logo-h:clamp(88px,9vw,128px);
-  --gap:clamp(48px,6vw,88px);
+  --gap:clamp(40px,5vw,72px);
   --band-pad:clamp(1.75rem,3.5vw,2.75rem);
   overflow:hidden!important;
   padding:var(--band-pad) 0;
