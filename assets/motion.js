@@ -237,9 +237,13 @@
     var steps = Array.prototype.slice.call(rootPath.querySelectorAll('[data-path-step]'));
     var panels = Array.prototype.slice.call(rootPath.querySelectorAll('[data-path-panel]'));
     if (!steps.length || !panels.length) return;
+    var lastI = -1;
+    var cache = { vh: 1, mobile: false, tops: [], hs: [], lastBottom: 0 };
 
     function setActive(i) {
-      i = Math.max(0, Math.min(steps.length - 1, i));
+      i = Math.max(0, Math.min(steps.length - 1, i | 0));
+      if (i === lastI) return;
+      lastI = i;
       steps.forEach(function (el, j) {
         el.classList.toggle('is-active', j === i);
         el.classList.toggle('is-done', j < i);
@@ -249,20 +253,15 @@
         var on = j === i;
         el.classList.toggle('is-active', on);
         el.setAttribute('aria-hidden', on ? 'false' : 'true');
-        if (on) {
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-        } else {
-          /* Clear fail-open inline styles so inactive panels can hide */
-          el.style.opacity = '';
-          el.style.transform = '';
-        }
+        /* Only opacity writes — never leave phone blank */
+        el.style.opacity = on ? '1' : '0';
+        el.style.transform = on ? 'none' : '';
+        el.style.pointerEvents = on ? 'auto' : 'none';
       });
       rootPath.style.setProperty('--path-i', String(i));
     }
 
     if (reduce) {
-      // Show all panels stacked for readability
       panels.forEach(function (el) {
         el.classList.add('is-active');
         el.style.position = 'relative';
@@ -273,35 +272,58 @@
       return;
     }
 
-    setActive(0);
+    function measure() {
+      cache.vh = window.innerHeight || 1;
+      cache.mobile = window.matchMedia('(max-width:43.75rem)').matches;
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      cache.tops = steps.map(function (el) {
+        return el.getBoundingClientRect().top + y;
+      });
+      cache.hs = steps.map(function (el) { return el.offsetHeight || 1; });
+      var last = steps[steps.length - 1];
+      cache.lastBottom = last.getBoundingClientRect().bottom + y;
+    }
 
     var ticking = false;
     function sync() {
       ticking = false;
-      var vh = window.innerHeight;
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      /* Mobile: focus above the docked phone (~28% down). Desktop: mid-viewport. */
+      var focusY = y + cache.vh * (cache.mobile ? 0.28 : 0.5);
       var best = 0;
       var bestDist = Infinity;
-      steps.forEach(function (el, i) {
-        var r = el.getBoundingClientRect();
-        var mid = r.top + r.height / 2;
-        var dist = Math.abs(mid - vh * 0.5);
+      for (var i = 0; i < steps.length; i++) {
+        var mid = cache.tops[i] + cache.hs[i] * 0.35;
+        var dist = Math.abs(mid - focusY);
         if (dist < bestDist) { bestDist = dist; best = i; }
-      });
+      }
       setActive(best);
 
-      // Exit tilt when past last step
-      var last = steps[steps.length - 1].getBoundingClientRect();
-      if (last.bottom < vh * 0.35) rootPath.classList.add('is-exit');
-      else rootPath.classList.remove('is-exit');
+      if (!cache.mobile) {
+        if (cache.lastBottom - y < cache.vh * 0.35) rootPath.classList.add('is-exit');
+        else rootPath.classList.remove('is-exit');
+      } else {
+        rootPath.classList.remove('is-exit');
+      }
     }
     function onScroll() {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(sync);
     }
+    function refresh() {
+      measure();
+      lastI = -1;
+      sync();
+    }
+
+    setActive(0);
+    refresh();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    sync();
+    window.addEventListener('resize', refresh, { passive: true });
+    window.addEventListener('orientationchange', function () {
+      setTimeout(refresh, 120);
+    }, { passive: true });
   }
   armPath();
 

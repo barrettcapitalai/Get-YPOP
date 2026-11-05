@@ -273,17 +273,107 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 @keyframes ypop-path-in{0%{opacity:.28;transform:translate3d(0,10px,0)}100%{opacity:1;transform:none}}
 @keyframes ypop-path-out{0%{opacity:1}100%{opacity:.4}}
 
-@media (max-width:1023px){
-  .path .path-grid{grid-template-columns:1fr;gap:1.5rem}
-  .path-sticky{position:relative;top:auto;order:-1;padding-bottom:8px}
-  .path-phone .phone{width:15.5rem;height:31rem}
-  .path-step{min-height:auto;padding:1.4rem 0 1.4rem 1.1rem}
-  .path.is-exit .path-phone .phone{transform:none}
+/* iPad / tablet: keep two-column sticky phone (do NOT kill sticky) */
+@media (max-width:1023px) and (min-width:43.76rem){
+  .path .path-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.75rem}
+  .path-phone .phone{width:15.25rem;height:30.5rem}
+  .path-step{min-height:min(22vh,12rem);padding:1.25rem 0 1.25rem 1.1rem}
+  .path-sticky{top:calc(50svh - 15.25rem)}
 }
-@media (max-width:560px){
-  .path-phone .phone{width:14rem;height:28rem;border-radius:2.4rem}
-  .path-phone .phone-screen{border-radius:1.9rem}
-  .path-step h3{font-size:22px}
+
+/* Mobile ≤700px — Linea #calls dock: steps scroll, phone sticky at bottom */
+@media (max-width:43.75rem){
+  .path{--path-phone-w:min(58vw, 14.25rem); --path-phone-h:calc(var(--path-phone-w) * 2)}
+  .path .path-grid{
+    grid-template-columns:1fr;
+    gap:0;
+    margin-top:1.25rem;
+  }
+  /* Overlap list + aside in one cell so sticky phone pins over scrolling steps */
+  .path-aside,
+  .path-steps{grid-area:1 / 1}
+  .path-aside{
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    pointer-events:none;
+    min-height:100%;
+    align-self:stretch;
+  }
+  .path-sticky{
+    position:sticky;
+    top:auto;
+    bottom:max(0.5rem, env(safe-area-inset-bottom, 0px));
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    padding:0;
+    pointer-events:none;
+    /* no transform on sticky */
+  }
+  .path-phone{pointer-events:auto}
+  .path-phone .phone{
+    width:var(--path-phone-w);
+    height:var(--path-phone-h);
+    border-radius:2.35rem;
+    padding:0.55rem;
+    transform:none!important; /* never blank via exit tilt on mobile */
+  }
+  .path-phone .phone-screen{border-radius:1.85rem}
+  .path.is-exit .path-phone .phone{transform:none!important}
+  .path-note{display:none}
+
+  .path-steps{
+    position:relative;
+    z-index:1;
+    /* room under last steps so they can scroll above the docked phone */
+    padding-bottom:calc(var(--path-phone-h) + 3.25rem);
+  }
+  .path-step,
+  [data-ypop-motion] .path-step{
+    min-height:78svh;
+    justify-content:flex-start;
+    padding:1.35rem 0 2rem 1.15rem;
+    opacity:.28;
+    transform:none; /* opacity-only on mobile for stability */
+    border-left-width:2px;
+  }
+  .path-step.is-active{
+    opacity:1;
+    border-left-color:var(--lime);
+  }
+  .path-step.is-done:not(.is-active){
+    opacity:.38;
+    border-left-color:color-mix(in srgb,var(--lime) 55%, transparent);
+  }
+  .path-step h3{font-size:clamp(1.35rem, 6.2vw, 1.65rem)}
+  .path-step p{font-size:0.95rem; max-width:34ch}
+  .path-step .n{font-size:11px}
+
+  /* Panels: always paint active content; size type for smaller phone */
+  .path-panel{
+    padding:1.05rem 0.9rem 1.15rem;
+  }
+  .path-panel h4{font-size:1.05rem}
+  .path-panel .panel-body{font-size:.75rem}
+  .path-panel .amt{font-size:1.45rem}
+  .path-panel .scard{margin-bottom:0.85rem;padding:12px 14px}
+  .path-panel .scard .top{font-size:16px}
+  .path-panel .scard .visa{font-size:18px}
+
+  /* Fail-safe: if no is-active somehow, first panel still shows */
+  .path-phone .phone-screen > .path-panel:first-child{
+    opacity:1;
+  }
+  [data-ypop-motion] .path-phone .phone-screen > .path-panel:first-child:not(.is-active){
+    opacity:0!important;
+  }
+  [data-ypop-motion] .path-panel.is-active{
+    opacity:1!important;
+    transform:none!important;
+  }
 }
 
 /* Film / photo soft settle */
