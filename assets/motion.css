@@ -428,8 +428,8 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   }
   [data-ypop-motion] #who:not(.who-rail--static) .who-rail__stage{
     position:sticky;top:0;
-    display:flex;flex-direction:column;justify-content:center;
-    min-height:100vh;padding:5.5rem 0 2rem;
+    display:flex;flex-direction:column;justify-content:flex-start;
+    min-height:100vh;padding:5.25rem 0 2rem;
     overflow:clip;
   }
   /* JS owns track translate3d — do not also bind via --who-p (Safari jitter) */
