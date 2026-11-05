@@ -859,7 +859,8 @@ main > .wrap{padding-top:clamp(1.5rem,3vw,2.5rem);padding-bottom:2rem}
   .site-footer{border-radius:2rem 2rem 0 0;margin-top:-1.1rem}
 }
 @media (prefers-reduced-motion:reduce){
-  .reveal{transform:none;transition:none}
+  .reveal{opacity:1;transform:none;transition:none}
+  .partners.reveal .marquee{opacity:1;transform:none;transition:none}
   .btn:hover{transform:none}
 }
 

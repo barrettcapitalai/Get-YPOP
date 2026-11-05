@@ -7,43 +7,73 @@
   --motion-dur-slow:.9s;
 }
 
-/* ---------- Reveals (IO sets .in; stagger via --i) ---------- */
-.reveal{
+/* Progressive enhancement — content visible until JS opts into motion */
+html:not([data-ypop-motion]) .reveal,
+html:not([data-ypop-motion]) .reveal-stagger > *,
+html:not([data-ypop-motion]) .reveal-left,
+html:not([data-ypop-motion]) .reveal-scale,
+html:not([data-ypop-motion]) .partners.reveal .marquee,
+html:not([data-ypop-motion]) .motion-lines .line__in,
+html:not([data-ypop-motion]) .path-step,
+html:not([data-ypop-motion]) .path-panel{
+  opacity:1!important;
+  transform:none!important;
+  transition:none!important;
+  pointer-events:auto!important;
+}
+html:not([data-ypop-motion]) .path-panel{
+  position:relative!important;
+  min-height:100%;
+}
+html:not([data-ypop-motion]) .path-phone .phone-screen{
+  display:flex;flex-direction:column;gap:0;overflow:auto;
+}
+html:not([data-ypop-motion]) .path-panel + .path-panel{
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+
+/* ---------- Reveals (gated: only after JS sets data-ypop-motion) ---------- */
+[data-ypop-motion] .reveal{
   opacity:0;
   transform:translate3d(0,22px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
   transition-delay:calc(var(--i,0) * 70ms);
   will-change:opacity,transform;
 }
-.reveal.in{opacity:1;transform:none}
-.reveal-left{transform:translate3d(-18px,0,0)}
-.reveal-left.in{transform:none}
-.reveal-scale{transform:translate3d(0,16px,0) scale(.985)}
-.reveal-scale.in{transform:none}
+[data-ypop-motion] .reveal.in{opacity:1;transform:none}
+[data-ypop-motion] .reveal-left{transform:translate3d(-18px,0,0)}
+[data-ypop-motion] .reveal-left.in{transform:none}
+[data-ypop-motion] .reveal-scale{transform:translate3d(0,16px,0) scale(.985)}
+[data-ypop-motion] .reveal-scale.in{transform:none}
+
+/* Override legacy site.css .reveal{opacity:0} until motion is enabled */
+html:not([data-ypop-motion]) .reveal{opacity:1;transform:none}
 
 /* Stagger children once parent is .in */
-.reveal-stagger > *{
+[data-ypop-motion] .reveal-stagger > *{
   opacity:0;
   transform:translate3d(0,18px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
   transition-delay:calc(var(--i,0) * 80ms);
   will-change:opacity,transform;
 }
-.reveal-stagger.in > *,
-.reveal.in.reveal-stagger > *{opacity:1;transform:none}
+[data-ypop-motion] .reveal-stagger.in > *,
+[data-ypop-motion] .reveal.in.reveal-stagger > *{opacity:1;transform:none}
 
 /* Heading line mask reveal (split by JS into .line > .line__in) */
 .motion-lines{display:block}
 .motion-lines .line{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
-.motion-lines .line__in{
+[data-ypop-motion] .motion-lines .line__in{
   display:block;
   transform:translate3d(0,110%,0);
   transition:transform var(--motion-dur-slow) var(--motion-ease);
   transition-delay:calc(var(--i,0) * 90ms);
   will-change:transform;
 }
-.motion-lines.is-in .line__in,
-.reveal.in .motion-lines .line__in{transform:none}
+.motion-lines .line__in{display:block}
+[data-ypop-motion] .motion-lines.is-in .line__in,
+[data-ypop-motion] .reveal.in .motion-lines .line__in{transform:none}
 
 /* ---------- Sheet band rise (scroll-driven when live) ---------- */
 .sheet{
@@ -112,7 +142,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   margin:0;padding:0;
   display:flex;flex-direction:column;
 }
-.path-step{
+[data-ypop-motion] .path-step{
   min-height:min(52vh,28rem);
   display:flex;flex-direction:column;justify-content:center;
   gap:.7rem;
@@ -121,6 +151,13 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   opacity:.34;
   transform:translate3d(0,8px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease), border-color var(--motion-dur) var(--motion-ease);
+}
+.path-step{
+  min-height:min(52vh,28rem);
+  display:flex;flex-direction:column;justify-content:center;
+  gap:.7rem;
+  padding:1.75rem 0 1.75rem 1.35rem;
+  border-left:2px solid color-mix(in srgb,var(--ww) 12%,transparent);
 }
 .path-step.is-active,
 .path-step.is-done{
@@ -148,7 +185,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .path-phone .phone{
   width:17.5rem;height:35rem;border-radius:2.75rem;padding:.65rem;
   background:#0c0c0d;
-  box-shadow:var(--shadow-lift),0 0 0 1px rgba(255,255,255,.08) inset,0 0 0 1.5px #2a2b2a,0 0 70px rgba(175,229,4,.16);
+  box-shadow:var(--shadow-lift),0 0 0 1px rgba(255,255,255,.08) inset,0 0 0 1.5px #2a2b2a,0 0 40px rgba(175,229,4,.1);
   transform-origin:50% 60%;
   transition:transform var(--motion-dur-slow) var(--motion-ease);
 }
@@ -161,14 +198,17 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   position:absolute;inset:0;
   display:flex;flex-direction:column;justify-content:flex-end;
   padding:1.35rem 1.1rem 1.5rem;
+  background:
+    radial-gradient(160px 140px at 88% 6%,rgba(175,229,4,.22),transparent 70%),
+    linear-gradient(180deg,#121312,#0d0e0d);
+}
+[data-ypop-motion] .path-panel{
   opacity:0;
   transform:translate3d(0,14px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
   pointer-events:none;
-  background:
-    radial-gradient(220px 180px at 85% 8%,rgba(175,229,4,.38),transparent 65%),
-    linear-gradient(180deg,#121312,#0d0e0d);
 }
+[data-ypop-motion] .path-panel.is-active,
 .path-panel.is-active{opacity:1;transform:none;pointer-events:auto}
 .path-panel .scard{
   width:100%;aspect-ratio:1.586;border-radius:14px;margin-bottom:1.2rem;padding:14px 16px;
@@ -176,7 +216,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   background:linear-gradient(135deg,#2a2b2a,#0a0a0a);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 18px 40px rgba(0,0,0,.45);
   transform:rotate(-6deg);
-  filter:drop-shadow(0 0 18px rgba(175,229,4,.16));
+  /* restrained lift — no glow overload */
 }
 .path-panel .scard .top{display:flex;justify-content:flex-end;font-weight:800;font-style:italic;font-size:20px}
 .path-panel .scard .bot{display:flex;justify-content:space-between;align-items:flex-end;font-size:11px}

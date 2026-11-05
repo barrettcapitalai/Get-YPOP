@@ -4,8 +4,13 @@
   try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
   var supportsTimeline = false;
   try { supportsTimeline = CSS.supports('animation-timeline: view()'); } catch (e) {}
-  if (!reduce && supportsTimeline) {
-    document.documentElement.setAttribute('data-ypop-live', '');
+  /* Gate applied after first in-view pass (enableMotion) to avoid FOUC */
+  var motionEnabled = false;
+  function enableMotion() {
+    if (reduce || motionEnabled) return;
+    motionEnabled = true;
+    document.documentElement.setAttribute('data-ypop-motion', '');
+    if (supportsTimeline) document.documentElement.setAttribute('data-ypop-live', '');
   }
 
   var ease = 'cubic-bezier(.2,.7,.2,1)';
@@ -50,33 +55,40 @@
   if (!reduce) splitLines();
 
   /* Enhanced reveals — observe .reveal and [data-split] */
+  function showReveal(el) {
+    el.classList.add('in');
+    if (el.classList.contains('motion-lines')) el.classList.add('is-in');
+    var lines = el.querySelector('.motion-lines');
+    if (lines) lines.classList.add('is-in');
+  }
   function armReveals() {
-    var els = document.querySelectorAll('.reveal, [data-split="lines"]');
-    if (!els.length) return;
-    function show(el) {
-      el.classList.add('in');
-      if (el.classList.contains('motion-lines') || el.querySelector('.motion-lines')) {
-        (el.classList.contains('motion-lines') ? el : el.querySelector('.motion-lines')).classList.add('is-in');
-      }
-      var lines = el.querySelector('.motion-lines');
-      if (lines) lines.classList.add('is-in');
-    }
+    var els = document.querySelectorAll('.reveal, [data-split="lines"], .motion-lines');
+    if (!els.length) { enableMotion(); return; }
     if (reduce) {
-      els.forEach(show);
+      els.forEach(showReveal);
       return;
     }
+    // Mark currently visible before gating so first paint stays visible
+    var vh = window.innerHeight || 800;
+    els.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (r.top < vh * 0.92 && r.bottom > 40) showReveal(el);
+    });
+    enableMotion();
     if (!('IntersectionObserver' in window)) {
-      els.forEach(show);
+      els.forEach(showReveal);
       return;
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
-        show(e.target);
+        showReveal(e.target);
         io.unobserve(e.target);
       });
     }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
-    els.forEach(function (el) { io.observe(el); });
+    els.forEach(function (el) {
+      if (!el.classList.contains('in')) io.observe(el);
+    });
   }
   armReveals();
 
@@ -193,4 +205,5 @@
     sync();
   }
   armPath();
+  if (!motionEnabled && !reduce) enableMotion();
 })();
