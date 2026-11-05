@@ -792,8 +792,8 @@ html[data-theme="light"] .sheet-dark .ww{color:#F7F8F2}
 /* Home hero sits inside first sheet */
 .sheet-hero .home-hero{padding-top:12px;padding-bottom:8px}
 section.block{padding:0;border-top:0}
-.who-for,.film-block,.income-block,.demo-block,.partners{padding:0;border-top:0}
-.partners{overflow-x:clip}
+.who-for,.film-block,.income-block,.demo-block,.partners,.partners-band{padding:0;border-top:0}
+.partners,.partners-band{overflow-x:clip}
 
 /* Cards / panels take Linea soft radii + lift */
 .card,.fstep,.fcard,.fly > div,.closing > div,.opp,.irow,.intake-card,.intake-dialog,
