@@ -143,20 +143,20 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   display:flex;flex-direction:column;
 }
 [data-ypop-motion] .path-step{
-  min-height:min(28vh,14.5rem);
+  min-height:min(20vh,11rem);
   display:flex;flex-direction:column;justify-content:center;
-  gap:.7rem;
-  padding:1.75rem 0 1.75rem 1.35rem;
+  gap:.45rem;
+  padding:1.1rem 0 1.1rem 1.2rem;
   border-left:2px solid color-mix(in srgb,var(--ww) 12%,transparent);
   opacity:.34;
   transform:translate3d(0,8px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease), border-color var(--motion-dur) var(--motion-ease);
 }
 .path-step{
-  min-height:min(28vh,14.5rem);
+  min-height:min(20vh,11rem);
   display:flex;flex-direction:column;justify-content:center;
-  gap:.7rem;
-  padding:1.75rem 0 1.75rem 1.35rem;
+  gap:.45rem;
+  padding:1.1rem 0 1.1rem 1.2rem;
   border-left:2px solid color-mix(in srgb,var(--ww) 12%,transparent);
 }
 .path-step.is-active,
@@ -455,7 +455,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 /* ========== Gap cleanup (path + sheets) ========== */
 .path-step,
 [data-ypop-motion] .path-step{
-  min-height:min(28vh,14.5rem);
+  min-height:min(20vh,11rem);
 }
 @media (max-width:1023px){
   .path-step,[data-ypop-motion] .path-step{min-height:auto}
