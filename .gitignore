@@ -1,3 +1,9 @@
 .netlify
 node_modules
 .DS_Store
+
+# Local QA screenshots / recordings — never commit or deploy
+shots_linea/
+shots/
+**/shots_linea/
+*_scroll*.mp4
