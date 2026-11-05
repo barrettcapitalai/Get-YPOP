@@ -398,59 +398,82 @@
   armWhoRail();
 
 
-  /* Pitch keynote — sticky Obsidian stage on ALL devices (Linea rooms technique).
-     Sticky stage has NO transform. One passive scroll → rAF. Cached geometry.
-     Only opacity/transform writes on items + glyphs. Static only for reduced-motion. */
+  /* Pitch — Linea listen split panel.
+     Sticky stage (no transform). Cached geometry. One passive scroll → rAF.
+     Only transform/opacity on rows + scaleY on wave bars. */
   function armPitch() {
     var root = document.querySelector('[data-pitch]');
     if (!root) return;
     var hold = root.querySelector('.pitch-hold');
-    var items = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-step]'));
-    var glyphs = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-glyph]'));
+    var panels = root.querySelector('[data-pitch-panels]');
+    var track = root.querySelector('[data-pitch-track]');
+    var rows = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-step]'));
     var bars = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-bar]'));
-    var countEl = root.querySelector('[data-pitch-count]');
-    var stepNo = root.querySelector('[data-pitch-stepno]');
-    if (!hold || items.length < 2) return;
+    var wave = root.querySelectorAll('.pitch-wave > i');
+    if (!hold || !panels || !track || rows.length < 2) return;
 
-    function useStatic() {
-      return reduce;
+    function useStatic() { return reduce; }
+
+    var cache = { top: 0, holdH: 0, vh: 0, scrollable: 1, dx: 0, dy: 0, vertical: false };
+    var ticking = false;
+    var lastP = -1;
+    var n = rows.length;
+
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 3);
     }
 
-    var cache = {
-      top: 0,
-      holdH: 0,
-      vh: 0,
-      scrollable: 1
-    };
-    var ticking = false;
-    var lastI = -1;
-    var n = items.length;
+    function applyProgress(p) {
+      for (var i = 0; i < n; i++) {
+        var start = (i / n) * 0.7;
+        var end = start + 0.32;
+        var local = 0;
+        if (p <= start) local = 0;
+        else if (p >= end) local = 1;
+        else local = (p - start) / (end - start);
+        local = easeOut(Math.max(0, Math.min(1, local)));
 
-    function setActive(i) {
-      i = Math.max(0, Math.min(n - 1, i | 0));
-      if (i === lastI) return;
-      lastI = i;
-      items.forEach(function (el, j) {
-        el.classList.toggle('is-active', j === i);
-        el.classList.toggle('is-done', j < i);
-      });
-      glyphs.forEach(function (el, j) {
-        el.classList.toggle('is-active', j === i);
-        el.classList.toggle('is-done', j < i);
-      });
+        var x = 0, y = 0;
+        if (cache.vertical) {
+          /* rest in top half; start shifted down into dark half */
+          y = (1 - local) * cache.dy;
+        } else {
+          /* rest on right; start shifted left into dark half */
+          x = (1 - local) * cache.dx;
+        }
+        var row = rows[i];
+        row.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)';
+
+        var text = row.querySelector('.pitch-card--text');
+        var barsEl = row.querySelector('.pitch-card--bars');
+        if (text) text.style.opacity = String(Math.max(0, Math.min(1, (local - 0.35) / 0.45)));
+        if (barsEl) barsEl.style.opacity = String(Math.max(0, Math.min(1, 1 - local / 0.55)));
+      }
+
+      var active = Math.min(n - 1, Math.floor(p * n + 0.001));
+      if (p >= 0.97) active = n - 1;
       bars.forEach(function (el, j) {
-        el.classList.toggle('is-on', j <= i);
+        el.classList.toggle('is-on', j <= active);
       });
-      if (countEl) countEl.textContent = (i + 1) + ' / ' + n;
-      if (stepNo) stepNo.textContent = String(i + 1).padStart(2, '0');
+
+      var swell = Math.sin(p * Math.PI);
+      for (var w = 0; w < wave.length; w++) {
+        var k = w + 1;
+        var wobble = Math.abs(Math.sin(k * 0.45 + p * 18));
+        var s = 1 - swell * 0.7 * (1 - wobble);
+        wave[w].style.transform = 'scaleY(' + Math.max(0.15, s).toFixed(3) + ')';
+      }
     }
 
     function measure() {
       if (useStatic()) {
         root.classList.add('pitch-band--static');
-        items.forEach(function (el) {
-          el.classList.remove('is-done');
-          el.classList.add('is-active');
+        rows.forEach(function (el) {
+          el.style.transform = '';
+          var text = el.querySelector('.pitch-card--text');
+          var barsEl = el.querySelector('.pitch-card--bars');
+          if (text) text.style.opacity = '';
+          if (barsEl) barsEl.style.opacity = '';
         });
         return;
       }
@@ -459,6 +482,10 @@
       cache.holdH = hold.offsetHeight;
       cache.top = hold.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0);
       cache.scrollable = Math.max(1, cache.holdH - cache.vh);
+      cache.vertical = window.matchMedia('(max-width:47.99rem)').matches;
+      var pr = panels.getBoundingClientRect();
+      cache.dx = -(pr.width * 0.5);
+      cache.dy = (pr.height * 0.5);
     }
 
     function progress() {
@@ -466,9 +493,10 @@
       var y = window.pageYOffset || document.documentElement.scrollTop || 0;
       var scrolled = y - cache.top;
       var p = 0;
-      if (scrolled > 0) p = Math.min(0.999, scrolled / cache.scrollable);
-      var i = Math.min(n - 1, Math.floor(p * n));
-      setActive(i);
+      if (scrolled > 0) p = Math.min(1, scrolled / cache.scrollable);
+      if (Math.abs(p - lastP) < 0.0012 && p !== 0 && p !== 1) return;
+      lastP = p;
+      applyProgress(p);
     }
 
     function onScroll() {
@@ -482,15 +510,11 @@
 
     function refresh() {
       measure();
-      lastI = -1;
+      lastP = -1;
       progress();
     }
 
-    if (useStatic()) {
-      measure();
-      return;
-    }
-
+    if (useStatic()) { measure(); return; }
     refresh();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', refresh, { passive: true });
@@ -498,6 +522,7 @@
       setTimeout(refresh, 120);
     }, { passive: true });
   }
+
   armPitch();
 
   if (!motionEnabled && !reduce) enableMotion();

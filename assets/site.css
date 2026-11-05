@@ -879,3 +879,80 @@ main > .wrap{padding-top:clamp(1.5rem,3vw,2.5rem);padding-bottom:2rem}
     background:color-mix(in srgb, var(--bg) 96%, transparent)!important;
   }
 }
+
+/* ========== Linea-precision mobile (landing + shared) ========== */
+:root{
+  --linea-pad-x:clamp(1.125rem,4.2vw,3.5rem);
+  --linea-pad-y:clamp(3.5rem,8vw,7rem);
+  --linea-radius:1.75rem;
+}
+@media (max-width:47.99rem){
+  .wrap{padding-inline:var(--linea-pad-x)!important}
+  .sheet{padding-block:clamp(3.25rem,10vw,5.5rem)}
+  .sheet-hero{padding-top:clamp(5.5rem,18vw,7rem)}
+  .home-hero h1,
+  .sheet-hero h1{
+    font-size:clamp(2.35rem,10.5vw,3.25rem)!important;
+    letter-spacing:-.04em;line-height:1.02;
+  }
+  .home-hero .lede,
+  .sheet .lede{font-size:1.05rem;line-height:1.45;max-width:36ch}
+  .block > h2,
+  .who-rail__title,
+  .path h2{
+    font-size:clamp(1.85rem,8.2vw,2.55rem)!important;
+    letter-spacing:-.035em;line-height:1.05;
+  }
+  /* Mobile nav — Linea large-type menu */
+  .nav-drawer{
+    background:#101110!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    padding:1.25rem var(--linea-pad-x) 2.5rem;
+    overflow-y:auto;
+  }
+  .nav-drawer .nav-panel{
+    display:grid;gap:1rem;
+    background:transparent!important;
+    border:0!important;box-shadow:none!important;
+    padding:0!important;max-width:none;
+  }
+  .nav-drawer .nav-panel > a,
+  .nav-drawer .nav-group > button{
+    font-size:clamp(1.75rem,8vw,2.5rem)!important;
+    font-weight:700;letter-spacing:-.03em;
+    color:#F7F8F2!important;
+    padding:.35rem 0!important;
+    background:transparent!important;
+    border:0!important;
+    text-align:left;width:100%;
+    min-height:0;
+  }
+  .nav-drawer .nav-group-panel{
+    display:grid;gap:.35rem;
+    padding:.35rem 0 .75rem .15rem;
+  }
+  .nav-drawer .nav-group-panel a{
+    font-size:1.05rem!important;font-weight:600;
+    color:rgba(247,248,242,.72)!important;
+    padding:.4rem 0!important;
+  }
+  .nav-drawer .nav-group-panel .d{display:none}
+  .nav-drawer .nav-panel > a[data-intake],
+  .nav-drawer .nav-panel > a[href="/work-with-us/"]{
+    margin-top:.75rem;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:fit-content;
+    min-height:3rem;padding:0 1.25rem!important;
+    border-radius:999px!important;
+    background:#AFE504!important;color:#101110!important;
+    font-size:1rem!important;font-weight:700!important;
+    letter-spacing:-.01em!important;
+  }
+  /* Kill sideways scroll on small screens */
+  html,body{overflow-x:clip}
+  .sheet,.partners,.marquee{overflow-x:clip}
+}
+@media (max-width:430px){
+  .home-hero h1,.sheet-hero h1{font-size:clamp(2.15rem,9.5vw,2.75rem)!important}
+}

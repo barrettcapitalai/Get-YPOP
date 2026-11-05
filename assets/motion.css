@@ -591,243 +591,208 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 
 
 /* ========== Pitch taglines — Linea-scale sticky sequence ========== */
-/* ========== Pitch keynote — pinned Obsidian stage, all devices ========== */
+/* ========== Pitch — Linea listen split panel (Obsidian | Lime) ========== */
 .pitch-band{
-  --space-sheet:clamp(1.25rem,3vw,2rem);
-  padding-block:clamp(1.5rem,3vw,2.5rem);
+  --space-sheet:clamp(1rem,2.5vw,1.75rem);
+  padding-block:clamp(1.25rem,3vw,2.25rem);
+  overflow-x:clip;
+  isolation:isolate;
 }
 .pitch-hold{position:relative}
 .pitch-stage{
   position:relative;
-  /* never transform this sticky ancestor */
   transform:none;
-}
-.pitch-panel{
-  display:grid;
-  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
-  gap:clamp(1.25rem,3vw,2.5rem);
-  align-items:center;
-  width:min(1120px, calc(100% - 2 * max(1rem, 3vw)));
-  margin-inline:auto;
-  min-height:min(78svh, 40rem);
-  padding:clamp(1.5rem,3.5vw,2.75rem) clamp(1.25rem,3vw,2.5rem);
-  border-radius:clamp(1.5rem,3vw,2.25rem);
-  background:#101110;
-  color:#F7F8F2;
-  border:1px solid rgba(175,229,4,.14);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,.03) inset,
-    0 24px 60px -28px rgba(0,0,0,.55);
-  overflow:hidden;
-  position:relative;
-}
-.pitch-panel::before{
-  content:"";
-  position:absolute;inset:0;
-  background:
-    radial-gradient(600px 280px at 88% 18%, rgba(175,229,4,.09), transparent 60%),
-    radial-gradient(420px 240px at 12% 88%, rgba(175,229,4,.05), transparent 65%);
-  pointer-events:none;
-}
-.pitch-panel__copy,
-.pitch-panel__visual{position:relative;z-index:1}
-.pitch-panel__copy{
   display:flex;flex-direction:column;
-  gap:clamp(1.25rem,2.5vw,2rem);
-  min-width:0;
+  justify-content:center;
+  gap:.9rem;
 }
-.pitch-progress{
-  display:flex;align-items:center;gap:.85rem;
-}
-.pitch-progress__label{
-  font-size:.8rem;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(247,248,242,.55);
-  font-variant-numeric:tabular-nums;
-  min-width:3.5ch;
-}
-.pitch-progress__bars{
-  display:flex;gap:.35rem;flex:1;max-width:9rem;
-}
-.pitch-progress__bars i{
-  display:block;flex:1;height:3px;border-radius:99px;
-  background:rgba(247,248,242,.16);
-  transition:background .45s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
-}
-.pitch-progress__bars i.is-on{
-  background:var(--lime,#AFE504);
-}
-.pitch-list{
-  list-style:none;margin:0;padding:0;
+.pitch-panels{
   position:relative;
-  min-height:min(38svh, 16rem);
-}
-.pitch-item{
-  margin:0;
-  position:absolute;inset:0 auto auto 0;right:0;
-  opacity:0;
-  transform:translate3d(0,28px,0);
-  pointer-events:none;
-  will-change:opacity,transform;
-  transition:opacity .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1)),
-              transform .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
-}
-.pitch-item.is-active{
-  opacity:1;
-  transform:translate3d(0,0,0);
-  pointer-events:auto;
-}
-.pitch-item.is-done{
-  opacity:0;
-  transform:translate3d(0,-22px,0);
-}
-.pitch-line{
-  margin:0;
-  font-size:clamp(2rem,4.8vw,4.25rem);
-  font-weight:700;
-  letter-spacing:-.045em;
-  line-height:1.02;
-  max-width:14ch;
-  color:#F7F8F2;
-}
-.pitch-line .lime{color:var(--lime,#AFE504)} /* always brand lime on Obsidian panel */
-.pitch-sub{
-  margin:.75rem 0 0;
-  font-size:clamp(1rem,1.5vw,1.25rem);
-  color:rgba(247,248,242,.58);
-  font-weight:500;
-  letter-spacing:-.015em;
-  max-width:32ch;
-  line-height:1.35;
-}
-.pitch-panel__visual{
   display:grid;
-  place-items:center;
-  position:relative;
-  min-height:min(42svh, 18rem);
-  color:rgba(247,248,242,.72);
+  grid-template-columns:1fr 1fr;
+  width:min(1120px, calc(100% - 2 * max(1rem, 3.2vw)));
+  margin-inline:auto;
+  height:clamp(22rem, 62vh, 38rem);
+  border-radius:1.75rem;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 28px 64px -28px rgba(0,0,0,.55);
 }
-.pitch-stepno{
-  position:absolute;
-  right:0;top:50%;
-  transform:translateY(-50%);
-  font-size:clamp(6rem,16vw,11rem);
-  font-weight:800;
-  letter-spacing:-.06em;
-  line-height:.85;
-  color:rgba(247,248,242,.06);
-  pointer-events:none;
-  user-select:none;
-  font-variant-numeric:tabular-nums;
+.pitch-half{position:relative;overflow:hidden;min-width:0}
+.pitch-half--dark{background:#101110;color:#F7F8F2}
+.pitch-half--lime{background:#AFE504;color:#101110}
+.pitch-label{
+  position:absolute;z-index:3;
+  top:1.35rem;left:1.5rem;margin:0;
+  font-size:.8125rem;font-weight:600;letter-spacing:.02em;
 }
-.pitch-glyphs{
-  position:relative;
-  width:min(200px,42vw);
-  aspect-ratio:4/5;
+.pitch-half--lime .pitch-label{left:auto;right:1.5rem}
+.pitch-wave{
+  position:absolute;z-index:1;
+  left:1.5rem;right:1.5rem;bottom:1.5rem;
+  display:flex;align-items:flex-end;gap:.28rem;
+  height:22%;pointer-events:none;
 }
-.pitch-glyph{
-  position:absolute;inset:0;
-  width:100%;height:100%;
-  opacity:0;
-  transform:translate3d(0,18px,0) scale(.96);
-  transition:opacity .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1)),
-              transform .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
-  will-change:opacity,transform;
-}
-.pitch-glyph.is-active{
-  opacity:1;
-  transform:translate3d(0,0,0) scale(1);
-}
-.pitch-glyph.is-done{
-  opacity:0;
-  transform:translate3d(0,-14px,0) scale(.98);
+.pitch-wave i{
+  flex:1;height:calc(var(--h)*100%);
+  border-radius:.2rem;
+  background:rgba(247,248,242,.22);
+  transform-origin:50% 100%;
+  will-change:transform;
 }
 
-/* Sticky pin — ALL devices (desktop / iPad / phone) */
+/* Spanning track: 200% wide, shifted so resting x sits on lime half */
+.pitch-track{
+  position:absolute;z-index:2;
+  top:0;bottom:0;left:0;
+  width:200%;
+  pointer-events:none;
+}
+.pitch-row{
+  position:absolute;
+  left:calc(50% + 1.5rem);
+  max-width:calc(50% - 3.25rem);
+  display:grid;
+  grid-template-areas:"card";
+  will-change:transform;
+  pointer-events:none;
+}
+.pitch-row[data-pitch-step="0"]{top:16%}
+.pitch-row[data-pitch-step="1"]{top:34%}
+.pitch-row[data-pitch-step="2"]{top:52%}
+.pitch-row[data-pitch-step="3"]{top:70%}
+.pitch-card{grid-area:card; max-width:100%}
+.pitch-card--text{
+  display:flex;flex-direction:column;gap:.2rem;
+  padding:.85rem 1.05rem;
+  border-radius:1.15rem;
+  background:#F7F8F2;color:#101110;
+  box-shadow:0 10px 28px -16px rgba(16,17,16,.4);
+  opacity:0;
+  will-change:opacity;
+}
+.pitch-card--bars{
+  display:flex;align-items:center;gap:.3rem;
+  height:2.6rem;padding:0 .15rem;
+  opacity:1;
+  will-change:opacity;
+}
+.pitch-card--bars span{
+  display:block;flex:1;height:42%;
+  border-radius:.2rem;
+  background:rgba(247,248,242,.55);
+}
+.pitch-card--bars span:nth-child(2n){height:70%}
+.pitch-card--bars span:nth-child(3n){height:100%}
+.pitch-card--bars span:nth-child(5){height:55%}
+.pitch-line{
+  margin:0;
+  font-size:clamp(.95rem,1.35vw,1.175rem);
+  font-weight:700;letter-spacing:-.025em;line-height:1.2;
+}
+.pitch-line .em{color:#5c7300;font-style:normal}
+.pitch-sub{
+  margin:0;
+  font-size:clamp(.78rem,1.05vw,.92rem);
+  color:rgba(16,17,16,.58);
+  font-weight:500;letter-spacing:-.01em;line-height:1.3;
+}
+
+.pitch-progress{
+  width:min(1120px, calc(100% - 2 * max(1rem, 3.2vw)));
+  margin-inline:auto;
+  display:flex;justify-content:center;
+}
+.pitch-progress__bars{display:flex;gap:.4rem;width:min(11rem,42vw)}
+.pitch-progress__bars i{
+  flex:1;height:3px;border-radius:99px;
+  background:rgba(247,248,242,.18);
+  transition:background .35s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+}
+html[data-theme="light"] .pitch-progress__bars i,
+html.light .pitch-progress__bars i{background:rgba(16,17,16,.14)}
+.pitch-progress__bars i.is-on{background:#AFE504}
+
+/* Sticky pin — all devices */
 [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
-  height:calc(100svh * 4.25);
+  height:calc(100svh * 3.55);
 }
 [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-stage{
-  position:sticky;
-  top:0;
+  position:sticky;top:0;
   min-height:100svh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:clamp(4.75rem,8vw,5.75rem) 0 clamp(1.25rem,3vw,2rem);
-  transform:none; /* critical — never transform sticky ancestors */
+  padding:clamp(4.5rem,7vw,5.75rem) 0 clamp(1.1rem,2.5vw,1.75rem);
+  transform:none;
   -webkit-backface-visibility:hidden;
   backface-visibility:hidden;
 }
 
-/* Phone: stack visual under copy, keep pin */
-@media (max-width:700px){
-  .pitch-panel{
+/* Mobile: lime on top, dark below; track 200% tall */
+@media (max-width:47.99rem){
+  .pitch-panels{
     grid-template-columns:1fr;
-    grid-template-rows:auto auto;
-    min-height:min(86svh, 36rem);
-    gap:1rem;
-    padding:1.35rem 1.15rem 1.5rem;
+    grid-template-rows:1fr 1fr;
+    height:min(74vh,36rem);
+    width:calc(100% - 2 * max(1rem,4.2vw));
+    border-radius:1.5rem;
   }
-  .pitch-panel__visual{
-    order:-1; /* visual on top on phone for presence */
-    min-height:9.5rem;
+  .pitch-half--lime{grid-row:1}
+  .pitch-half--dark{grid-row:2}
+  .pitch-label{top:auto;bottom:1.05rem;left:1.15rem}
+  .pitch-half--lime .pitch-label{top:auto;bottom:1.05rem;left:auto;right:1.15rem}
+  .pitch-wave{left:6.25rem;right:1.15rem;bottom:1.1rem;height:15%;gap:.18rem}
+  .pitch-track{
+    left:0;right:0;width:auto;
+    top:0;height:200%;
   }
-  .pitch-glyphs{width:min(120px,38vw)}
-  .pitch-stepno{font-size:clamp(4.5rem,28vw,7rem); opacity:.9}
-  .pitch-list{min-height:11rem}
-  .pitch-line{font-size:clamp(1.85rem,8.2vw,2.55rem); max-width:12ch}
-  .pitch-sub{font-size:1rem}
+  .pitch-row{
+    left:1.15rem;right:1.15rem;max-width:none;
+    /* rest in top (lime) half of the 200% track → top half of panels */
+  }
+  .pitch-row[data-pitch-step="0"]{top:6%}
+  .pitch-row[data-pitch-step="1"]{top:16%}
+  .pitch-row[data-pitch-step="2"]{top:26%}
+  .pitch-row[data-pitch-step="3"]{top:36%}
+  .pitch-card--text{padding:.7rem .85rem;border-radius:1rem}
+  .pitch-line{font-size:.88rem}
+  .pitch-sub{font-size:.76rem}
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
+    height:calc(100svh * 3.8);
+  }
   [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-stage{
-    padding:4.25rem 0 1rem;
+    padding:4.15rem 0 .85rem;
   }
-}
-@media (min-width:701px) and (max-width:1024px){
-  .pitch-panel{min-height:min(72svh, 34rem)}
-  .pitch-line{font-size:clamp(2.15rem,4.2vw,3.35rem)}
-  .pitch-glyphs{width:min(168px,28vw)}
 }
 
-/* Static / reduced-motion: readable stack, no pin */
+/* Static / reduced-motion */
 .pitch-band.pitch-band--static .pitch-hold{height:auto!important}
 .pitch-band.pitch-band--static .pitch-stage{
-  position:relative!important;
-  min-height:0!important;
-  padding:0!important;
+  position:relative!important;min-height:0!important;padding:0!important;
 }
-.pitch-band.pitch-band--static .pitch-panel{
-  min-height:0;
-  display:flex;flex-direction:column;
+.pitch-band.pitch-band--static .pitch-panels{
+  height:auto;display:block;background:#AFE504;padding:1.35rem 1.15rem 1.5rem;
 }
-.pitch-band.pitch-band--static .pitch-panel__visual{display:none}
-.pitch-band.pitch-band--static .pitch-list{
-  position:relative;min-height:0;
-  display:flex;flex-direction:column;
-  gap:clamp(1.5rem,4vw,2.5rem);
+.pitch-band.pitch-band--static .pitch-half,
+.pitch-band.pitch-band--static .pitch-wave{display:none}
+.pitch-band.pitch-band--static .pitch-track{
+  position:relative;inset:auto;width:auto;height:auto;
+  display:flex;flex-direction:column;gap:.75rem;
 }
-.pitch-band.pitch-band--static .pitch-item{
-  position:relative!important;
-  opacity:1!important;
-  transform:none!important;
-  pointer-events:auto;
+.pitch-band.pitch-band--static .pitch-row{
+  position:relative!important;left:auto!important;right:auto!important;
+  top:auto!important;max-width:none;transform:none!important;
 }
-.pitch-band.pitch-band--static .pitch-progress{margin-bottom:.25rem}
+.pitch-band.pitch-band--static .pitch-card--bars{display:none}
+.pitch-band.pitch-band--static .pitch-card--text{opacity:1!important}
+.pitch-band.pitch-band--static .pitch-progress{margin-top:.65rem}
 
 @media (prefers-reduced-motion:reduce){
-  .pitch-item,.pitch-item.is-active,.pitch-item.is-done,
-  .pitch-glyph,.pitch-glyph.is-active,.pitch-glyph.is-done{
-    opacity:1!important;transform:none!important;position:relative!important;
-    transition:none!important;
-  }
   .pitch-band .pitch-hold{height:auto!important}
   .pitch-band .pitch-stage{position:relative!important;min-height:0!important;padding:0}
-  .pitch-list{display:flex;flex-direction:column;gap:1.75rem;min-height:0}
-  .pitch-glyphs{display:none}
+  .pitch-row{transform:none!important}
+  .pitch-card--text{opacity:1!important}
+  .pitch-card--bars{display:none}
 }
-
-/* Light page: panel stays Obsidian; accent text on surrounding sheet uses #5c7300 via .lime */
-html[data-theme="light"] .pitch-line .lime,
-html.light .pitch-line .lime{color:var(--lime,#AFE504)}
 
 /* Theme-aware logo variants — white marks on dark, black on light */
 .marquee-track .logo-on-light{display:none!important}
@@ -837,3 +802,50 @@ html.light .marquee-track .logo-on-dark{display:none!important}
 html[data-theme="light"] .marquee-track .logo-on-light,
 html.light .marquee-track .logo-on-light{display:block!important}
 .marquee-track li{position:relative}
+
+/* ========== Linea layout polish: problem / path / film ========== */
+#problem .block{
+  display:grid;
+  grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+  gap:1.5rem clamp(2rem,4vw,4rem);
+  align-items:end;
+}
+#problem .block > h2{grid-column:1;max-width:14em;margin:0}
+#problem .block > .lede{grid-column:2;max-width:30rem;margin:0;color:var(--mut)}
+#problem .block > .band,
+#problem .block > .flow,
+#problem .block > .miss{grid-column:1 / -1}
+@media (max-width:47.99rem){
+  #problem .block{grid-template-columns:1fr;gap:1rem}
+  #problem .block > h2,#problem .block > .lede{grid-column:1;max-width:none}
+  #problem .flow{gap:.75rem}
+  #problem .fstep{padding:1rem}
+}
+
+/* Path: tighter mobile sticky phone dock */
+@media (max-width:47.99rem){
+  [data-ypop-motion] #path .path-sticky{
+    position:sticky;bottom:.5rem;top:auto;
+  }
+  #path .path-copy h2{font-size:clamp(1.85rem,8vw,2.4rem)}
+  #path .path-step{padding-block:1.1rem}
+}
+
+/* Film / CTA bands — Linea start rhythm */
+.film-block{
+  padding-block:clamp(3.5rem,8vw,6rem);
+}
+.film-block h2{
+  font-size:clamp(2rem,5.5vw,3.5rem);
+  letter-spacing:-.04em;line-height:1.05;
+  max-width:16ch;
+}
+@media (max-width:47.99rem){
+  .film-block h2{font-size:clamp(1.85rem,8.5vw,2.5rem);max-width:12ch}
+}
+
+/* Sheet vertical rhythm closer to Linea space-2 */
+.sheet-a,.sheet-b,.sheet-c{
+  padding-block:clamp(4rem,9vw,7.5rem);
+}
+.sheet-hero{padding-bottom:clamp(2.5rem,5vw,4rem)}
