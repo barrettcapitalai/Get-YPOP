@@ -187,7 +187,7 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
   }
 
   // firstname (not "name") so collected forms map to HubSpot's firstname property.
-  var FORM_HTML = "<form class=\"intake\" data-intake-form action=\"/work-with-us/?sent=1\" method=\"get\" novalidate>\n  <div class=\"fld\"><label for=\"md-name\">Name</label><input id=\"md-name\" name=\"firstname\" type=\"text\" autocomplete=\"name\" required maxlength=\"120\"><span class=\"err\" id=\"md-name-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-ind\">Industry</label><select id=\"md-ind\" name=\"industry\" required><option value=\"\">Select your industry</option><option>Creator</option><option>Athlete</option><option>Brand</option><option>Agency</option><option>Restaurant</option><option>Event</option><option>Community</option><option>Other</option></select><span class=\"err\" id=\"md-ind-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-email\">Email</label><input id=\"md-email\" name=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"200\"><span class=\"err\" id=\"md-email-err\" aria-live=\"polite\"></span></div>\n  <button class=\"btn\" type=\"submit\">Send</button>\n  <p class=\"form-status\" role=\"status\" aria-live=\"polite\"></p>\n  <p class=\"privacy-note\">We use your details only to reply about working with $YPOP. See our <a href=\"/faq/#gen-1-q\">privacy policy</a>.</p>\n</form>";
+  var FORM_HTML = "<form class=\"intake\" data-intake-form action=\"/work-with-us/?sent=1\" method=\"get\" novalidate>\n  <div class=\"fld\"><label for=\"md-name\">Name</label><input id=\"md-name\" name=\"firstname\" type=\"text\" autocomplete=\"name\" required maxlength=\"120\"><span class=\"err\" id=\"md-name-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-ind\">Industry</label><select id=\"md-ind\" name=\"industry\" required><option value=\"\">Select your industry</option><option>Creator</option><option>Athlete</option><option>Brand</option><option>Agency</option><option>Restaurant</option><option>Event</option><option>Community</option><option>Other</option></select><span class=\"err\" id=\"md-ind-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-email\">Email</label><input id=\"md-email\" name=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"200\"><span class=\"err\" id=\"md-email-err\" aria-live=\"polite\"></span></div>\n  <button class=\"btn\" type=\"submit\" name=\"sent\" value=\"1\">Send</button>\n  <p class=\"form-status\" role=\"status\" aria-live=\"polite\"></p>\n  <p class=\"privacy-note\">We use your details only to reply about working with $YPOP. See our <a href=\"/faq/#gen-1-q\">privacy policy</a>.</p>\n</form>";
   var modal=null, lastFocus=null;
   function buildModal(){
     if(modal) return;
@@ -268,8 +268,11 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
     function say(cls,msg){ if(!status) return; status.className='form-status '+cls; status.textContent=msg; }
 
     // Thank-you landing after a native collected-forms submit.
-    if(/[?&]sent=1(?:&|$)/.test(location.search) && location.pathname.indexOf('/work-with-us')===0){
+    if(location.pathname.indexOf('/work-with-us')===0 && (/[?&]sent=1(?:&|$)/.test(location.search) || (/[?&]email=/.test(location.search) && /[?&]firstname=/.test(location.search)))){
       showThanks(form);
+      if(window.history && history.replaceState){
+        try{ history.replaceState(null,'',location.pathname+'?sent=1'); }catch(err){}
+      }
     }
 
     form.addEventListener('submit', function(e){
