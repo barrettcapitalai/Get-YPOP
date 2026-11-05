@@ -393,3 +393,12 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
   }
   blocks.forEach(arm);
 })();
+
+
+/* Calculator hub: hash deep-link to subpages */
+(function(){
+  if(!document.querySelector('.calc-hub-cards')) return;
+  var map={creators:'/calculator/creators/',events:'/calculator/events/',communities:'/calculator/communities/'};
+  var h=(location.hash||'').replace('#','');
+  if(map[h]) location.replace(map[h]);
+})();

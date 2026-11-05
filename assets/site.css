@@ -627,3 +627,72 @@ html[data-theme="light"] .film-frame .film-scrim{
 #creators, #athletes, #who, #agencies, #restaurants{scroll-margin-top:88px}
 .niche-pair .niche-shot figcaption{color:var(--mut)}
 html[data-theme="light"] .film-frame{background:#0d0e0d}
+
+
+/* ===== v12: calc hub, slots, income square, who-5, restaurant strip ===== */
+.who-for .who-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:1100px){.who-for .who-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.who-for .who-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.who-for .who-grid{grid-template-columns:1fr;max-width:420px}}
+
+.niche-feature{margin:0;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow)}
+.niche-feature img{width:100%;height:auto;display:block}
+
+.niche-slot{
+  margin:0;border-radius:22px;overflow:hidden;border:1px dashed color-mix(in srgb,var(--ww) 14%,transparent);
+  background:var(--soft);aspect-ratio:3/4;display:flex;align-items:flex-end;justify-content:flex-start;
+  min-height:220px;position:relative;
+}
+.niche-slot[data-ratio="16/9"]{aspect-ratio:16/9}
+.niche-slot[data-ratio="4/3"]{aspect-ratio:4/3}
+.niche-slot[data-ratio="1/1"]{aspect-ratio:1/1}
+.niche-slot[data-ratio="3/2"]{aspect-ratio:3/2}
+.niche-slot .slot-meta{
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);
+  padding:12px 14px;opacity:.7;
+}
+.niche-slot.is-filled{border-style:solid;border-color:var(--line);background:var(--panel);box-shadow:var(--shadow)}
+.niche-slot.is-filled img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+.niche-slot.is-filled .slot-meta{display:none}
+
+.photo-strip{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin:28px 0 8px;align-items:end}
+.photo-strip figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
+.photo-strip img{width:100%;height:auto;display:block;vertical-align:middle}
+.photo-strip .cap{padding:10px 12px;font-size:12px;color:var(--mut)}
+@media (max-width:700px){.photo-strip{grid-template-columns:1fr}}
+
+.income-block{padding:56px 0 40px;border-top:1px solid var(--line)}
+.income-frame{
+  position:relative;margin:28px auto 0;max-width:420px;border-radius:24px;overflow:hidden;
+  border:1px solid var(--line);background:var(--brand-ob);box-shadow:var(--shadow);aspect-ratio:1/1;
+}
+.income-frame video,.income-frame img.film-poster{width:100%;height:100%;object-fit:cover;display:block}
+.income-frame video{position:absolute;inset:0}
+.income-frame .film-poster{position:absolute;inset:0;z-index:1;transition:opacity .45s var(--ease)}
+.income-frame.is-playing .film-poster{opacity:0;pointer-events:none}
+.income-note{text-align:center;margin-top:14px;font-size:12.5px;color:var(--mut);max-width:420px;margin-left:auto;margin-right:auto}
+
+.calc-niche-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 20px}
+.calc-niche-tabs button{
+  font:inherit;font-size:13.5px;font-weight:700;padding:10px 16px;border-radius:999px;cursor:pointer;
+  border:1px solid var(--line);background:var(--panel);color:var(--mut);
+}
+.calc-niche-tabs button.on{background:var(--lime);color:#0d0e0d;border-color:transparent}
+.calc-stage{padding-bottom:24px}
+.calc-panel iframe{width:100%;min-height:1100px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+.calc-crumb{font-size:13px;color:var(--mut);margin:18px 0 8px}
+.calc-crumb a{color:var(--accent-text);font-weight:600}
+
+.niche-hero-with-slots{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:36px 40px;align-items:start}
+.niche-slots{display:grid;gap:14px}
+@media (max-width:900px){
+  .niche-hero-with-slots{grid-template-columns:1fr}
+  .niche-slots{max-width:420px}
+}
+
+.calc-niche-tabs a{
+  display:inline-flex;align-items:center;font-size:13.5px;font-weight:700;padding:10px 16px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);color:var(--mut);text-decoration:none;
+}
+.calc-niche-tabs a.on{background:var(--lime);color:#0d0e0d;border-color:transparent}
+.calc-hub-cards{margin-top:8px}
