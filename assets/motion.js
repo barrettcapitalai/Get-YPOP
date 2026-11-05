@@ -398,82 +398,139 @@
   armWhoRail();
 
 
-  /* Pitch — Linea listen split panel.
+  /* Pitch — big two-tone headlines on pinned Obsidian|Lime split.
      Sticky stage (no transform). Cached geometry. One passive scroll → rAF.
-     Only transform/opacity on rows + scaleY on wave bars. */
+     Writes: --pitch-split, copy width/left, item opacity+translate3d. */
   function armPitch() {
     var root = document.querySelector('[data-pitch]');
     if (!root) return;
     var hold = root.querySelector('.pitch-hold');
     var panels = root.querySelector('[data-pitch-panels]');
-    var track = root.querySelector('[data-pitch-track]');
-    var rows = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-step]'));
+    var copyDark = root.querySelector('[data-pitch-copy="dark"]');
+    var copyLime = root.querySelector('[data-pitch-copy="lime"]');
+    var darkItems = copyDark ? Array.prototype.slice.call(copyDark.querySelectorAll('[data-pitch-step]')) : [];
+    var limeItems = copyLime ? Array.prototype.slice.call(copyLime.querySelectorAll('[data-pitch-step]')) : [];
     var bars = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-bar]'));
-    var wave = root.querySelectorAll('.pitch-wave > i');
-    if (!hold || !panels || !track || rows.length < 2) return;
+    if (!hold || !panels || darkItems.length < 2) return;
 
     function useStatic() { return reduce; }
 
-    var cache = { top: 0, holdH: 0, vh: 0, scrollable: 1, dx: 0, dy: 0, vertical: false };
+    var cache = { top: 0, holdH: 0, vh: 0, scrollable: 1, pw: 0, ph: 0, vertical: false };
     var ticking = false;
     var lastP = -1;
-    var n = rows.length;
+    var lastI = -1;
+    var n = darkItems.length;
 
-    function easeOut(t) {
-      return 1 - Math.pow(1 - t, 3);
+    function setItems(list, i) {
+      list.forEach(function (el, j) {
+        el.classList.toggle('is-active', j === i);
+        el.classList.toggle('is-done', j < i);
+        if (j === i) {
+          el.style.opacity = '1';
+          el.style.transform = 'translate3d(0,-50%,0)';
+        } else if (j < i) {
+          el.style.opacity = '0';
+          el.style.transform = 'translate3d(0,calc(-50% - 28px),0)';
+        } else {
+          el.style.opacity = '0';
+          el.style.transform = 'translate3d(0,calc(-50% + 32px),0)';
+        }
+      });
+    }
+
+    function alignCopies() {
+      if (!copyDark || !copyLime) return;
+      var pw = cache.pw;
+      var ph = cache.ph;
+      copyDark.style.width = pw + 'px';
+      copyLime.style.width = pw + 'px';
+      if (cache.vertical) {
+        /* lime on top: copy fills full panel height, offset so text aligns */
+        copyDark.style.height = ph + 'px';
+        copyLime.style.height = ph + 'px';
+        copyDark.style.width = '';
+        copyLime.style.width = '';
+        copyDark.style.left = '0';
+        copyLime.style.left = '0';
+        copyDark.style.top = ''; /* JS sets each frame via split */
+        copyLime.style.top = '0';
+      } else {
+        copyDark.style.height = '';
+        copyLime.style.height = '';
+        copyDark.style.left = '0';
+        copyDark.style.top = '0';
+        copyLime.style.top = '0';
+        /* lime copy shifted left by dark width so text coincides */
+      }
+    }
+
+    function applySplit(split) {
+      split = Math.max(0.28, Math.min(0.72, split));
+      panels.style.setProperty('--pitch-split', String(split));
+      if (cache.vertical) {
+        var limeH = cache.ph * split;
+        var darkH = cache.ph - limeH;
+        if (copyLime) {
+          copyLime.style.height = cache.ph + 'px';
+          copyLime.style.top = '0';
+        }
+        if (copyDark) {
+          copyDark.style.height = cache.ph + 'px';
+          /* dark half sits at bottom; copy aligned to panel top → shift up by limeH */
+          copyDark.style.top = (-limeH) + 'px';
+        }
+      } else {
+        var darkW = cache.pw * (1 - split);
+        if (copyLime) {
+          copyLime.style.width = cache.pw + 'px';
+          copyLime.style.left = (-darkW) + 'px';
+        }
+        if (copyDark) {
+          copyDark.style.width = cache.pw + 'px';
+          copyDark.style.left = '0';
+        }
+      }
     }
 
     function applyProgress(p) {
-      for (var i = 0; i < n; i++) {
-        var start = (i / n) * 0.7;
-        var end = start + 0.32;
-        var local = 0;
-        if (p <= start) local = 0;
-        else if (p >= end) local = 1;
-        else local = (p - start) / (end - start);
-        local = easeOut(Math.max(0, Math.min(1, local)));
+      /* Which line is active */
+      var i = Math.min(n - 1, Math.floor(p * n));
+      if (p >= 0.995) i = n - 1;
 
-        var x = 0, y = 0;
-        if (cache.vertical) {
-          /* rest in top half; start shifted down into dark half */
-          y = (1 - local) * cache.dy;
-        } else {
-          /* rest on right; start shifted left into dark half */
-          x = (1 - local) * cache.dx;
-        }
-        var row = rows[i];
-        row.style.transform = 'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0)';
+      /* Local progress within the active slot — lime sweeps 0.34 → 0.66 */
+      var slot = 1 / n;
+      var local = (p - i * slot) / slot;
+      local = Math.max(0, Math.min(1, local));
+      var split = 0.34 + local * 0.32; /* 34% → 66% */
 
-        var text = row.querySelector('.pitch-card--text');
-        var barsEl = row.querySelector('.pitch-card--bars');
-        if (text) text.style.opacity = String(Math.max(0, Math.min(1, (local - 0.22) / 0.4)));
-        if (barsEl) barsEl.style.opacity = String(Math.max(0, Math.min(1, 1 - local / 0.38)));
-      }
+      applySplit(split);
 
-      var active = Math.min(n - 1, Math.floor(p * n + 0.001));
-      if (p >= 0.97) active = n - 1;
-      bars.forEach(function (el, j) {
-        el.classList.toggle('is-on', j <= active);
-      });
-
-      var swell = Math.sin(p * Math.PI);
-      for (var w = 0; w < wave.length; w++) {
-        var k = w + 1;
-        var wobble = Math.abs(Math.sin(k * 0.45 + p * 18));
-        var s = 1 - swell * 0.7 * (1 - wobble);
-        wave[w].style.transform = 'scaleY(' + Math.max(0.15, s).toFixed(3) + ')';
+      if (i !== lastI) {
+        lastI = i;
+        setItems(darkItems, i);
+        setItems(limeItems, i);
+        bars.forEach(function (el, j) {
+          el.classList.toggle('is-on', j <= i);
+        });
       }
     }
 
     function measure() {
       if (useStatic()) {
         root.classList.add('pitch-band--static');
-        rows.forEach(function (el) {
+        panels.style.removeProperty('--pitch-split');
+        [copyDark, copyLime].forEach(function (c) {
+          if (!c) return;
+          c.style.width = '';
+          c.style.height = '';
+          c.style.left = '';
+          c.style.top = '';
+        });
+        darkItems.concat(limeItems).forEach(function (el) {
+          el.style.opacity = '';
           el.style.transform = '';
-          var text = el.querySelector('.pitch-card--text');
-          var barsEl = el.querySelector('.pitch-card--bars');
-          if (text) text.style.opacity = '';
-          if (barsEl) barsEl.style.opacity = '';
+          el.classList.add('is-active');
+          el.classList.remove('is-done');
         });
         return;
       }
@@ -482,10 +539,10 @@
       cache.holdH = hold.offsetHeight;
       cache.top = hold.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0);
       cache.scrollable = Math.max(1, cache.holdH - cache.vh);
+      cache.pw = panels.clientWidth;
+      cache.ph = panels.clientHeight;
       cache.vertical = window.matchMedia('(max-width:47.99rem)').matches;
-      var pr = panels.getBoundingClientRect();
-      cache.dx = -(pr.width * 0.5);
-      cache.dy = (pr.height * 0.5);
+      alignCopies();
     }
 
     function progress() {
@@ -494,7 +551,7 @@
       var scrolled = y - cache.top;
       var p = 0;
       if (scrolled > 0) p = Math.min(1, scrolled / cache.scrollable);
-      if (Math.abs(p - lastP) < 0.0012 && p !== 0 && p !== 1) return;
+      if (Math.abs(p - lastP) < 0.001 && p !== 0 && p !== 1) return;
       lastP = p;
       applyProgress(p);
     }
@@ -511,6 +568,7 @@
     function refresh() {
       measure();
       lastP = -1;
+      lastI = -1;
       progress();
     }
 
