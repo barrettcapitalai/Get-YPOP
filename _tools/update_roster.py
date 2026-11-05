@@ -1,5 +1,5 @@
 
-# YPOP roster sync. Reads the "Full List" tab of the YPOP roster Google Sheet,
+# YPOP roster sync. Reads the "Client List (Internal)" tab of the YPOP roster Google Sheet,
 # rebuilds the encrypted roster data, and commits roster/index.html to GitHub
 # only when something changed. Run inside the Composio workbench with PASS set.
 import re, json, os, io, base64, hmac, hashlib, datetime, concurrent.futures
@@ -78,7 +78,7 @@ def _data(r):
     return r.get('data', r) if isinstance(r, dict) else r
 
 def read_sheet():
-    r, e = run_composio_tool('GOOGLESHEETS_BATCH_GET', {'spreadsheet_id': SHEET_ID, 'ranges': ["'Full List'!A1:AZ2000"]})
+    r, e = run_composio_tool('GOOGLESHEETS_BATCH_GET', {'spreadsheet_id': SHEET_ID, 'ranges': ["'Client List (Internal)'!A1:AZ2000"]})
     if e: raise RuntimeError('sheet read failed: %s' % e)
     vrs = _data(r).get('valueRanges', [])
     return vrs[0].get('values', []) if vrs else []
@@ -133,7 +133,7 @@ def build_lines(vals):
     H = vals[1]; ix = {h.strip(): i for i, h in enumerate(H) if h and h.strip()}
     need = ['Status', 'Category', 'Industry / niche', 'Instagram', 'IG followers', 'TikTok', 'TikTok followers', 'YouTube', 'YouTube subs', 'X', 'X followers', 'Facebook', 'Facebook followers', 'Twitch followers', 'Discord members', 'Other platforms']
     miss = [k for k in need if k not in ix]
-    if miss: raise RuntimeError('Full List is missing columns: %s' % miss)
+    if miss: raise RuntimeError('Client List (Internal) is missing columns: %s' % miss)
     G = lambda r, k: (r[ix[k]] if ix[k] < len(r) else '') or ''
     PL = [('Instagram', 'IG followers'), ('TikTok', 'TikTok followers'), ('YouTube', 'YouTube subs'), ('X', 'X followers'), ('Facebook', 'Facebook followers')]
     recs = {}
