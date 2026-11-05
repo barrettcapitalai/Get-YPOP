@@ -398,70 +398,105 @@
   armWhoRail();
 
 
-  /* Pitch keynote sequence — sticky on fine desktop only */
+  /* Pitch keynote — sticky Obsidian stage on ALL devices (Linea rooms technique).
+     Sticky stage has NO transform. One passive scroll → rAF. Cached geometry.
+     Only opacity/transform writes on items + glyphs. Static only for reduced-motion. */
   function armPitch() {
     var root = document.querySelector('[data-pitch]');
     if (!root) return;
     var hold = root.querySelector('.pitch-hold');
     var items = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-step]'));
+    var glyphs = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-glyph]'));
+    var bars = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-bar]'));
+    var countEl = root.querySelector('[data-pitch-count]');
+    var stepNo = root.querySelector('[data-pitch-stepno]');
     if (!hold || items.length < 2) return;
 
     function useStatic() {
-      return reduce || coarsePointer || window.matchMedia('(max-width:900px), (hover:none), (pointer:coarse)').matches;
+      return reduce;
     }
 
+    var cache = {
+      top: 0,
+      holdH: 0,
+      vh: 0,
+      scrollable: 1
+    };
+    var ticking = false;
+    var lastI = -1;
+    var n = items.length;
+
     function setActive(i) {
-      i = Math.max(0, Math.min(items.length - 1, i));
+      i = Math.max(0, Math.min(n - 1, i | 0));
+      if (i === lastI) return;
+      lastI = i;
       items.forEach(function (el, j) {
         el.classList.toggle('is-active', j === i);
         el.classList.toggle('is-done', j < i);
       });
+      glyphs.forEach(function (el, j) {
+        el.classList.toggle('is-active', j === i);
+        el.classList.toggle('is-done', j < i);
+      });
+      bars.forEach(function (el, j) {
+        el.classList.toggle('is-on', j <= i);
+      });
+      if (countEl) countEl.textContent = (i + 1) + ' / ' + n;
+      if (stepNo) stepNo.textContent = String(i + 1).padStart(2, '0');
     }
 
-    if (useStatic()) {
-      root.classList.add('pitch-band--static');
-      items.forEach(function (el) {
-        el.classList.remove('is-done');
-        el.classList.remove('is-active');
-      });
-      /* Always readable immediately — rise is a polish, not a blank slot */
-      items.forEach(function (el, i) {
-        el.classList.add('is-inview');
-        el.style.transitionDelay = (i * 0.06) + 's';
-      });
-      if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) {
-            if (en.isIntersecting) en.target.classList.add('is-inview');
-          });
-        }, { root: null, threshold: 0.2, rootMargin: '0px 0px -4% 0px' });
-        items.forEach(function (el) { io.observe(el); });
+    function measure() {
+      if (useStatic()) {
+        root.classList.add('pitch-band--static');
+        items.forEach(function (el) {
+          el.classList.remove('is-done');
+          el.classList.add('is-active');
+        });
+        return;
       }
-      return;
+      root.classList.remove('pitch-band--static');
+      cache.vh = window.innerHeight || 1;
+      cache.holdH = hold.offsetHeight;
+      cache.top = hold.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0);
+      cache.scrollable = Math.max(1, cache.holdH - cache.vh);
     }
-    root.classList.remove('pitch-band--static');
-    setActive(0);
 
-    var ticking = false;
-    function sync() {
-      ticking = false;
+    function progress() {
       if (useStatic()) return;
-      var rect = hold.getBoundingClientRect();
-      var vh = window.innerHeight || 1;
-      var scrollable = Math.max(1, hold.offsetHeight - vh);
+      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+      var scrolled = y - cache.top;
       var p = 0;
-      if (rect.top <= 0) p = Math.min(0.999, Math.max(0, (-rect.top) / scrollable));
-      var i = Math.min(items.length - 1, Math.floor(p * items.length));
+      if (scrolled > 0) p = Math.min(0.999, scrolled / cache.scrollable);
+      var i = Math.min(n - 1, Math.floor(p * n));
       setActive(i);
     }
+
     function onScroll() {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(sync);
+      requestAnimationFrame(function () {
+        ticking = false;
+        progress();
+      });
     }
+
+    function refresh() {
+      measure();
+      lastI = -1;
+      progress();
+    }
+
+    if (useStatic()) {
+      measure();
+      return;
+    }
+
+    refresh();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    sync();
+    window.addEventListener('resize', refresh, { passive: true });
+    window.addEventListener('orientationchange', function () {
+      setTimeout(refresh, 120);
+    }, { passive: true });
   }
   armPitch();
 

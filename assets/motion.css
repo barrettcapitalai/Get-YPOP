@@ -591,111 +591,243 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 
 
 /* ========== Pitch taglines — Linea-scale sticky sequence ========== */
+/* ========== Pitch keynote — pinned Obsidian stage, all devices ========== */
 .pitch-band{
-  --space-sheet:clamp(2.5rem,5vw,4rem);
+  --space-sheet:clamp(1.25rem,3vw,2rem);
+  padding-block:clamp(1.5rem,3vw,2.5rem);
+}
+.pitch-hold{position:relative}
+.pitch-stage{
+  position:relative;
+  /* never transform this sticky ancestor */
+  transform:none;
+}
+.pitch-panel{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:clamp(1.25rem,3vw,2.5rem);
+  align-items:center;
+  width:min(1120px, calc(100% - 2 * max(1rem, 3vw)));
+  margin-inline:auto;
+  min-height:min(78svh, 40rem);
+  padding:clamp(1.5rem,3.5vw,2.75rem) clamp(1.25rem,3vw,2.5rem);
+  border-radius:clamp(1.5rem,3vw,2.25rem);
+  background:#101110;
+  color:#F7F8F2;
+  border:1px solid rgba(175,229,4,.14);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 24px 60px -28px rgba(0,0,0,.55);
+  overflow:hidden;
+  position:relative;
+}
+.pitch-panel::before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    radial-gradient(600px 280px at 88% 18%, rgba(175,229,4,.09), transparent 60%),
+    radial-gradient(420px 240px at 12% 88%, rgba(175,229,4,.05), transparent 65%);
+  pointer-events:none;
+}
+.pitch-panel__copy,
+.pitch-panel__visual{position:relative;z-index:1}
+.pitch-panel__copy{
+  display:flex;flex-direction:column;
+  gap:clamp(1.25rem,2.5vw,2rem);
+  min-width:0;
+}
+.pitch-progress{
+  display:flex;align-items:center;gap:.85rem;
+}
+.pitch-progress__label{
+  font-size:.8rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(247,248,242,.55);
+  font-variant-numeric:tabular-nums;
+  min-width:3.5ch;
+}
+.pitch-progress__bars{
+  display:flex;gap:.35rem;flex:1;max-width:9rem;
+}
+.pitch-progress__bars i{
+  display:block;flex:1;height:3px;border-radius:99px;
+  background:rgba(247,248,242,.16);
+  transition:background .45s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+}
+.pitch-progress__bars i.is-on{
+  background:var(--lime,#AFE504);
 }
 .pitch-list{
   list-style:none;margin:0;padding:0;
-  display:flex;flex-direction:column;
-  gap:clamp(2.5rem,6vw,4.5rem);
+  position:relative;
+  min-height:min(38svh, 16rem);
 }
 .pitch-item{
   margin:0;
-  transition:opacity .45s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+  position:absolute;inset:0 auto auto 0;right:0;
+  opacity:0;
+  transform:translate3d(0,28px,0);
+  pointer-events:none;
+  will-change:opacity,transform;
+  transition:opacity .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1)),
+              transform .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+}
+.pitch-item.is-active{
+  opacity:1;
+  transform:translate3d(0,0,0);
+  pointer-events:auto;
+}
+.pitch-item.is-done{
+  opacity:0;
+  transform:translate3d(0,-22px,0);
 }
 .pitch-line{
   margin:0;
-  font-size:clamp(2.5rem,6.2vw,5.75rem); /* ~40–92px */
+  font-size:clamp(2rem,4.8vw,4.25rem);
   font-weight:700;
   letter-spacing:-.045em;
-  line-height:.98;
-  max-width:16ch;
+  line-height:1.02;
+  max-width:14ch;
+  color:#F7F8F2;
 }
+.pitch-line .lime{color:var(--lime,#AFE504)} /* always brand lime on Obsidian panel */
 .pitch-sub{
-  margin:.65rem 0 0;
-  font-size:clamp(1.05rem,1.6vw,1.35rem);
-  color:var(--mut);
+  margin:.75rem 0 0;
+  font-size:clamp(1rem,1.5vw,1.25rem);
+  color:rgba(247,248,242,.58);
   font-weight:500;
   letter-spacing:-.015em;
-  max-width:36ch;
+  max-width:32ch;
+  line-height:1.35;
 }
-/* Desktop fine pointer: sticky keynote sequence */
-@media (min-width:901px) and (hover:hover) and (pointer:fine){
-  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
-    height:calc(100svh * 4.15);
-  }
-  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-stage{
-    position:sticky;top:0;
-    min-height:100svh;
-    display:flex;align-items:center;
-    padding:5.5rem 0 2.5rem;
-  }
-  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-list{
-    position:relative;width:100%;
-    gap:0;min-height:min(42vh,22rem);
-  }
-  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-item{
-    position:absolute;top:0;left:0;right:0;
-    opacity:0;
-    transform:translate3d(0,28px,0);
-    transition:opacity .55s var(--motion-ease), transform .55s var(--motion-ease);
-    pointer-events:none;
-    will-change:opacity,transform;
-  }
-  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-item.is-active{
-    opacity:1;
-    transform:translate3d(0,0,0);
-    pointer-events:auto;
-  }
-  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-item.is-done{
-    opacity:0;
-    transform:translate3d(0,-18px,0);
-  }
+.pitch-panel__visual{
+  display:grid;
+  place-items:center;
+  position:relative;
+  min-height:min(42svh, 18rem);
+  color:rgba(247,248,242,.72);
 }
-/* Touch / phone: stacked reveals, no sticky pin */
-@media (max-width:900px), (hover:none), (pointer:coarse){
-  .pitch-band .pitch-hold{height:auto!important}
-  .pitch-band .pitch-stage{position:relative!important;min-height:0!important;padding:0}
-  .pitch-list{gap:clamp(2rem,5vw,3rem)}
-  .pitch-item{opacity:1;transform:none;position:relative}
-  .pitch-line{font-size:clamp(2.15rem,8.5vw,3rem)}
+.pitch-stepno{
+  position:absolute;
+  right:0;top:50%;
+  transform:translateY(-50%);
+  font-size:clamp(6rem,16vw,11rem);
+  font-weight:800;
+  letter-spacing:-.06em;
+  line-height:.85;
+  color:rgba(247,248,242,.06);
+  pointer-events:none;
+  user-select:none;
+  font-variant-numeric:tabular-nums;
 }
-@media (prefers-reduced-motion:reduce){
-  .pitch-item,.pitch-item.is-active,.pitch-item.is-done{
-    opacity:1!important;transform:none!important;position:relative!important;
-  }
-  .pitch-band .pitch-hold{height:auto!important}
-  .pitch-band .pitch-stage{position:relative!important;min-height:0!important}
+.pitch-glyphs{
+  position:relative;
+  width:min(200px,42vw);
+  aspect-ratio:4/5;
+}
+.pitch-glyph{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  opacity:0;
+  transform:translate3d(0,18px,0) scale(.96);
+  transition:opacity .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1)),
+              transform .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+  will-change:opacity,transform;
+}
+.pitch-glyph.is-active{
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+}
+.pitch-glyph.is-done{
+  opacity:0;
+  transform:translate3d(0,-14px,0) scale(.98);
 }
 
-/* Touch/static pitch: compact stack, always readable (no empty opacity-0 slots) */
-.pitch-band.pitch-band--static .pitch-hold{
-  height:auto!important;
+/* Sticky pin — ALL devices (desktop / iPad / phone) */
+[data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
+  height:calc(100svh * 4.25);
 }
+[data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-stage{
+  position:sticky;
+  top:0;
+  min-height:100svh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(4.75rem,8vw,5.75rem) 0 clamp(1.25rem,3vw,2rem);
+  transform:none; /* critical — never transform sticky ancestors */
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+}
+
+/* Phone: stack visual under copy, keep pin */
+@media (max-width:700px){
+  .pitch-panel{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto;
+    min-height:min(86svh, 36rem);
+    gap:1rem;
+    padding:1.35rem 1.15rem 1.5rem;
+  }
+  .pitch-panel__visual{
+    order:-1; /* visual on top on phone for presence */
+    min-height:9.5rem;
+  }
+  .pitch-glyphs{width:min(120px,38vw)}
+  .pitch-stepno{font-size:clamp(4.5rem,28vw,7rem); opacity:.9}
+  .pitch-list{min-height:11rem}
+  .pitch-line{font-size:clamp(1.85rem,8.2vw,2.55rem); max-width:12ch}
+  .pitch-sub{font-size:1rem}
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-stage{
+    padding:4.25rem 0 1rem;
+  }
+}
+@media (min-width:701px) and (max-width:1024px){
+  .pitch-panel{min-height:min(72svh, 34rem)}
+  .pitch-line{font-size:clamp(2.15rem,4.2vw,3.35rem)}
+  .pitch-glyphs{width:min(168px,28vw)}
+}
+
+/* Static / reduced-motion: readable stack, no pin */
+.pitch-band.pitch-band--static .pitch-hold{height:auto!important}
 .pitch-band.pitch-band--static .pitch-stage{
   position:relative!important;
   min-height:0!important;
   padding:0!important;
 }
+.pitch-band.pitch-band--static .pitch-panel{
+  min-height:0;
+  display:flex;flex-direction:column;
+}
+.pitch-band.pitch-band--static .pitch-panel__visual{display:none}
 .pitch-band.pitch-band--static .pitch-list{
-  gap:clamp(1.75rem,4.5vw,2.75rem);
-  min-height:0!important;
+  position:relative;min-height:0;
+  display:flex;flex-direction:column;
+  gap:clamp(1.5rem,4vw,2.5rem);
 }
 .pitch-band.pitch-band--static .pitch-item{
   position:relative!important;
-  opacity:1;
-  transform:translate3d(0,18px,0);
-  transition:opacity .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1)), transform .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+  opacity:1!important;
+  transform:none!important;
   pointer-events:auto;
 }
-.pitch-band.pitch-band--static .pitch-item.is-inview,
-.pitch-band.pitch-band--static .pitch-item.is-active{
-  opacity:1;
-  transform:translate3d(0,0,0);
-}
+.pitch-band.pitch-band--static .pitch-progress{margin-bottom:.25rem}
+
 @media (prefers-reduced-motion:reduce){
-  .pitch-band.pitch-band--static .pitch-item{opacity:1!important;transform:none!important}
+  .pitch-item,.pitch-item.is-active,.pitch-item.is-done,
+  .pitch-glyph,.pitch-glyph.is-active,.pitch-glyph.is-done{
+    opacity:1!important;transform:none!important;position:relative!important;
+    transition:none!important;
+  }
+  .pitch-band .pitch-hold{height:auto!important}
+  .pitch-band .pitch-stage{position:relative!important;min-height:0!important;padding:0}
+  .pitch-list{display:flex;flex-direction:column;gap:1.75rem;min-height:0}
+  .pitch-glyphs{display:none}
 }
+
+/* Light page: panel stays Obsidian; accent text on surrounding sheet uses #5c7300 via .lime */
+html[data-theme="light"] .pitch-line .lime,
+html.light .pitch-line .lime{color:var(--lime,#AFE504)}
 
 /* Theme-aware logo variants — white marks on dark, black on light */
 .marquee-track .logo-on-light{display:none!important}
