@@ -287,20 +287,23 @@
     var ticking = false;
     function sync() {
       ticking = false;
-      var y = window.pageYOffset || document.documentElement.scrollTop || 0;
-      /* Mobile: focus above the docked phone (~28% down). Desktop: mid-viewport. */
-      var focusY = y + cache.vh * (cache.mobile ? 0.28 : 0.5);
+      var vh = cache.vh || window.innerHeight || 1;
+      /* Mobile: focus band above the docked phone. Desktop: mid-viewport. */
+      var focus = vh * (cache.mobile ? 0.30 : 0.45);
       var best = 0;
       var bestDist = Infinity;
       for (var i = 0; i < steps.length; i++) {
-        var mid = cache.tops[i] + cache.hs[i] * 0.35;
-        var dist = Math.abs(mid - focusY);
+        var r = steps[i].getBoundingClientRect();
+        /* Prefer the title band near the top of each tall step */
+        var anchor = r.top + Math.min(120, r.height * 0.2);
+        var dist = Math.abs(anchor - focus);
         if (dist < bestDist) { bestDist = dist; best = i; }
       }
       setActive(best);
 
       if (!cache.mobile) {
-        if (cache.lastBottom - y < cache.vh * 0.35) rootPath.classList.add('is-exit');
+        var last = steps[steps.length - 1].getBoundingClientRect();
+        if (last.bottom < vh * 0.35) rootPath.classList.add('is-exit');
         else rootPath.classList.remove('is-exit');
       } else {
         rootPath.classList.remove('is-exit');
