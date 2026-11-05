@@ -498,6 +498,9 @@ html[data-theme="light"] .more-calcs .arr,
 html[data-theme="light"] .vs .row b.g,
 html[data-theme="light"] .eq i{color:var(--accent-text)}
 html[data-theme="light"] .label .dot{background:var(--lime)}
+/* Kill any leftover inline lime text colors (AA) */
+html[data-theme="light"] [style*="color:var(--lime)"],
+html[data-theme="light"] [style*="color: var(--lime)"]{color:var(--accent-text)!important}
 html[data-theme="light"] .numbox{border-color:var(--track)!important}
 html[data-theme="light"] .numbox:focus-within{border-color:var(--focus-ring)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--focus-ring) 25%,transparent)}
 html[data-theme="light"] .chip{border-color:var(--track)!important}
