@@ -313,9 +313,10 @@
     var track = root.querySelector('[data-who-track]');
     if (!hold || !track) return;
 
-    var mqPhone = window.matchMedia('(max-width:700px)');
+    /* Pin only on fine desktop pointers. iPad Safari + sticky + translate = jitter. */
+    var mqPhone = window.matchMedia('(max-width:900px), (hover:none), (pointer:coarse)');
     function useStatic() {
-      return reduce || mqPhone.matches;
+      return reduce || mqPhone.matches || coarsePointer;
     }
 
     function measure() {
@@ -385,6 +386,61 @@
     }
   }
   armWhoRail();
+
+
+  /* Pitch keynote sequence — sticky on fine desktop only */
+  function armPitch() {
+    var root = document.querySelector('[data-pitch]');
+    if (!root) return;
+    var hold = root.querySelector('.pitch-hold');
+    var items = Array.prototype.slice.call(root.querySelectorAll('[data-pitch-step]'));
+    if (!hold || items.length < 2) return;
+
+    function useStatic() {
+      return reduce || coarsePointer || window.matchMedia('(max-width:900px), (hover:none), (pointer:coarse)').matches;
+    }
+
+    function setActive(i) {
+      i = Math.max(0, Math.min(items.length - 1, i));
+      items.forEach(function (el, j) {
+        el.classList.toggle('is-active', j === i);
+        el.classList.toggle('is-done', j < i);
+      });
+    }
+
+    if (useStatic()) {
+      root.classList.add('pitch-band--static');
+      items.forEach(function (el) {
+        el.classList.add('is-active');
+        el.classList.remove('is-done');
+      });
+      return;
+    }
+    root.classList.remove('pitch-band--static');
+    setActive(0);
+
+    var ticking = false;
+    function sync() {
+      ticking = false;
+      if (useStatic()) return;
+      var rect = hold.getBoundingClientRect();
+      var vh = window.innerHeight || 1;
+      var scrollable = Math.max(1, hold.offsetHeight - vh);
+      var p = 0;
+      if (rect.top <= 0) p = Math.min(0.999, Math.max(0, (-rect.top) / scrollable));
+      var i = Math.min(items.length - 1, Math.floor(p * items.length));
+      setActive(i);
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(sync);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    sync();
+  }
+  armPitch();
 
   if (!motionEnabled && !reduce) enableMotion();
 })();

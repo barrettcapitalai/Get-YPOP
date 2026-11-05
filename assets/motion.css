@@ -349,12 +349,22 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .who-rail__title{
   margin:0;
-  font-size:clamp(2.5rem,5.4vw,5rem);
+  font-size:clamp(2.75rem,6vw,5.5rem);
   letter-spacing:-.045em;
-  line-height:.98;
-  max-width:16ch;
+  line-height:.96;
+  max-width:10ch;
   font-weight:700;
 }
+.who-rail__aside{display:flex;flex-direction:column;gap:.75rem;max-width:30rem}
+.who-rail__kicker{
+  margin:0;
+  font-size:clamp(1.15rem,2vw,1.55rem);
+  font-weight:650;
+  letter-spacing:-.03em;
+  line-height:1.25;
+  color:var(--ww);
+}
+.who-rail__pill{display:none!important}
 .who-rail__lead{
   margin:0;
   max-width:30rem;
@@ -421,22 +431,43 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .who-place__body .d{font-size:.9rem;color:var(--mut);line-height:1.4}
 .who-place__body .go{margin-top:.25rem;font-size:.85rem;font-weight:700;color:var(--accent-text)}
 
-/* Desktop/tablet sticky scrub (JS sets --who-travel and progress) */
-@media (min-width:701px){
+/* Desktop fine-pointer sticky scrub only — NEVER on touch/coarse (iPad Safari jitter) */
+@media (min-width:901px) and (hover:hover) and (pointer:fine){
   [data-ypop-motion] #who:not(.who-rail--static) .who-rail__hold{
-    height:calc(100vh + var(--who-travel, 0px) * 1.35);
+    height:calc(100svh + var(--who-travel, 0px) * 1.25);
   }
   [data-ypop-motion] #who:not(.who-rail--static) .who-rail__stage{
     position:sticky;top:0;
     display:flex;flex-direction:column;justify-content:flex-start;
-    min-height:100vh;padding:5.25rem 0 2rem;
+    min-height:100svh;padding:5.25rem 0 2rem;
     overflow:clip;
+    transform:none; /* never transform a sticky ancestor */
   }
-  /* JS owns track translate3d — do not also bind via --who-p (Safari jitter) */
   [data-ypop-motion] #who:not(.who-rail--static) .who-rail__track{
     transform:translate3d(0,0,0);
     backface-visibility:hidden;
   }
+}
+/* iPad / touch / tablet: native horizontal swipe — no pin, no JS translate */
+@media (max-width:900px), (hover:none), (pointer:coarse){
+  #who .who-rail__hold{height:auto!important}
+  #who .who-rail__stage{
+    position:relative!important;min-height:0!important;padding:0 0 1rem;
+    overflow:visible;transform:none!important;
+  }
+  #who .who-rail__track{
+    width:auto;max-width:100%;
+    overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+    padding-inline:max(1rem, calc((100vw - var(--wrap, 88rem)) / 2));
+    padding-bottom:.5rem;
+    gap:1rem;
+    transform:none!important;
+    will-change:auto!important;
+  }
+  #who .who-place{width:min(72vw,20rem);scroll-snap-align:start}
 }
 
 /* Phone: native horizontal swipe, no pin */
@@ -495,12 +526,12 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .partners .wrap{overflow:hidden}
 .marquee{
-  --gap:clamp(64px,8vw,112px);
-  --h:44px;
+  --gap:clamp(56px,7vw,100px);
+  --h:clamp(72px,8vw,112px);
   overflow:hidden!important;
-  padding:10px 0;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%);
-  mask-image:linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%);
+  padding:clamp(1.25rem,3vw,2.25rem) 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
 }
 .marquee-track{
   align-items:center;
@@ -509,22 +540,24 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .marquee-track li{
   flex:none;
-  height:calc(var(--h) + 24px);
-  min-width:calc(var(--h) * 2.2);
+  height:calc(var(--h) + 12px);
+  min-width:calc(var(--h) * 2.4);
   display:flex;align-items:center;justify-content:center;
+  background:transparent;
 }
 .marquee-track img{
   height:var(--h)!important;
   max-height:var(--h)!important;
   width:auto!important;
-  max-width:9.5rem;
+  max-width:min(14rem,42vw);
   object-fit:contain;
+  opacity:1;
 }
-.marquee-track img[src*="nvidia"]{--k:1;height:calc(var(--h) * 1.15)!important;max-height:calc(var(--h) * 1.15)!important}
-.marquee-track img[src*="skull"]{height:calc(var(--h) * 1.1)!important;max-height:calc(var(--h) * 1.1)!important}
-.marquee-track img[src*="proto"],
-.marquee-track img[src*="ibm"],
-.marquee-track img[src*="the-league"]{height:var(--h)!important}
+.marquee-track .logo-nvidia img{height:calc(var(--h) * 1.15)!important;max-height:calc(var(--h) * 1.15)!important;max-width:min(16rem,48vw)}
+.marquee-track .logo-proto img{height:calc(var(--h) * 0.95)!important;max-height:calc(var(--h) * 0.95)!important}
+.marquee-track .logo-skull img{height:calc(var(--h) * 1.05)!important;max-height:calc(var(--h) * 1.05)!important}
+.marquee-track .logo-ibm img{height:calc(var(--h) * 0.85)!important;max-height:calc(var(--h) * 0.85)!important}
+.marquee-track .logo-league img{height:calc(var(--h) * 0.9)!important;max-height:calc(var(--h) * 0.9)!important}
 /* Marquee: opacity reveal only — no scale that collided with sheets */
 .partners-band .marquee,
 .partners .marquee{
@@ -537,7 +570,7 @@ html[data-theme="light"] .marquee-track li{
   padding:10px 16px;
   box-sizing:border-box;
 }
-@media (max-width:1023px){.marquee{--h:42px}}
+@media (max-width:1023px){.marquee{--h:clamp(64px,9vw,88px)}}
 @media (max-width:560px){.marquee{--gap:48px;--h:36px}}
 
 /* Light-theme chips add horizontal padding — keep breathing room */
@@ -566,4 +599,82 @@ html[data-theme="light"] .marquee{--gap:clamp(72px,9vw,128px)}
   .path-sticky{display:flex;justify-content:center}
   .path-phone .phone{width:min(15.5rem,72vw);height:31rem}
   .path-phone .phone-screen{min-height:100%}
+}
+
+
+/* ========== Pitch taglines — Linea-scale sticky sequence ========== */
+.pitch-band{
+  --space-sheet:clamp(2.5rem,5vw,4rem);
+}
+.pitch-list{
+  list-style:none;margin:0;padding:0;
+  display:flex;flex-direction:column;
+  gap:clamp(2.5rem,6vw,4.5rem);
+}
+.pitch-item{
+  margin:0;
+  transition:opacity .45s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+}
+.pitch-line{
+  margin:0;
+  font-size:clamp(2.5rem,6.2vw,5.75rem); /* ~40–92px */
+  font-weight:700;
+  letter-spacing:-.045em;
+  line-height:.98;
+  max-width:16ch;
+}
+.pitch-sub{
+  margin:.65rem 0 0;
+  font-size:clamp(1.05rem,1.6vw,1.35rem);
+  color:var(--mut);
+  font-weight:500;
+  letter-spacing:-.015em;
+  max-width:36ch;
+}
+/* Desktop fine pointer: sticky keynote sequence */
+@media (min-width:901px) and (hover:hover) and (pointer:fine){
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-hold{
+    height:calc(100svh * 4.15);
+  }
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-stage{
+    position:sticky;top:0;
+    min-height:100svh;
+    display:flex;align-items:center;
+    padding:5.5rem 0 2.5rem;
+  }
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-list{
+    position:relative;width:100%;
+    gap:0;min-height:18rem;
+  }
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-item{
+    position:absolute;inset:auto 0 auto 0;
+    opacity:.22;
+    transform:translate3d(0,18px,0);
+    transition:opacity .5s var(--motion-ease), transform .5s var(--motion-ease);
+    pointer-events:none;
+  }
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-item.is-active{
+    opacity:1;
+    transform:translate3d(0,0,0);
+    pointer-events:auto;
+  }
+  [data-ypop-motion] .pitch-band:not(.pitch-band--static) .pitch-item.is-done{
+    opacity:.18;
+    transform:translate3d(0,-10px,0);
+  }
+}
+/* Touch / phone: stacked reveals, no sticky pin */
+@media (max-width:900px), (hover:none), (pointer:coarse){
+  .pitch-band .pitch-hold{height:auto!important}
+  .pitch-band .pitch-stage{position:relative!important;min-height:0!important;padding:0}
+  .pitch-list{gap:clamp(2rem,5vw,3rem)}
+  .pitch-item{opacity:1;transform:none;position:relative}
+  .pitch-line{font-size:clamp(2.15rem,8.5vw,3rem)}
+}
+@media (prefers-reduced-motion:reduce){
+  .pitch-item,.pitch-item.is-active,.pitch-item.is-done{
+    opacity:1!important;transform:none!important;position:relative!important;
+  }
+  .pitch-band .pitch-hold{height:auto!important}
+  .pitch-band .pitch-stage{position:relative!important;min-height:0!important}
 }
