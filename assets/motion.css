@@ -694,3 +694,10 @@ html[data-theme="light"] .marquee{--gap:clamp(72px,9vw,128px)}
 @media (prefers-reduced-motion:reduce){
   .pitch-band.pitch-band--static .pitch-item{opacity:1!important;transform:none!important}
 }
+
+/* Theme-aware logo variants (NVIDIA black wordmark needs white on dark) */
+html:not([data-theme="light"]) .marquee-track .logo-on-light{display:none!important}
+html:not([data-theme="light"]) .marquee-track .logo-on-dark{display:block!important}
+html[data-theme="light"] .marquee-track .logo-on-dark{display:none!important}
+html[data-theme="light"] .marquee-track .logo-on-light{display:block!important}
+.marquee-track .logo-nvidia{position:relative}
