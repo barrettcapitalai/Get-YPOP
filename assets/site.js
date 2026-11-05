@@ -297,12 +297,11 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
         return;
       }
       // Collected / non-HubSpot forms path.
-      // HubSpot's collector listens for the submit-button click on forms that were
-      // present at page load (modal is built before the tracking script injects).
-      // preventDefault runs on the submit event so we can show an on-brand thank-you
-      // without putting the lead's email in the URL; the click already fired.
-      e.preventDefault();
-      showThanks(form);
+      // HubSpot requires no JS that intercepts submit for reliable collection, so
+      // we let the browser navigate to action="/work-with-us/?sent=1" (method=get).
+      // Do not preventDefault here.
+      if(btn){ btn.disabled=true; btn.textContent='Sending…'; }
+      // allow native submit
     });
   }
   // Build the modal form at initial load so HubSpot's collected-forms scan can see it.
