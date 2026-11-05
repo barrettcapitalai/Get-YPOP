@@ -34,13 +34,13 @@
   }
   numberStaggers();
 
+
   /* Split headings marked [data-split="lines"] into line masks */
   function splitLines() {
     document.querySelectorAll('[data-split="lines"]').forEach(function (el) {
       if (el.getAttribute('data-split-done')) return;
       var text = el.textContent.replace(/\s+/g, ' ').trim();
       if (!text) return;
-      // Keep existing <br> structure as hard breaks
       var html = el.innerHTML;
       var parts = html.split(/<br\s*\/?>/i);
       el.classList.add('motion-lines');
@@ -54,42 +54,106 @@
   }
   if (!reduce) splitLines();
 
-  /* Enhanced reveals — observe .reveal and [data-split] */
   function showReveal(el) {
+    if (!el) return;
+    el.classList.remove('is-waiting');
     el.classList.add('in');
-    if (el.classList.contains('motion-lines')) el.classList.add('is-in');
-    var lines = el.querySelector('.motion-lines');
-    if (lines) lines.classList.add('is-in');
+    if (el.classList.contains('motion-lines') || el.hasAttribute('data-split')) {
+      el.classList.add('is-in');
+      el.classList.remove('is-waiting');
+    }
+    el.querySelectorAll('.motion-lines').forEach(function (lines) {
+      lines.classList.add('is-in', 'in');
+      lines.classList.remove('is-waiting');
+    });
+    // nested stagger groups
+    if (el.classList.contains('reveal-stagger')) {
+      el.classList.add('in');
+      el.classList.remove('is-waiting');
+    }
+    el.querySelectorAll('.reveal-stagger').forEach(function (g) {
+      g.classList.add('in');
+      g.classList.remove('is-waiting');
+    });
   }
+
+  function revealTargets() {
+    return document.querySelectorAll('.reveal, .reveal-stagger, [data-split="lines"], .motion-lines');
+  }
+
+  function isInView(el) {
+    var r = el.getBoundingClientRect();
+    var vh = window.innerHeight || 800;
+    // Generous: any pixel in the viewport (with small slack)
+    return r.bottom > 0 && r.top < vh;
+  }
+
   function armReveals() {
-    var els = document.querySelectorAll('.reveal, [data-split="lines"], .motion-lines');
-    if (!els.length) { enableMotion(); return; }
+    var els = revealTargets();
     if (reduce) {
       els.forEach(showReveal);
+      document.documentElement.setAttribute('data-ypop-revealed', '');
       return;
     }
-    // Mark currently visible before gating so first paint stays visible
-    var vh = window.innerHeight || 800;
+
+    // Opt-in hide only for elements not already in view
     els.forEach(function (el) {
-      var r = el.getBoundingClientRect();
-      if (r.top < vh * 0.92 && r.bottom > 40) showReveal(el);
+      if (isInView(el)) {
+        showReveal(el);
+      } else {
+        el.classList.add('is-waiting');
+      }
     });
     enableMotion();
+
     if (!('IntersectionObserver' in window)) {
       els.forEach(showReveal);
+      document.documentElement.setAttribute('data-ypop-revealed', '');
       return;
     }
+
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
         showReveal(e.target);
         io.unobserve(e.target);
       });
-    }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+
     els.forEach(function (el) {
-      if (!el.classList.contains('in')) io.observe(el);
+      if (!el.classList.contains('in') && !el.classList.contains('is-in')) io.observe(el);
     });
+
+    // Re-check on scroll/resize (fast scroll / jump)
+    var ticking = false;
+    function sweep() {
+      ticking = false;
+      revealTargets().forEach(function (el) {
+        if (el.classList.contains('in') || el.classList.contains('is-in')) return;
+        if (isInView(el)) showReveal(el);
+      });
+    }
+    function onSweep() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(sweep);
+    }
+    window.addEventListener('scroll', onSweep, { passive: true });
+    window.addEventListener('resize', onSweep, { passive: true });
+
+    // Hard fail-open: never leave content invisible
+    setTimeout(function () {
+      revealTargets().forEach(showReveal);
+      document.documentElement.setAttribute('data-ypop-revealed', '');
+      // ensure path phone has an active panel
+      var panel = document.querySelector('.path-panel.is-active') || document.querySelector('.path-panel');
+      if (panel) {
+        panel.classList.add('is-active');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    }, 1800);
   }
+
   armReveals();
 
   /* Auto-mark common home clusters for stagger if not already */
@@ -106,8 +170,12 @@
     });
   }
   autoStagger();
-  // Re-arm observers for newly tagged nodes
-  armReveals();
+  // Newly tagged stagger nodes: show if in view, else wait + observe via sweep/timeout
+  revealTargets().forEach(function (el) {
+    if (el.classList.contains('in') || el.classList.contains('is-in')) return;
+    if (isInView(el)) showReveal(el);
+    else el.classList.add('is-waiting');
+  });
 
   /* Subtle parallax on [data-parallax] — transform only */
   function armParallax() {
@@ -156,8 +224,13 @@
         el.setAttribute('aria-current', j === i ? 'step' : 'false');
       });
       panels.forEach(function (el, j) {
-        el.classList.toggle('is-active', j === i);
-        el.setAttribute('aria-hidden', j === i ? 'false' : 'true');
+        var on = j === i;
+        el.classList.toggle('is-active', on);
+        el.setAttribute('aria-hidden', on ? 'false' : 'true');
+        if (on) {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
       });
       rootPath.style.setProperty('--path-i', String(i));
     }

@@ -33,47 +33,67 @@ html:not([data-ypop-motion]) .path-panel + .path-panel{
 }
 
 
-/* ---------- Reveals (gated: only after JS sets data-ypop-motion) ---------- */
-[data-ypop-motion] .reveal{
+/* ---------- Reveals: FAIL-OPEN ----------
+   Content is visible by default. JS opts elements into .is-waiting only
+   briefly, then .in / .is-in. Legacy site.css .reveal{opacity:0} is overridden.
+*/
+.reveal,
+.reveal-stagger > *,
+.motion-lines .line__in{
+  opacity:1;
+  transform:none;
+}
+/* Kill legacy site.css hide unless we explicitly arm waiting */
+html[data-ypop-motion] .reveal{opacity:1;transform:none}
+html[data-ypop-motion] .reveal.is-waiting{
   opacity:0;
   transform:translate3d(0,22px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
   transition-delay:calc(var(--i,0) * 70ms);
   will-change:opacity,transform;
 }
-[data-ypop-motion] .reveal.in{opacity:1;transform:none}
-[data-ypop-motion] .reveal-left{transform:translate3d(-18px,0,0)}
-[data-ypop-motion] .reveal-left.in{transform:none}
-[data-ypop-motion] .reveal-scale{transform:translate3d(0,16px,0) scale(.985)}
-[data-ypop-motion] .reveal-scale.in{transform:none}
+html[data-ypop-motion] .reveal.is-waiting.reveal-left{transform:translate3d(-18px,0,0)}
+html[data-ypop-motion] .reveal.is-waiting.reveal-scale{transform:translate3d(0,16px,0) scale(.985)}
+html[data-ypop-motion] .reveal.in,
+html[data-ypop-motion] .reveal.is-waiting.in{
+  opacity:1;transform:none;
+}
 
-/* Override legacy site.css .reveal{opacity:0} until motion is enabled */
-html:not([data-ypop-motion]) .reveal{opacity:1;transform:none}
-
-/* Stagger children once parent is .in */
-[data-ypop-motion] .reveal-stagger > *{
+html[data-ypop-motion] .reveal-stagger.is-waiting > *{
   opacity:0;
   transform:translate3d(0,18px,0);
   transition:opacity var(--motion-dur) var(--motion-ease), transform var(--motion-dur) var(--motion-ease);
   transition-delay:calc(var(--i,0) * 80ms);
   will-change:opacity,transform;
 }
-[data-ypop-motion] .reveal-stagger.in > *,
-[data-ypop-motion] .reveal.in.reveal-stagger > *{opacity:1;transform:none}
+html[data-ypop-motion] .reveal-stagger.in > *,
+html[data-ypop-motion] .reveal-stagger.is-waiting.in > *{
+  opacity:1;transform:none;
+}
 
-/* Heading line mask reveal (split by JS into .line > .line__in) */
+/* Heading line mask — only hide while waiting */
 .motion-lines{display:block}
 .motion-lines .line{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
-[data-ypop-motion] .motion-lines .line__in{
-  display:block;
+.motion-lines .line__in{display:block;transform:none}
+html[data-ypop-motion] .motion-lines.is-waiting .line__in{
   transform:translate3d(0,110%,0);
   transition:transform var(--motion-dur-slow) var(--motion-ease);
   transition-delay:calc(var(--i,0) * 90ms);
   will-change:transform;
 }
-.motion-lines .line__in{display:block}
-[data-ypop-motion] .motion-lines.is-in .line__in,
-[data-ypop-motion] .reveal.in .motion-lines .line__in{transform:none}
+html[data-ypop-motion] .motion-lines.is-in .line__in,
+html[data-ypop-motion] .motion-lines.in .line__in,
+html[data-ypop-motion] .reveal.in .motion-lines .line__in{
+  transform:none;
+}
+
+/* After fail-open timeout, force everything visible */
+html[data-ypop-revealed] .reveal,
+html[data-ypop-revealed] .reveal-stagger > *,
+html[data-ypop-revealed] .motion-lines .line__in,
+html[data-ypop-revealed] .path-panel.is-active{
+  opacity:1!important;transform:none!important;
+}
 
 /* ---------- Sheet band rise (scroll-driven when live) ---------- */
 .sheet{
@@ -284,7 +304,8 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 
 /* Reduced motion: show finished state, no motion */
 @media (prefers-reduced-motion:reduce){
-  .reveal,.reveal-stagger > *,.reveal-left,.reveal-scale,.motion-lines .line__in{
+  .reveal,.reveal-stagger > *,.reveal-left,.reveal-scale,.motion-lines .line__in,
+  .reveal.is-waiting,.reveal-stagger.is-waiting > *,.motion-lines.is-waiting .line__in{
     opacity:1!important;transform:none!important;transition:none!important;
   }
   [data-ypop-live] .sheet:not(.sheet-hero),
@@ -519,3 +540,27 @@ html[data-theme="light"] .marquee-track li{
 /* Light-theme chips add horizontal padding — keep breathing room */
 html[data-theme="light"] .marquee{--gap:clamp(72px,9vw,128px)}
 .partners .marquee-track li{margin:0}
+
+/* Path phone — always show active panel content (never blank shell) */
+.path-phone .phone,
+.path-phone .phone-screen{
+  min-height:28rem;
+}
+.path-phone .phone-screen{
+  color:#F7F8F2 !important;
+}
+.path-panel.is-active{
+  opacity:1 !important;
+  transform:none !important;
+  pointer-events:auto !important;
+  z-index:2;
+}
+.path-panel[aria-hidden="true"]:not(.is-active){
+  opacity:0;
+  z-index:1;
+}
+@media (max-width:1023px){
+  .path-sticky{display:flex;justify-content:center}
+  .path-phone .phone{width:min(15.5rem,72vw);height:31rem}
+  .path-phone .phone-screen{min-height:100%}
+}

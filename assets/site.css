@@ -122,7 +122,8 @@ h2{font-size:clamp(32px,4.2vw,64px)}
 body.menu-open{overflow:hidden}
 
 /* reveal */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+/* Reveal hide is owned by motion.css (.is-waiting). Default visible. */
+.reveal{opacity:1;transform:none;transition:opacity .8s var(--ease),transform .8s var(--ease)}
 .reveal.in{opacity:1;transform:none}
 
 /* ========== HOME HERO ========== */
@@ -840,7 +841,7 @@ main > .wrap{padding-top:clamp(1.5rem,3vw,2.5rem);padding-bottom:2rem}
 .calc-hero,.r-hero,main .niche-hero{padding-top:clamp(1.25rem,3vw,2rem)}
 
 /* Soft reveal stays; slightly longer like Linea */
-.reveal{transform:translateY(28px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal{transition:opacity 1s var(--ease),transform 1s var(--ease)}
 
 /* Keep tap targets ≥44px on the floating pill */
 @media (max-width:900px){
