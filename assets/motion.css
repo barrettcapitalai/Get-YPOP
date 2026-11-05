@@ -527,7 +527,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .partners .wrap{overflow:hidden}
 .marquee{
   /* Shared logo height → natural widths ~140–180px at desktop */
-  --logo-h:clamp(72px,7.5vw,110px);
+  --logo-h:clamp(88px,9vw,128px);
   --gap:clamp(48px,6vw,88px);
   --band-pad:clamp(1.75rem,3.5vw,2.75rem);
   overflow:hidden!important;
@@ -564,7 +564,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   opacity:1!important;
 }
 /* Optical size tweaks — still height-locked, no empty min-width boxes */
-.marquee-track .logo-nvidia img{max-width:min(190px,44vw)!important}
+.marquee-track .logo-nvidia img{max-width:min(220px,48vw)!important}
 .marquee-track .logo-ibm img{max-width:min(200px,46vw)!important}
 .marquee-track .logo-proto img{max-width:min(200px,46vw)!important}
 .marquee-track .logo-league img{max-width:min(190px,44vw)!important}
@@ -577,10 +577,10 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 [data-ypop-motion] .reveal .partners-band .marquee{opacity:0}
 [data-ypop-motion] .reveal.in .partners-band .marquee{opacity:1}
 @media (max-width:900px){
-  .marquee{--logo-h:clamp(64px,9vw,92px);--gap:clamp(36px,5vw,56px)}
+  .marquee{--logo-h:clamp(72px,10vw,100px);--gap:clamp(36px,5vw,56px)}
 }
 @media (max-width:560px){
-  .marquee{--logo-h:clamp(52px,14vw,72px);--gap:clamp(28px,7vw,40px);--band-pad:1.5rem}
+  .marquee{--logo-h:clamp(56px,15vw,78px);--gap:clamp(28px,7vw,40px);--band-pad:1.5rem}
 }
 .partners .marquee-track li{margin:0}
 
