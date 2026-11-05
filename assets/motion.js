@@ -446,8 +446,8 @@
 
         var text = row.querySelector('.pitch-card--text');
         var barsEl = row.querySelector('.pitch-card--bars');
-        if (text) text.style.opacity = String(Math.max(0, Math.min(1, (local - 0.35) / 0.45)));
-        if (barsEl) barsEl.style.opacity = String(Math.max(0, Math.min(1, 1 - local / 0.55)));
+        if (text) text.style.opacity = String(Math.max(0, Math.min(1, (local - 0.22) / 0.4)));
+        if (barsEl) barsEl.style.opacity = String(Math.max(0, Math.min(1, 1 - local / 0.38)));
       }
 
       var active = Math.min(n - 1, Math.floor(p * n + 0.001));

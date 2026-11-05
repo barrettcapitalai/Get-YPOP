@@ -651,8 +651,8 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .pitch-row{
   position:absolute;
-  left:calc(50% + 1.5rem);
-  max-width:calc(50% - 3.25rem);
+  left:calc(50% + 1.25rem);
+  max-width:calc(50% - 2.75rem);
   display:grid;
   grid-template-areas:"card";
   will-change:transform;
@@ -688,7 +688,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .pitch-card--bars span:nth-child(5){height:55%}
 .pitch-line{
   margin:0;
-  font-size:clamp(.95rem,1.35vw,1.175rem);
+  font-size:clamp(.92rem,1.25vw,1.125rem);
   font-weight:700;letter-spacing:-.025em;line-height:1.2;
 }
 .pitch-line .em{color:#5c7300;font-style:normal}
