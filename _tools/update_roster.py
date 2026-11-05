@@ -1,5 +1,5 @@
 
-# YPOP roster sync. Reads the "Client List (Internal)" tab of the YPOP roster Google Sheet,
+# YPOP roster sync. Reads the "Live Site Roster(External)" tab of the YPOP roster Google Sheet,
 # rebuilds the encrypted roster data, and commits roster/index.html to GitHub
 # only when something changed. Run inside the Composio workbench with PASS set.
 import re, json, os, io, base64, hmac, hashlib, datetime, concurrent.futures
@@ -10,6 +10,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 
 SHEET_ID = '1A6u1Xy7N4F_BQZNl8fIkXoBkoyUOr2zQg0LeQFJ2U0Q'
+TAB = 'Live Site Roster(External)'
 OWNER, REPO, BRANCH, PAGE = 'barrettcapitalai', 'Get-YPOP', 'main', 'roster/index.html'
 BLOCKS = ['Celebrities','Artists & Musicians','Creators & Entertainment','Fitness Influencers','Athletes & Sports','SRGN League Players','Fashion & Sneakers','Business, Finance & Real Estate','Brands & Businesses','Gyms & Fitness Brands','Agencies & NIL','Platforms & Tech','Government & Tourism','Connectors & Partners','To categorize']
 DRY = globals().get('DRY', False)
@@ -77,11 +78,14 @@ def commit(files, message):
 def _data(r):
     return r.get('data', r) if isinstance(r, dict) else r
 
-def read_sheet():
-    r, e = run_composio_tool('GOOGLESHEETS_BATCH_GET', {'spreadsheet_id': SHEET_ID, 'ranges': ["'Client List (Internal)'!A1:AZ2000"]})
+def read_tab(rng, **kw):
+    r, e = run_composio_tool('GOOGLESHEETS_BATCH_GET', dict({'spreadsheet_id': SHEET_ID, 'ranges': [rng]}, **kw))
     if e: raise RuntimeError('sheet read failed: %s' % e)
     vrs = _data(r).get('valueRanges', [])
     return vrs[0].get('values', []) if vrs else []
+
+def read_sheet():
+    return read_tab("'%s'!A1:Q2000" % TAB, valueRenderOption='UNFORMATTED_VALUE')
 
 def num(s):
     s = str(s or '').strip()
@@ -129,29 +133,39 @@ def web(o):
     w = re.sub(r'^https?://(www\.)?', '', m.group(1)).rstrip('/')
     return '' if w.lower() in ('facebook.com', 'instagram.com', 'tiktok.com', 'youtube.com', 'x.com', 'linkedin.com') else w
 
+def client_categories():
+    # Category is not on the live tab; used only to pick the top-level filter for Creators. A failed read just falls back.
+    try:
+        vals = read_tab("'Client List (Internal)'!A1:K2000")
+        i = [h.strip() for h in vals[1]].index('Category')
+        return {str(r[0]).strip(): str(r[i]) for r in vals[2:] if r and len(r) > i}
+    except Exception:
+        return {}
+
 def build_lines(vals):
-    H = vals[1]; ix = {h.strip(): i for i, h in enumerate(H) if h and h.strip()}
-    need = ['Status', 'Category', 'Industry / niche', 'Instagram', 'IG followers', 'TikTok', 'TikTok followers', 'YouTube', 'YouTube subs', 'X', 'X followers', 'Facebook', 'Facebook followers', 'Twitch followers', 'Discord members', 'Other platforms']
-    miss = [k for k in need if k not in ix]
-    if miss: raise RuntimeError('Client List (Internal) is missing columns: %s' % miss)
-    G = lambda r, k: (r[ix[k]] if ix[k] < len(r) else '') or ''
-    PL = [('Instagram', 'IG followers'), ('TikTok', 'TikTok followers'), ('YouTube', 'YouTube subs'), ('X', 'X followers'), ('Facebook', 'Facebook followers')]
-    recs = {}
-    for r in vals[2:]:
-        if not r or not str(r[0]).strip(): continue
-        name = str(r[0]).strip().replace('|', '/')
+    # Layout: col B name, C industry, D status, then handle/count pairs for IG, TikTok, YouTube, X, Facebook, O website, P total.
+    # People sit under an all-caps block heading; the summary from "YPOP POTENTIAL REACH" down is not roster.
+    ups = {b.upper(): b for b in BLOCKS}
+    if not any(len(v) > 3 and str(v[1]).strip() == 'NAME' and str(v[3]).strip() == 'YPOP STATUS' for v in vals):
+        raise RuntimeError('%s layout changed: NAME / YPOP STATUS header row not found' % TAB)
+    cats = client_categories()
+    G = lambda r, i: str(r[i]) if i < len(r) else ''
+    recs, blk = {}, None
+    for r in vals:
+        raw = G(r, 1).strip()
+        if raw == 'YPOP POTENTIAL REACH': break
+        if raw in ups: blk = ups[raw]; continue
+        if not blk or not raw or raw == 'NAME': continue
+        name = raw.replace('|', '/')
         cells, tot = [], 0
-        for h, f in PL:
-            hs = [x.replace('|', '/').replace('~', '-') for x in handles(G(r, h))]; n = count(G(r, f)); tot += n
+        for h in (4, 6, 8, 10, 12):
+            hs = [x.replace('|', '/').replace('~', '-') for x in handles(G(r, h))]; n = count(G(r, h + 1)); tot += n
             s = hs[0] if hs else ''
             if len(hs) > 1: s += ' +%d' % (len(hs) - 1)
             cells.append('%s~%d' % (s, n) if n else s)
-        tot += count(G(r, 'Twitch followers')) + count(G(r, 'Discord members'))
-        cat, niche = str(G(r, 'Category')), str(G(r, 'Industry / niche'))
-        ind = (niche.strip() or cat.strip()).replace('|', '/')
-        blk = group(cat, niche, name); g = BLOCKS.index(blk)
-        CAT_OF[name] = top_cat(blk, cat)
-        line = '|'.join([name, str(g), ind, str(G(r, 'Status')).strip().replace('|', '/')] + cells + [web(G(r, 'Other platforms')), str(tot) if tot else ''])
+        tot = num(G(r, 15)) or tot
+        CAT_OF[name] = top_cat(blk, cats.get(raw, ''))
+        line = '|'.join([name, str(BLOCKS.index(blk)), G(r, 2).strip().replace('|', '/'), G(r, 3).strip().replace('|', '/')] + cells + [web(G(r, 14)), str(tot) if tot else ''])
         if name in recs and recs[name][1] >= tot: continue
         recs[name] = (line, tot)
     return [v[0] for k, v in sorted(recs.items(), key=lambda kv: kv[0].lower())], sum(v[1] for v in recs.values())
