@@ -526,9 +526,9 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .partners .wrap{overflow:hidden}
 .marquee{
-  /* Target ~160px logo width at 1440; height follows contain */
-  --logo-w:clamp(140px,13vw,180px);
-  --gap:clamp(40px,5.5vw,72px);
+  /* Shared logo height → natural widths ~140–180px at desktop */
+  --logo-h:clamp(72px,7.5vw,110px);
+  --gap:clamp(48px,6vw,88px);
   --band-pad:clamp(1.75rem,3.5vw,2.75rem);
   overflow:hidden!important;
   padding:var(--band-pad) 0;
@@ -542,10 +542,10 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .marquee-track li{
   flex:none;
-  width:var(--logo-w);
-  height:calc(var(--logo-w) * 0.72);
+  width:auto;
+  height:var(--logo-h);
   min-width:0;
-  max-width:var(--logo-w);
+  max-width:none;
   padding:0!important;
   margin:0;
   display:flex;align-items:center;justify-content:center;
@@ -555,20 +555,20 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .marquee-track img{
   display:block;
-  width:100%!important;
-  max-width:100%!important;
   height:100%!important;
   max-height:100%!important;
+  width:auto!important;
+  max-width:min(200px,42vw)!important;
   object-fit:contain;
   object-position:center;
   opacity:1!important;
 }
-/* Per-logo optical balance inside the shared slot */
-.marquee-track .logo-nvidia{width:calc(var(--logo-w) * 1.05)}
-.marquee-track .logo-ibm{width:calc(var(--logo-w) * 1.15)}
-.marquee-track .logo-proto{width:calc(var(--logo-w) * 0.85)}
-.marquee-track .logo-league{width:calc(var(--logo-w) * 1.05)}
-.marquee-track .logo-skull{width:calc(var(--logo-w) * 0.78)}
+/* Optical size tweaks — still height-locked, no empty min-width boxes */
+.marquee-track .logo-nvidia img{max-width:min(190px,44vw)!important}
+.marquee-track .logo-ibm img{max-width:min(200px,46vw)!important}
+.marquee-track .logo-proto img{max-width:min(200px,46vw)!important}
+.marquee-track .logo-league img{max-width:min(190px,44vw)!important}
+.marquee-track .logo-skull img{max-width:min(120px,28vw)!important}
 .partners-band .marquee,
 .partners .marquee{
   transform:none!important;
@@ -577,10 +577,10 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 [data-ypop-motion] .reveal .partners-band .marquee{opacity:0}
 [data-ypop-motion] .reveal.in .partners-band .marquee{opacity:1}
 @media (max-width:900px){
-  .marquee{--logo-w:clamp(120px,18vw,150px);--gap:clamp(28px,5vw,48px)}
+  .marquee{--logo-h:clamp(64px,9vw,92px);--gap:clamp(36px,5vw,56px)}
 }
 @media (max-width:560px){
-  .marquee{--logo-w:clamp(100px,30vw,130px);--gap:clamp(24px,7vw,36px);--band-pad:1.5rem}
+  .marquee{--logo-h:clamp(52px,14vw,72px);--gap:clamp(28px,7vw,40px);--band-pad:1.5rem}
 }
 .partners .marquee-track li{margin:0}
 
