@@ -145,14 +145,16 @@
 })();
 
 /* ===== HubSpot intake config =====
-   Creator Banker portal 48972179 (NA2). With no formGuid we use HubSpot
-   non-HubSpot / collected forms via the tracking code. Optional formGuid
-   switches the submit path to the Forms API v3. */
+   Creator Banker portal 48972179 (NA2). Primary path is Forms API v3 with
+   formGuid. Tracking code stays for analytics; collected forms is fallback
+   only when formGuid is empty. */
 window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
   portalId: '48972179',
-  formGuid: '',
+  formGuid: 'ee1efa64-e2b1-4b1c-bc99-9a315a5e87d0',
   industryField: 'industry',
-  scriptHost: 'js-na2.hs-scripts.com'
+  scriptHost: 'js-na2.hs-scripts.com',
+  // Docs list api.hsforms.com; NA2 also serves api-na2.hsforms.com.
+  submitHost: 'api-na2.hsforms.com'
 };
 
 (function(){
@@ -279,32 +281,40 @@ window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || {
       say('','');
       if(!validate(form)){ e.preventDefault(); return; }
       var cfg=window.YPOP_HUBSPOT||{};
-      // Forms API path when a HubSpot form GUID is configured.
+      // Primary path: HubSpot Forms API v3 when formGuid is set.
       if(cfg.portalId && cfg.formGuid){
         e.preventDefault();
-        var full=nameField(form).value.trim(), parts=full.split(/\s+/);
-        var first=parts.shift(), last=parts.join(' ');
-        var fields=[{objectTypeId:'0-1',name:'firstname',value:first},{objectTypeId:'0-1',name:'email',value:form.elements.email.value.trim()},{objectTypeId:'0-1',name:cfg.industryField||'industry',value:form.elements.industry.value}];
-        if(last) fields.push({objectTypeId:'0-1',name:'lastname',value:last});
-        var body={fields:fields,context:{pageUri:location.href,pageName:document.title}};
-        var hm=document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/); if(hm) body.context.hutk=hm[1];
+        var full=nameField(form).value.trim();
+        var fields=[
+          {objectTypeId:'0-1',name:'firstname',value:full},
+          {objectTypeId:'0-1',name:'email',value:form.elements.email.value.trim()},
+          {objectTypeId:'0-1',name:cfg.industryField||'industry',value:form.elements.industry.value}
+        ];
+        var body={fields:fields,context:{pageUri:location.href,pageName:document.title||'$YPOP'}};
+        var hm=document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/); if(hm) body.context.hutk=decodeURIComponent(hm[1]);
+        var host=cfg.submitHost||'api-na2.hsforms.com';
+        var url='https://'+host+'/submissions/v3/integration/submit/'+encodeURIComponent(cfg.portalId)+'/'+encodeURIComponent(cfg.formGuid);
         btn.disabled=true; var old=btn.textContent; btn.textContent='Sending…';
-        fetch('https://api.hsforms.com/submissions/v3/integration/submit/'+encodeURIComponent(cfg.portalId)+'/'+encodeURIComponent(cfg.formGuid),{
-          method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
-        }).then(function(r){
-          if(!r.ok) throw new Error('HTTP '+r.status);
-          showThanks(form);
-        }).catch(function(){
-          say('bad','Something went wrong and your details were not sent. Please try again, or email info@getypop.com.');
-        }).finally(function(){ btn.disabled=false; btn.textContent=old; });
+        fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+          .then(function(r){
+            return r.text().then(function(txt){
+              var parsed=null; try{ parsed=txt?JSON.parse(txt):null; }catch(err){}
+              if(!r.ok){
+                var detail=(parsed&&(parsed.message||parsed.error||parsed.errors&&JSON.stringify(parsed.errors)))||('HTTP '+r.status);
+                throw new Error(detail);
+              }
+              showThanks(form);
+            });
+          })
+          .catch(function(){
+            say('bad','Something went wrong and your details were not sent. Please try again, or email info@getypop.com.');
+          })
+          .finally(function(){ btn.disabled=false; btn.textContent=old; });
         return;
       }
-      // Collected / non-HubSpot forms path.
-      // HubSpot requires no JS that intercepts submit for reliable collection, so
-      // we let the browser navigate to action="/work-with-us/?sent=1" (method=get).
-      // Do not preventDefault here.
+      // Fallback: collected / non-HubSpot forms (no formGuid).
+      // Do not preventDefault — HubSpot's collector needs a native submit.
       if(btn){ btn.disabled=true; btn.textContent='Sending…'; }
-      // allow native submit
     });
   }
   // Build the modal form at initial load so HubSpot's collected-forms scan can see it.
