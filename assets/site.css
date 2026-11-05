@@ -30,8 +30,9 @@ h2{font-size:clamp(26px,3.6vw,44px)}
 /* ========== SHARED HEADER ========== */
 .site-header{position:sticky;top:0;z-index:50;height:var(--header-h);backdrop-filter:saturate(140%) blur(16px);-webkit-backdrop-filter:saturate(140%) blur(16px);background:rgba(16,17,16,.92)!important;border-bottom:1px solid var(--line)}
 .site-header .bar{display:flex;align-items:center;justify-content:space-between;height:var(--header-h);gap:16px;flex-wrap:nowrap!important;padding:0 24px!important}
-.logo{font-weight:800;font-size:22px;font-style:italic;letter-spacing:-.02em;color:var(--ww)!important;flex:none}
-.logo span{color:var(--lime);font-style:normal}
+.logo{display:inline-flex!important;align-items:center;gap:10px;font-weight:800;font-size:20px;font-style:normal;letter-spacing:-.01em;line-height:1;color:var(--ww)!important;flex:none;text-decoration:none}
+.logo img{width:30px;height:30px;display:block;flex:none}
+.logo span{color:var(--ww);font-style:normal}
 .nav-desk{display:flex;align-items:center;gap:4px;flex:1;justify-content:center;min-width:0}
 .nav-desk > a{font-size:13.5px;font-weight:600;color:var(--mut);padding:8px 12px;border-radius:10px;min-height:38px;display:inline-flex;align-items:center;white-space:nowrap;border:0!important}
 .nav-desk > a:hover,.nav-desk > a.on{color:var(--ww);background:rgba(255,255,255,.06)}
@@ -334,3 +335,7 @@ footer .fine strong{color:#d8dbd0!important}
 }
 
 @media (max-width:560px){.site-header .bar{padding:0 16px!important}}
+
+/* /demo/ page: header + full-height demo */
+body.demo-page{height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+.demo-frame{flex:1;min-height:0;width:100%;border:0;display:block;background:#101110}
