@@ -459,6 +459,7 @@ body.modal-open{overflow:hidden}
 .marquee-track img[src*="the-league"]{--k:1}
 .marquee-track li:hover img{opacity:1}
 @keyframes ypop-marquee{to{transform:translateX(-50%)}}
+.partners{overflow-x:clip}
 .partners.reveal .marquee{transform:scale(1.08) translateY(18px);opacity:0;transition:transform 1.1s var(--ease),opacity 1.1s var(--ease)}
 .partners.reveal.in .marquee{transform:none;opacity:1}
 @media (max-width:1023px){.marquee{--h:56px}.partners{padding:72px 0}}
