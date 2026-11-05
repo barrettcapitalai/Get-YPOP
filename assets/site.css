@@ -350,33 +350,45 @@ footer .fine strong{color:#d8dbd0!important}
 
 
 /* ========== WHO'S $YPOP FOR DROPDOWN ========== */
-.nav-dd{position:relative;display:flex;align-items:center}
+.nav-dd{position:relative;display:flex;align-items:center;z-index:1}
 .nav-dd > button{
   font:inherit;font-size:13.5px;font-weight:600;color:var(--mut);padding:8px 12px;border-radius:10px;
   min-height:38px;display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;cursor:pointer;
-  white-space:nowrap;
+  white-space:nowrap;-webkit-tap-highlight-color:transparent;
 }
 .nav-dd > button:hover,.nav-dd > button[aria-expanded="true"],.nav-dd.on > button{color:var(--ww);background:var(--hover)}
 .nav-dd > button .chev{width:10px;height:10px;opacity:.7;transition:transform .2s var(--ease)}
 .nav-dd > button[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .nav-dd-panel{
-  position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
-  min-width:320px;max-width:min(380px,92vw);padding:8px;
+  position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%);
+  min-width:300px;max-width:min(360px,92vw);padding:8px;
   background:var(--elevated);border:1px solid var(--line);border-radius:18px;
-  box-shadow:var(--shadow),0 0 0 1px var(--soft) inset;
+  box-shadow:var(--shadow-lift,0 24px 48px -24px rgba(0,0,0,.55)),0 0 0 1px var(--soft) inset;
   backdrop-filter:saturate(140%) blur(18px);-webkit-backdrop-filter:saturate(140%) blur(18px);
-  z-index:60;display:none;
+  z-index:80;display:none;
 }
 .nav-dd-panel.open{display:block;animation:drop .22s var(--ease)}
 .nav-dd-panel a{
   display:flex;flex-direction:column;align-items:flex-start;gap:2px;
-  padding:12px 14px;border-radius:12px;text-decoration:none;color:var(--ww);
+  padding:11px 14px;border-radius:12px;text-decoration:none;color:var(--ww);
   min-height:auto;border:0!important;background:transparent;
 }
 .nav-dd-panel a:hover,.nav-dd-panel a:focus-visible{background:var(--lime-soft);outline:0}
-.nav-dd-panel a .t{font-size:15px;font-weight:700;letter-spacing:-.01em}
+.nav-dd-panel a .t{font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--ww)}
 .nav-dd-panel a .d{font-size:12.5px;font-weight:500;color:var(--mut);line-height:1.35}
 .nav-dd-panel a:hover .d,.nav-dd-panel a:focus-visible .d{color:var(--text-2)}
+html[data-theme="light"] .nav-dd-panel{
+  background:color-mix(in srgb,var(--brand-ww,#F7F8F2) 94%,transparent);
+  border-color:color-mix(in srgb,var(--brand-ob,#101110) 12%,transparent);
+  box-shadow:0 22px 48px -22px rgba(16,17,16,.22),0 0 0 1px color-mix(in srgb,var(--brand-ob,#101110) 4%,transparent) inset;
+}
+html[data-theme="light"] .nav-dd-panel a .t{color:var(--brand-ob,#101110)}
+html[data-theme="light"] .nav-dd-panel a .d{color:color-mix(in srgb,var(--brand-ob,#101110) 62%,transparent)}
+html[data-theme="light"] .nav-dd-panel a:hover,
+html[data-theme="light"] .nav-dd-panel a:focus-visible{background:color-mix(in srgb,var(--lime,#AFE504) 22%,transparent)}
+/* Keep header above sheets so open panel isn't trapped under page stacking */
+.site-header{overflow:visible}
+.site-header .nav-desk{overflow:visible;position:relative;z-index:2}
 
 /* Mobile expandable niches inside drawer */
 .nav-group{display:grid;gap:2px}
@@ -752,7 +764,9 @@ body{background:var(--sheet-1,var(--ob))}
   backdrop-filter:saturate(140%) blur(14px);-webkit-backdrop-filter:saturate(140%) blur(14px);
   box-shadow:var(--shadow-lift,0 24px 48px -24px rgba(0,0,0,.55)),0 0 0 1px color-mix(in srgb,var(--ww) 6%,transparent) inset;
   transform:translate3d(0,0,0);
-  contain:layout style paint;
+  /* layout+style only — paint containment clipped the Who's dropdown outside the pill */
+  contain:layout style;
+  overflow:visible;
 }
 html[data-theme="light"] .site-header .bar{
   background:color-mix(in srgb,var(--brand-ww) 82%,transparent)!important;
@@ -766,7 +780,7 @@ html[data-theme="light"] .site-header .bar{
   border-radius:var(--radius-card,28px);background:var(--drawer-bg);
   box-shadow:var(--shadow-lift);
 }
-.nav-dd-panel{border-radius:var(--radius-card,28px)}
+.nav-dd-panel{border-radius:var(--radius-card,22px);z-index:80}
 
 /* Sheet sections — overlapping rounded tops like Linea */
 .sheet{

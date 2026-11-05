@@ -120,9 +120,10 @@ html[data-ypop-revealed] .path-panel.is-active{
 /* ---------- Nav pill on scroll ---------- */
 .site-header .bar{
   transition:background-color .35s var(--motion-ease), box-shadow .35s var(--motion-ease), border-color .35s var(--motion-ease);
-  /* Isolate frosted layer so scroll doesn't repaint backdrop-filter every frame */
+  /* Isolate frosted layer — no paint containment: it clipped the Who's $YPOP for dropdown */
   transform:translate3d(0,0,0);
-  contain:layout style paint;
+  contain:layout style;
+  overflow:visible;
   will-change:auto;
 }
 html.is-scrolled .site-header .bar{

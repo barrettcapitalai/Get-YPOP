@@ -69,7 +69,7 @@
     drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
   }
 
-  // desktop Who's $YPOP for dropdown
+  // desktop Who's $YPOP for dropdown (click/tap — not hover-only)
   var dds = document.querySelectorAll('[data-nav-dd]');
   function closeAllDd(except){
     dds.forEach(function(dd){
@@ -80,15 +80,28 @@
       if(p) p.classList.remove('open');
     });
   }
+  function openDd(dd){
+    var b=dd.querySelector('[data-nav-dd-toggle]');
+    var p=dd.querySelector('[data-nav-dd-panel]');
+    if(!b||!p) return;
+    closeAllDd(dd);
+    b.setAttribute('aria-expanded','true');
+    p.classList.add('open');
+  }
+  function toggleDd(dd){
+    var b=dd.querySelector('[data-nav-dd-toggle]');
+    if(!b) return;
+    if(b.getAttribute('aria-expanded')==='true') closeAllDd();
+    else openDd(dd);
+  }
   dds.forEach(function(dd){
     var b=dd.querySelector('[data-nav-dd-toggle]');
     var p=dd.querySelector('[data-nav-dd-panel]');
     if(!b||!p) return;
     b.addEventListener('click', function(e){
+      e.preventDefault();
       e.stopPropagation();
-      var open=b.getAttribute('aria-expanded')==='true';
-      closeAllDd();
-      if(!open){ b.setAttribute('aria-expanded','true'); p.classList.add('open'); }
+      toggleDd(dd);
     });
     p.querySelectorAll('a').forEach(function(a){
       a.addEventListener('click', function(){ closeAllDd(); });
@@ -97,7 +110,7 @@
     b.addEventListener('keydown', function(e){
       if(e.key==='ArrowDown'){
         e.preventDefault();
-        b.setAttribute('aria-expanded','true'); p.classList.add('open');
+        openDd(dd);
         var first=p.querySelector('a'); if(first) first.focus();
       }
     });
@@ -112,6 +125,10 @@
       if(e.key==='Tab'){ closeAllDd(); }
     });
   });
+  // Outside tap/click closes (pointerdown catches iPad taps that miss click)
+  document.addEventListener('pointerdown', function(e){
+    if(!e.target.closest('[data-nav-dd]')) closeAllDd();
+  }, {passive:true});
   document.addEventListener('click', function(e){
     if(!e.target.closest('[data-nav-dd]')) closeAllDd();
   });
