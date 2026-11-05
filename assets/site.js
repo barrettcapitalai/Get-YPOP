@@ -1,5 +1,6 @@
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // reveal
   var els = document.querySelectorAll('.reveal');
   if('IntersectionObserver' in window){
@@ -8,6 +9,32 @@
     },{threshold:0.12, rootMargin:'0px 0px -40px 0px'});
     els.forEach(function(el){ io.observe(el); });
   } else { els.forEach(function(el){ el.classList.add('in'); }); }
+
+  // mobile menu
+  var btn = document.querySelector('[data-menu-toggle]');
+  var drawer = document.querySelector('[data-menu-drawer]');
+  function closeMenu(){
+    if(!drawer) return;
+    drawer.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    if(btn){ btn.setAttribute('aria-expanded','false'); }
+  }
+  function openMenu(){
+    if(!drawer) return;
+    drawer.classList.add('open');
+    document.body.classList.add('menu-open');
+    if(btn){ btn.setAttribute('aria-expanded','true'); }
+  }
+  if(btn && drawer){
+    btn.addEventListener('click', function(){
+      if(drawer.classList.contains('open')) closeMenu(); else openMenu();
+    });
+    drawer.addEventListener('click', function(e){
+      if(e.target === drawer) closeMenu();
+    });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+    window.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
+  }
 
   // phone tilt
   var wrap = document.querySelector('.phone-wrap');

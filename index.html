@@ -18,16 +18,31 @@
 <header class="site-header">
   <div class="wrap bar">
     <a class="logo" href="/" aria-label="$YPOP home">$<span>YPOP</span></a>
-    <nav class="tabs" aria-label="Site">
+    <nav class="nav-desk" aria-label="Primary">
       <a href="/creators/"><span class="tl">Creators &amp; Athletes</span><span class="ts">Creators</span></a>
       <a href="/events/"><span class="tl">Event Hosts</span><span class="ts">Events</span></a>
       <a href="/communities/"><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a>
       <a href="/demo/"><span class="tl">App demo</span><span class="ts">Demo</span></a>
       <a href="/roster/"><span class="tl">Roster</span><span class="ts">Roster</span></a>
     </nav>
-    <a class="btn sm" href="https://getypop.com" target="_blank" rel="noopener">Work With Us</a>
+    <div class="header-cta">
+      <a class="btn sm pill" href="https://getypop.com" target="_blank" rel="noopener">Work with us</a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
   </div>
 </header>
+<div class="nav-drawer" id="site-menu" data-menu-drawer>
+  <div class="nav-panel" role="navigation" aria-label="Mobile">
+    <a href="/creators/">Creators &amp; Athletes</a>
+    <a href="/events/">Event Hosts</a>
+    <a href="/communities/">Brands &amp; Communities</a>
+    <a href="/demo/">App demo</a>
+    <a href="/roster/">Roster</a>
+    <a href="https://getypop.com" target="_blank" rel="noopener">Work with us</a>
+  </div>
+</div>
 <main>
   <div class="wrap">
     <section class="home-hero" aria-label="Hero">
@@ -41,10 +56,7 @@
           <a class="btn ghost" href="#calculators">Run your numbers</a>
         </div>
         <div class="concept-pill"><span class="dot"></span>Concept demo · simulated transactions</div>
-        <div class="home-hero-mobile-cta home-hero-actions">
-          <a class="btn" href="/demo/">Open full demo</a>
-        </div>
-      </div>
+              </div>
       <div class="phone-stage reveal" aria-hidden="false">
         <div class="phone-wrap">
           <div class="phone">
@@ -54,6 +66,21 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="mobile-phone-preview" aria-label="Open app demo">
+        <a class="phone" href="/demo/" style="display:block">
+          <span class="phone-btn l1"></span><span class="phone-btn l2"></span><span class="phone-btn r1"></span>
+          <div class="phone-screen">
+            <div class="phone-static">
+              <span class="scard" aria-hidden="true">
+                <span class="top">$YPOP</span>
+                <span class="bot"><span>powered by $YPOP</span><span class="visa">VISA</span></span>
+              </span>
+              <h3>Your community.<br><span class="lime">Your $YPOP</span> experience.</h3>
+              <p>Tap to open the concept demo.</p>
+              <span class="tap">Open app demo</span>
+            </div></div></a>
       </div>
     </section>
   </div>

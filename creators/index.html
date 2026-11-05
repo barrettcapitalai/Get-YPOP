@@ -14,11 +14,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0A0A0A; --panel:#121212; --panel-2:#171717; --line:#262626; --line-2:#333;
-  --text:#ECECEC; --muted:#8A8A8A; --dim:#5C5C5C;
-  --lime:#AFE504; --lime-dim:rgba(173,255,90,.12); --gold:#E8F500;
-  --sans:"Archivo",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --bg:#101110; --panel:#141514; --panel-2:#1a1b1a; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --text:#F7F8F2; --muted:#9a9d94; --dim:#6c6f68;
+  --lime:#AFE504; --lime-dim:rgba(175,229,4,.12); --gold:#D4A84A;
+  --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:Inter,system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
@@ -160,7 +160,7 @@ footer .row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;f
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* site nav */
-header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+
 .bar{gap:20px}
 .tabs{display:flex;gap:2px;align-self:stretch;margin-right:auto;margin-left:20px}
 .tabs a{display:flex;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:0 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
@@ -175,7 +175,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-f
 .more-calcs h3{font-weight:800;font-size:20px;letter-spacing:-.01em;margin-top:6px}
 .more-calcs .arr{font-family:var(--mono);color:var(--lime);font-size:20px}
 @media (max-width:900px){
-  .bar{flex-wrap:wrap;height:auto;padding-top:12px;gap:0 12px}
+  .bar{/* mobile handled by site.css */}
   .tabs{order:3;width:100%;margin:8px 0 0;overflow-x:auto;scrollbar-width:none;align-self:auto}
   .tabs::-webkit-scrollbar{display:none}
   .tabs a{padding:12px 12px 10px}
@@ -186,7 +186,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-f
   .tabs .ts{display:inline}
   .tabs{justify-content:space-between}
   .tabs a{padding:12px 4px 10px}
-  .bar .btn{margin-left:auto}
+  
 }
 @media (max-width:560px){
   .more-calcs .grid{grid-template-columns:1fr}
@@ -194,137 +194,18 @@ header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.92);backdrop-f
   .more-calcs a:first-child{border-top:0}
 }
 
-/* ===== 2026-10 deck theme: "Financial Infrastructure of Influence" ===== */
-:root{
-  --bg:#F6F5EE; --panel:#FFFFFF; --panel-2:#FAFAF5; --line:#E3E2D8; --line-2:#D3D2C7;
-  --text:#0B0B0B; --muted:#55554F; --dim:#8A8A82;
-  --lime:#2E8B0E;            /* green ink: text accents on cream */
-  --fill:#AFE504;            /* lime fill: buttons, highlights */
-  --fill-2:#D9F99D;
-  --lime-dim:rgba(182,240,63,.28);
-  --around:#1F5C0B; --around-dim:rgba(31,92,11,.12);
-  --rw:#0B0B0B;
-  --sans:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --mono:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --display:"Anton","Arial Narrow",Impact,sans-serif;
-}
-body{background:
-  radial-gradient(900px 520px at 100% 0%,rgba(182,240,63,.40),transparent 62%),
-  radial-gradient(700px 500px at 0% 100%,rgba(182,240,63,.22),transparent 60%),
-  var(--bg)}
-h1,h2,.big,.vs h3,.grp-h h3,.card h2,.tot,.econ .tot,.split .tot{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:0}
-h1{line-height:.92;font-size:clamp(46px,7.6vw,104px)}
-h2{line-height:.98}
-.big{letter-spacing:0;line-height:.95}
-.big small{font-family:var(--sans);font-weight:700;text-transform:none}
-.label{font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.22em;color:var(--muted)}
-.label::before{content:none}
-.hero .lede,.sec-head p,.cta p,.eq,.hint,.ticks,.stackcap,.legend,.tixnote,.vs .row{font-family:var(--sans)}
-.hero .lede{color:var(--muted);font-size:clamp(16px,1.6vw,20px);line-height:1.5}
-.g{color:var(--lime)}
-.logo{font-family:var(--sans);font-weight:900;font-size:24px;letter-spacing:-.03em;color:var(--text)}
-.logo span{color:var(--lime)}
+</style>
+<link rel="stylesheet" href="/assets/site.css">
 
-/* buttons, chips, controls */
-.btn{background:var(--fill);border-color:var(--fill);color:#0B0B0B;border-radius:999px;font-family:var(--sans);letter-spacing:.06em}
-.btn:hover{background:#A6E22E}
-.btn.ghost{background:#fff;color:var(--text);border-color:var(--line-2)}
-.btn.ghost:hover{background:var(--fill-2);border-color:var(--fill)}
-.chip{font-family:var(--sans);border-radius:999px;background:#fff;color:var(--muted)}
-.chip.on{background:var(--fill);border-color:var(--fill);color:#0B0B0B;font-weight:600}
-.seg{border-radius:999px;overflow:hidden;background:#fff}
-.seg button{font-family:var(--sans)}
-.seg button.on{background:var(--fill);color:#0B0B0B}
-.numbox{background:#fff;border-radius:10px}
-.numbox input{font-family:var(--sans)}
-input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(to right,var(--lime) var(--p,50%),var(--line-2) var(--p,50%))}
-input[type=range]::-webkit-slider-thumb{background:var(--fill);border:4px solid #fff;box-shadow:0 0 0 1px var(--lime),0 2px 6px rgba(0,0,0,.15)}
-input[type=range]::-moz-range-thumb{background:var(--fill);border:4px solid #fff;box-shadow:0 0 0 1px var(--lime)}
-details.adv summary{font-family:var(--sans)}
-
-/* panels */
-.calc,.tablewrap,.steps,.vs,.econ,.split,.grp,.more-calcs .grid{border-radius:18px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.02),0 12px 30px -18px rgba(0,0,0,.18)}
-.calc{background:var(--panel)}
-.tablewrap,.grp,.econ,.split{background:#fff}
-table{font-family:var(--sans)}
-td.hl{color:var(--lime)}
-tr.cur td{background:var(--lime-dim)}
-td.cell-on{outline-color:var(--lime);color:var(--lime)}
-.barcell div{background:var(--fill);opacity:1}
-.disclose{color:var(--muted);font-family:var(--sans)}
-.disclose strong{color:var(--text);font-weight:600}
-.disclose .more,.disclose a{color:var(--lime)}
-.steps{background:#fff}
-.step .n{font-family:var(--sans);font-weight:700;color:var(--lime)}
-.step h3{font-family:var(--sans);font-weight:800}
-.quote{border-left-color:var(--fill)}
-.quote p{font-family:var(--sans)}
-.quote p em{color:var(--lime)}
-
-/* without / with blocks */
-.vs .with{background:linear-gradient(160deg,#FFFFFF 0%,#F1FBDD 100%)}
-.vs .row b{font-family:var(--sans)}
-.vs .row b.zero{color:#C8321F}
-.vs .row b.y{color:var(--rw)}
-.y{color:var(--around)}
-td.y{color:var(--rw)}
-.split .stack div:first-child{color:#0B0B0B}
-.split .stack div:last-child{color:#fff}
-
-/* cta & footer */
-.cta{border-radius:22px;border:1px solid #CFEA9A;background:linear-gradient(120deg,#FFFFFF 0%,#EAF9C8 60%,#C9F178 100%)}
-.cta h2{font-size:clamp(30px,4vw,52px)}
-.cta p{color:var(--muted)}
-footer{border-top-color:var(--line)}
-footer .fine{color:var(--muted);font-family:var(--sans)}
-footer .fine strong{color:var(--text)}
-footer .row{font-family:var(--sans)}
-
-/* nav */
-header{background:rgba(246,245,238,.86)!important;border-bottom:1px solid var(--line)}
-.tabs a{font-family:var(--sans);font-weight:600;letter-spacing:.12em}
-.tabs a.on{color:var(--text);border-bottom-color:var(--fill);border-bottom-width:3px}
-.more-calcs a{background:#fff}
-.more-calcs a:hover{background:#F4FBE6}
-.more-calcs h3{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:26px;letter-spacing:0}
-.more-calcs .arr{font-family:var(--sans)}
-
-/* redesign chrome overrides */
-:root{
-  --bg:#101110; --panel:#141514; --panel-2:#1a1b1a; --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
-  --text:#F7F8F2; --muted:#9a9d94; --dim:#6c6f68;
-  --lime:#AFE504; --lime-dim:rgba(175,229,4,.12); --gold:#D4A84A;
-  --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --mono:Inter,system-ui,sans-serif;
-  --display:Inter,system-ui,sans-serif;
-  --rw:#D4A84A; --around:#AFE504;
-}
-body{background:var(--bg);color:var(--text);font-family:var(--sans)}
-.g{color:var(--lime)}
-header,.site-header{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);background:rgba(16,17,16,.86);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
-.logo{font-weight:800;font-size:22px;font-style:italic;letter-spacing:-.02em;text-decoration:none;color:inherit}
-.logo span{color:var(--lime);font-style:normal}
-.tabs{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
-.tabs a{font-size:13.5px;font-weight:600;color:var(--muted);padding:8px 12px;border-radius:10px;min-height:38px;display:inline-flex;align-items:center;text-decoration:none}
-.tabs a:hover,.tabs a.on{color:var(--text);background:rgba(255,255,255,.06)}
-.tabs .ts{display:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;border-radius:14px;background:linear-gradient(180deg,#c3f52a,var(--lime));color:#0d0e0d;font-weight:700;font-size:15px;box-shadow:0 8px 30px rgba(175,229,4,.22),inset 0 1px 0 rgba(255,255,255,.35);text-decoration:none;cursor:pointer}
-.btn.ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--line);box-shadow:none}
-.btn.sm{min-height:38px;padding:0 14px;font-size:13px;border-radius:10px}
-.calc,.tablewrap,.steps,.vs,.econ,.split,.grp,.more-calcs .grid{border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:none}
-.tablewrap,.grp,.econ,.split{background:var(--panel)}
-.more-calcs a{background:var(--panel)}
-.more-calcs a:hover{background:#1a1f14}
-.vs .with{background:linear-gradient(160deg,#121312 0%,#141a0c 100%)}
-.chip.on,.seg button.on{background:var(--lime);color:#111;border-color:var(--lime)}
-input[type=range]::-webkit-slider-thumb{background:var(--lime);border-color:var(--bg)}
-h1,h2,.big,.vs h3,.grp-h h3,.card h2,.tot,.econ .tot,.split .tot{font-family:var(--sans);font-weight:800;text-transform:none;letter-spacing:-.03em}
-.label{font-family:var(--sans);letter-spacing:.14em}
-.disclose,.eq,.hint,.ticks,.stackcap,.legend{font-family:var(--sans)}
-footer{border-top:1px solid var(--line);background:transparent}
-@media (max-width:860px){.tabs .tl{display:none}.tabs .ts{display:inline}}
-
+<style id="calc-force-dark">
+header.site-header, .site-header{background:rgba(16,17,16,.92)!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
+.numbox{background:#181a17!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:12px!important}
+.numbox input{color:#F7F8F2!important;-webkit-text-fill-color:#F7F8F2!important}
+.chip{background:transparent!important;color:#9a9d94!important;border-color:rgba(255,255,255,.14)!important;border-radius:99px!important}
+.chip.on{background:#AFE504!important;color:#111!important;border-color:#AFE504!important}
+body{background:#101110!important;color:#F7F8F2!important}
+.label::before{content:none!important}
+.tabs{display:none!important} /* old class if any */
 </style>
 </head>
 <body>
@@ -332,21 +213,36 @@ footer{border-top:1px solid var(--line);background:transparent}
 <header class="site-header">
   <div class="wrap bar">
     <a class="logo" href="/" aria-label="$YPOP home">$<span>YPOP</span></a>
-    <nav class="tabs" aria-label="Site">
+    <nav class="nav-desk" aria-label="Primary">
       <a href="/creators/" class="on"><span class="tl">Creators &amp; Athletes</span><span class="ts">Creators</span></a>
-      <a href="/events/" class=""><span class="tl">Event Hosts</span><span class="ts">Events</span></a>
-      <a href="/communities/" class=""><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a>
+      <a href="/events/"><span class="tl">Event Hosts</span><span class="ts">Events</span></a>
+      <a href="/communities/"><span class="tl">Brands &amp; Communities</span><span class="ts">Brands</span></a>
       <a href="/demo/"><span class="tl">App demo</span><span class="ts">Demo</span></a>
       <a href="/roster/"><span class="tl">Roster</span><span class="ts">Roster</span></a>
     </nav>
-    <a class="btn sm" href="https://getypop.com" target="_blank" rel="noopener">Work With Us</a>
+    <div class="header-cta">
+      <a class="btn sm pill" href="https://getypop.com" target="_blank" rel="noopener">Work with us</a>
+      <button class="menu-btn" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false" aria-controls="site-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
   </div>
 </header>
+<div class="nav-drawer" id="site-menu" data-menu-drawer>
+  <div class="nav-panel" role="navigation" aria-label="Mobile">
+    <a href="/creators/" class="on">Creators &amp; Athletes</a>
+    <a href="/events/">Event Hosts</a>
+    <a href="/communities/">Brands &amp; Communities</a>
+    <a href="/demo/">App demo</a>
+    <a href="/roster/">Roster</a>
+    <a href="https://getypop.com" target="_blank" rel="noopener">Work with us</a>
+  </div>
+</div>
 
 <main class="wrap">
-  <div class="hero">
+  <div class="hero calc-hero">
     <div class="label">Creator &amp; athlete wallet</div>
-    <h1 style="margin-top:18px">You move the spend.<br>Get your <span class="g">piece.</span></h1>
+    <h1>You move the spend.<br>Get your <span class="g">piece.</span></h1>
     <p class="lede">See how everyday fan spending through your branded $YPOP wallet and Visa card can turn into recurring revenue for your athlete or creator brand.</p>
   </div>
 
@@ -620,5 +516,6 @@ footer{border-top:1px solid var(--line);background:transparent}
   render(true);
 })();
 </script>
+<script src="/assets/site.js"></script>
 </body>
 </html>
