@@ -312,9 +312,11 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 /* Partners band lives inside the closing sheet — no orphan empty sheet */
 .partners-band{
   overflow:clip;
-  margin:0 0 clamp(1.5rem,3vw,2.25rem);
+  margin:0 0 clamp(1.35rem,2.5vw,2rem);
   padding:0;
+  scroll-margin-top:5.5rem;
 }
+#partners{scroll-margin-top:5.5rem}
 .partners-band .marquee{margin:0}
 
 .who-rail__head{
