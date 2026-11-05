@@ -465,7 +465,7 @@
     }
 
     function applySplit(split) {
-      split = Math.max(0.28, Math.min(0.72, split));
+      split = Math.max(0.1, Math.min(0.9, split));
       panels.style.setProperty('--pitch-split', String(split));
       if (cache.vertical) {
         var limeH = cache.ph * split;
@@ -501,7 +501,8 @@
       var slot = 1 / n;
       var local = (p - i * slot) / slot;
       local = Math.max(0, Math.min(1, local));
-      var split = 0.34 + local * 0.32; /* 34% → 66% */
+      /* Lime sweeps across the headline so two-tone always lands on the type */
+      var split = 0.12 + local * 0.76; /* 12% → 88% */
 
       applySplit(split);
 
