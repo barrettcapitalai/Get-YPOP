@@ -518,7 +518,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   .path-step,[data-ypop-motion] .path-step{min-height:auto}
 }
 
-/* ========== Partners marquee — no overlap ========== */
+/* ========== Partners marquee — large, even, theme-legible ========== */
 .partners{
   overflow:clip!important;
   isolation:isolate;
@@ -526,12 +526,14 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .partners .wrap{overflow:hidden}
 .marquee{
-  --gap:clamp(56px,7vw,100px);
-  --h:clamp(80px,9vw,120px);
+  /* Target ~160px logo width at 1440; height follows contain */
+  --logo-w:clamp(110px,12vw,170px);
+  --gap:clamp(40px,5.5vw,72px);
+  --band-pad:clamp(1.75rem,3.5vw,2.75rem);
   overflow:hidden!important;
-  padding:clamp(2rem,4vw,3.25rem) 0;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
-  mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);
+  padding:var(--band-pad) 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 6%,#000 94%,transparent 100%);
 }
 .marquee-track{
   align-items:center;
@@ -540,25 +542,33 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 .marquee-track li{
   flex:none;
-  height:calc(var(--h) + 20px);
-  min-width:calc(var(--h) * 2.6);
+  width:var(--logo-w);
+  height:calc(var(--logo-w) * 0.72);
+  min-width:0;
+  max-width:var(--logo-w);
+  padding:0!important;
+  margin:0;
   display:flex;align-items:center;justify-content:center;
-  background:transparent;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
 }
 .marquee-track img{
-  height:var(--h)!important;
-  max-height:var(--h)!important;
-  width:auto!important;
-  max-width:min(14rem,42vw);
+  display:block;
+  width:100%!important;
+  max-width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
   object-fit:contain;
-  opacity:1;
+  object-position:center;
+  opacity:1!important;
 }
-.marquee-track .logo-nvidia img{height:calc(var(--h) * 1.05)!important;max-height:calc(var(--h) * 1.05)!important;max-width:min(14rem,44vw)}
-.marquee-track .logo-proto img{height:calc(var(--h) * 0.95)!important;max-height:calc(var(--h) * 0.95)!important}
-.marquee-track .logo-skull img{height:calc(var(--h) * 1.05)!important;max-height:calc(var(--h) * 1.05)!important}
-.marquee-track .logo-ibm img{height:calc(var(--h) * 0.85)!important;max-height:calc(var(--h) * 0.85)!important}
-.marquee-track .logo-league img{height:calc(var(--h) * 0.9)!important;max-height:calc(var(--h) * 0.9)!important}
-/* Marquee: opacity reveal only — no scale that collided with sheets */
+/* Per-logo optical balance inside the shared slot */
+.marquee-track .logo-nvidia{width:calc(var(--logo-w) * 1.05)}
+.marquee-track .logo-ibm{width:calc(var(--logo-w) * 1.15)}
+.marquee-track .logo-proto{width:calc(var(--logo-w) * 0.85)}
+.marquee-track .logo-league{width:calc(var(--logo-w) * 1.05)}
+.marquee-track .logo-skull{width:calc(var(--logo-w) * 0.78)}
 .partners-band .marquee,
 .partners .marquee{
   transform:none!important;
@@ -566,15 +576,12 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 }
 [data-ypop-motion] .reveal .partners-band .marquee{opacity:0}
 [data-ypop-motion] .reveal.in .partners-band .marquee{opacity:1}
-html[data-theme="light"] .marquee-track li{
-  padding:10px 16px;
-  box-sizing:border-box;
+@media (max-width:1023px){
+  .marquee{--logo-w:clamp(100px,14vw,140px);--gap:clamp(32px,5vw,56px)}
 }
-@media (max-width:1023px){.marquee{--h:clamp(64px,9vw,88px)}}
-@media (max-width:560px){.marquee{--gap:48px;--h:36px}}
-
-/* Light-theme chips add horizontal padding — keep breathing room */
-html[data-theme="light"] .marquee{--gap:clamp(72px,9vw,128px)}
+@media (max-width:560px){
+  .marquee{--logo-w:clamp(88px,28vw,120px);--gap:clamp(28px,8vw,40px);--band-pad:1.5rem}
+}
 .partners .marquee-track li{margin:0}
 
 /* Path phone — always show active panel content (never blank shell) */
@@ -680,11 +687,25 @@ html[data-theme="light"] .marquee{--gap:clamp(72px,9vw,128px)}
   .pitch-band .pitch-stage{position:relative!important;min-height:0!important}
 }
 
-/* Touch/static pitch: line-rise as each statement enters view */
+/* Touch/static pitch: compact stack, always readable (no empty opacity-0 slots) */
+.pitch-band.pitch-band--static .pitch-hold{
+  height:auto!important;
+}
+.pitch-band.pitch-band--static .pitch-stage{
+  position:relative!important;
+  min-height:0!important;
+  padding:0!important;
+}
+.pitch-band.pitch-band--static .pitch-list{
+  gap:clamp(1.75rem,4.5vw,2.75rem);
+  min-height:0!important;
+}
 .pitch-band.pitch-band--static .pitch-item{
-  opacity:0;
-  transform:translate3d(0,36px,0);
-  transition:opacity .7s var(--motion-ease,cubic-bezier(.2,.7,.2,1)), transform .7s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+  position:relative!important;
+  opacity:1;
+  transform:translate3d(0,18px,0);
+  transition:opacity .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1)), transform .55s var(--motion-ease,cubic-bezier(.2,.7,.2,1));
+  pointer-events:auto;
 }
 .pitch-band.pitch-band--static .pitch-item.is-inview,
 .pitch-band.pitch-band--static .pitch-item.is-active{
@@ -695,9 +716,11 @@ html[data-theme="light"] .marquee{--gap:clamp(72px,9vw,128px)}
   .pitch-band.pitch-band--static .pitch-item{opacity:1!important;transform:none!important}
 }
 
-/* Theme-aware logo variants (NVIDIA black wordmark needs white on dark) */
-html:not([data-theme="light"]) .marquee-track .logo-on-light{display:none!important}
-html:not([data-theme="light"]) .marquee-track .logo-on-dark{display:block!important}
-html[data-theme="light"] .marquee-track .logo-on-dark{display:none!important}
-html[data-theme="light"] .marquee-track .logo-on-light{display:block!important}
-.marquee-track .logo-nvidia{position:relative}
+/* Theme-aware logo variants — white marks on dark, black on light */
+.marquee-track .logo-on-light{display:none!important}
+.marquee-track .logo-on-dark{display:block!important}
+html[data-theme="light"] .marquee-track .logo-on-dark,
+html.light .marquee-track .logo-on-dark{display:none!important}
+html[data-theme="light"] .marquee-track .logo-on-light,
+html.light .marquee-track .logo-on-light{display:block!important}
+.marquee-track li{position:relative}

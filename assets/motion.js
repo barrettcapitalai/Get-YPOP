@@ -414,18 +414,18 @@
         el.classList.remove('is-done');
         el.classList.remove('is-active');
       });
+      /* Always readable immediately — rise is a polish, not a blank slot */
+      items.forEach(function (el, i) {
+        el.classList.add('is-inview');
+        el.style.transitionDelay = (i * 0.06) + 's';
+      });
       if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (en) {
             if (en.isIntersecting) en.target.classList.add('is-inview');
           });
-        }, { root: null, threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
-        items.forEach(function (el, i) {
-          el.style.transitionDelay = (i * 0.08) + 's';
-          io.observe(el);
-        });
-      } else {
-        items.forEach(function (el) { el.classList.add('is-inview'); });
+        }, { root: null, threshold: 0.2, rootMargin: '0px 0px -4% 0px' });
+        items.forEach(function (el) { io.observe(el); });
       }
       return;
     }

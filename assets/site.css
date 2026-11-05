@@ -471,23 +471,18 @@ body.modal-open{overflow:hidden}
 
 /* partners marquee (v7.2) */
 .partners{padding:0;border-top:1px solid var(--line)}
-.marquee{--gap:clamp(48px,6vw,88px);--h:100px;overflow:hidden;padding:28px 0;-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 8%,#000 22%,#000 78%,rgba(0,0,0,.35) 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 8%,#000 22%,#000 78%,rgba(0,0,0,.35) 92%,transparent 100%)}
+.marquee{--gap:clamp(40px,5.5vw,72px);--logo-w:clamp(110px,12vw,170px);overflow:hidden;padding:28px 0;-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 8%,#000 22%,#000 78%,rgba(0,0,0,.35) 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.35) 8%,#000 22%,#000 78%,rgba(0,0,0,.35) 92%,transparent 100%)}
 .marquee-track{list-style:none;display:flex;align-items:center;gap:var(--gap);width:max-content;padding-right:var(--gap);animation:ypop-marquee 46s linear infinite}
 .marquee:hover .marquee-track{animation-play-state:paused}
 .marquee-track li{flex:none;display:flex;align-items:center;justify-content:center;line-height:0}
-.marquee-track img{display:block;height:calc(var(--h) * var(--k,1));width:auto;max-width:none;object-fit:contain;opacity:.85;transition:opacity .3s var(--ease)}
-.marquee-track img[src*="nvidia"]{--k:1.35}
-.marquee-track img[src*="proto"]{--k:.95}
-.marquee-track img[src*="skull"]{--k:1.3}
-.marquee-track img[src*="ibm"]{--k:.9}
-.marquee-track img[src*="the-league"]{--k:1}
+.marquee-track img{display:block;width:100%;height:100%;object-fit:contain;opacity:1;transition:opacity .3s var(--ease)}
 .marquee-track li:hover img{opacity:1}
 @keyframes ypop-marquee{to{transform:translateX(-50%)}}
 .partners{overflow-x:clip}
 .reveal .partners-band .marquee{transform:none;opacity:0;transition:opacity .7s var(--ease)}
 .reveal.in .partners-band .marquee{transform:none;opacity:1}
-@media (max-width:1023px){.marquee{--h:72px}.partners{padding:0}}
-@media (max-width:560px){.partners{padding:0}.marquee{--gap:40px;--h:56px}.marquee-track{animation-duration:36s}}
+@media (max-width:1023px){.partners{padding:0}}
+@media (max-width:560px){.partners{padding:0}.marquee-track{animation-duration:36s}}
 @media (prefers-reduced-motion:reduce){
   .marquee{-webkit-mask-image:none;mask-image:none}
   .marquee-track{animation:none;width:auto;flex-wrap:wrap;justify-content:center;gap:32px 56px;padding:0}
@@ -561,14 +556,7 @@ html[data-theme="light"] .phone{box-shadow:0 30px 70px rgba(16,17,16,.18),0 0 0 
 
 /* Partner logos: many are light-on-transparent. On light theme, place them on
    a soft Obsidian chip so brand artwork stays readable without harsh invert. */
-/* Only mono logos need a dark plate on light theme */
-html[data-theme="light"] .marquee-track li.logo-skull,
-html[data-theme="light"] .marquee-track li.logo-league{
-  background:var(--brand-ob);border-radius:16px;padding:14px 20px;
-  box-shadow:0 1px 0 rgba(16,17,16,.06);
-}
 html[data-theme="light"] .marquee-track img{opacity:1}
-html[data-theme="light"] .marquee-track li:hover img{opacity:1}
 
 html[data-theme="light"] .intake select{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%235a5d56' stroke-width='2'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
