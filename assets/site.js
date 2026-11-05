@@ -10,7 +10,7 @@
     els.forEach(function(el){ io.observe(el); });
   } else { els.forEach(function(el){ el.classList.add('in'); }); }
 
-  // mobile menu
+  // mobile drawer
   var btn = document.querySelector('[data-menu-toggle]');
   var drawer = document.querySelector('[data-menu-drawer]');
   function closeMenu(){
@@ -18,6 +18,13 @@
     drawer.classList.remove('open');
     document.body.classList.remove('menu-open');
     if(btn){ btn.setAttribute('aria-expanded','false'); }
+    // collapse niche group when drawer closes
+    document.querySelectorAll('[data-nav-group]').forEach(function(g){
+      var t=g.querySelector('[data-nav-group-toggle]');
+      var p=g.querySelector('[data-nav-group-panel]');
+      if(t) t.setAttribute('aria-expanded','false');
+      if(p) p.classList.remove('open');
+    });
   }
   function openMenu(){
     if(!drawer) return;
@@ -33,7 +40,86 @@
       if(e.target === drawer) closeMenu();
     });
     drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
-    window.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
+  }
+
+  // desktop Who's $YPOP for dropdown
+  var dds = document.querySelectorAll('[data-nav-dd]');
+  function closeAllDd(except){
+    dds.forEach(function(dd){
+      if(except && dd===except) return;
+      var b=dd.querySelector('[data-nav-dd-toggle]');
+      var p=dd.querySelector('[data-nav-dd-panel]');
+      if(b) b.setAttribute('aria-expanded','false');
+      if(p) p.classList.remove('open');
+    });
+  }
+  dds.forEach(function(dd){
+    var b=dd.querySelector('[data-nav-dd-toggle]');
+    var p=dd.querySelector('[data-nav-dd-panel]');
+    if(!b||!p) return;
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open=b.getAttribute('aria-expanded')==='true';
+      closeAllDd();
+      if(!open){ b.setAttribute('aria-expanded','true'); p.classList.add('open'); }
+    });
+    p.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){ closeAllDd(); });
+    });
+    // keyboard: Escape closes; ArrowDown opens/focuses first
+    b.addEventListener('keydown', function(e){
+      if(e.key==='ArrowDown'){
+        e.preventDefault();
+        b.setAttribute('aria-expanded','true'); p.classList.add('open');
+        var first=p.querySelector('a'); if(first) first.focus();
+      }
+    });
+    p.addEventListener('keydown', function(e){
+      var items=[].slice.call(p.querySelectorAll('a'));
+      var i=items.indexOf(document.activeElement);
+      if(e.key==='ArrowDown'){ e.preventDefault(); items[Math.min(i+1, items.length-1)]?.focus(); }
+      if(e.key==='ArrowUp'){ e.preventDefault(); if(i<=0) b.focus(); else items[i-1].focus(); }
+      if(e.key==='Home'){ e.preventDefault(); items[0]?.focus(); }
+      if(e.key==='End'){ e.preventDefault(); items[items.length-1]?.focus(); }
+      if(e.key==='Escape'){ e.preventDefault(); closeAllDd(); b.focus(); }
+      if(e.key==='Tab'){ closeAllDd(); }
+    });
+  });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('[data-nav-dd]')) closeAllDd();
+  });
+
+  // mobile niche group
+  document.querySelectorAll('[data-nav-group]').forEach(function(g){
+    var t=g.querySelector('[data-nav-group-toggle]');
+    var p=g.querySelector('[data-nav-group-panel]');
+    if(!t||!p) return;
+    t.addEventListener('click', function(){
+      var open=t.getAttribute('aria-expanded')==='true';
+      t.setAttribute('aria-expanded', open?'false':'true');
+      p.classList.toggle('open', !open);
+    });
+  });
+
+  window.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ closeAllDd(); closeMenu(); }
+  });
+
+  // hash niche highlight (no new claims — just mark existing hero)
+  var hash=(location.hash||'').replace(/^#/,'').toLowerCase();
+  var nicheMap={creators:'Creators',athletes:'Athletes',events:'Events',brands:'Brands',communities:'Communities'};
+  if(nicheMap[hash]){
+    var hero=document.querySelector('.calc-hero, .r-hero, .home-hero-copy');
+    if(hero){
+      hero.classList.add('niche-hl');
+      var lab=hero.querySelector('.label');
+      if(lab && !lab.querySelector('.niche-pill')){
+        var pill=document.createElement('span');
+        pill.className='niche-pill';
+        pill.textContent=nicheMap[hash];
+        lab.appendChild(pill);
+      }
+    }
   }
 
   // phone tilt
