@@ -315,8 +315,9 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   }
   .path-phone{pointer-events:auto}
   .path-phone .phone{
-    width:var(--path-phone-w);
-    height:var(--path-phone-h);
+    width:var(--path-phone-w) !important;
+    height:var(--path-phone-h) !important;
+    min-height:0 !important;
     border-radius:2.35rem;
     padding:0.55rem;
     transform:none!important; /* never blank via exit tilt on mobile */
@@ -333,9 +334,9 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   }
   .path-step,
   [data-ypop-motion] .path-step{
-    min-height:78svh;
+    min-height:78svh !important;
     justify-content:flex-start;
-    padding:1.35rem 0 2rem 1.15rem;
+    padding:1.35rem 0 2rem 1.15rem !important;
     opacity:.28;
     transform:none; /* opacity-only on mobile for stability */
     border-left-width:2px;
@@ -580,14 +581,7 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   .who-place__media img,.who-place:hover .who-place__media img{transform:none!important;transition:none!important}
 }
 
-/* ========== Gap cleanup (path + sheets) ========== */
-.path-step,
-[data-ypop-motion] .path-step{
-  min-height:min(20vh,11rem);
-}
-@media (max-width:1023px){
-  .path-step,[data-ypop-motion] .path-step{min-height:auto}
-}
+/* Path step min-heights are owned by the sticky-path block above (desktop / iPad / mobile dock). */
 
 /* ========== Partners marquee — large, even, theme-legible ========== */
 .partners{
@@ -656,10 +650,6 @@ html[data-theme="light"].is-scrolled .site-header .bar{
 .partners .marquee-track li{margin:0}
 
 /* Path phone — always show active panel content (never blank shell) */
-.path-phone .phone,
-.path-phone .phone-screen{
-  min-height:28rem;
-}
 .path-phone .phone-screen{
   color:#F7F8F2 !important;
 }
@@ -673,10 +663,16 @@ html[data-theme="light"].is-scrolled .site-header .bar{
   opacity:0;
   z-index:1;
 }
-@media (max-width:1023px){
+/* iPad only — do not override ≤700px Linea dock sizes */
+@media (max-width:1023px) and (min-width:43.76rem){
   .path-sticky{display:flex;justify-content:center}
-  .path-phone .phone{width:min(15.5rem,72vw);height:31rem}
+  .path-phone .phone{width:15.25rem;height:30.5rem}
   .path-phone .phone-screen{min-height:100%}
+}
+@media (max-width:43.75rem){
+  .path-phone .phone,
+  .path-phone .phone-screen{min-height:0}
+  .path-sticky{display:flex;justify-content:center}
 }
 
 
@@ -907,13 +903,19 @@ html.light .marquee-track .logo-on-light{display:block!important}
   #problem .fstep{padding:1rem}
 }
 
-/* Path: tighter mobile sticky phone dock */
-@media (max-width:47.99rem){
+/* Path mobile dock owned by ≤43.75rem block above — keep sticky pin only as belt-and-suspenders */
+@media (max-width:43.75rem){
   [data-ypop-motion] #path .path-sticky{
-    position:sticky;bottom:.5rem;top:auto;
+    position:sticky;bottom:max(0.5rem, env(safe-area-inset-bottom, 0px));top:auto;
   }
-  #path .path-copy h2{font-size:clamp(1.85rem,8vw,2.4rem)}
-  #path .path-step{padding-block:1.1rem}
+  #path .path-step,
+  [data-ypop-motion] #path .path-step{
+    min-height:78svh !important;
+  }
+  #path .path-phone .phone{
+    width:min(58vw, 14.25rem) !important;
+    height:calc(min(58vw, 14.25rem) * 2) !important;
+  }
 }
 
 /* Film / CTA bands — Linea start rhythm */
