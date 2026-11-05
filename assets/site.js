@@ -143,3 +143,117 @@
     wrap.style.transform = 'rotateX(8deg) rotateY(-12deg)';
   }
 })();
+
+/* ===== HubSpot intake config =====
+   To connect: create a HubSpot form with fields firstname, lastname, email and a
+   custom contact property for industry, then paste the IDs below.
+   industryField must match the internal name of that custom property. */
+window.YPOP_HUBSPOT = window.YPOP_HUBSPOT || { portalId: '', formGuid: '', industryField: 'industry' };
+
+(function(){
+  // FAQ accordion
+  document.querySelectorAll('[data-faq]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var p=document.getElementById(b.getAttribute('aria-controls'));
+      var open=b.getAttribute('aria-expanded')==='true';
+      b.setAttribute('aria-expanded', open?'false':'true');
+      if(p) p.hidden=open;
+    });
+  });
+  // open FAQ item from hash (e.g. /faq/#gen-1-q)
+  if(location.hash){
+    var t=document.getElementById(location.hash.slice(1));
+    if(t && t.hasAttribute('data-faq') && t.getAttribute('aria-expanded')!=='true') t.click();
+  }
+
+  var FORM_HTML = "<form class=\"intake\" data-intake-form novalidate>\n  <div class=\"fld\"><label for=\"md-name\">Name</label><input id=\"md-name\" name=\"name\" type=\"text\" autocomplete=\"name\" required maxlength=\"120\"><span class=\"err\" id=\"md-name-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-ind\">Industry</label><select id=\"md-ind\" name=\"industry\" required><option value=\"\">Select your industry</option><option>Creator</option><option>Athlete</option><option>Brand</option><option>Agency</option><option>Restaurant</option><option>Event</option><option>Community</option><option>Other</option></select><span class=\"err\" id=\"md-ind-err\" aria-live=\"polite\"></span></div>\n  <div class=\"fld\"><label for=\"md-email\">Email</label><input id=\"md-email\" name=\"email\" type=\"email\" autocomplete=\"email\" required maxlength=\"200\"><span class=\"err\" id=\"md-email-err\" aria-live=\"polite\"></span></div>\n  <button class=\"btn\" type=\"submit\">Send</button>\n  <p class=\"form-status\" role=\"status\" aria-live=\"polite\"></p>\n  <p class=\"privacy-note\">We use your details only to reply about working with $YPOP. See our <a href=\"/faq/#gen-1-q\">privacy policy</a>.</p>\n</form>";
+  var modal=null, lastFocus=null;
+  function buildModal(){
+    modal=document.createElement('div');
+    modal.className='intake-modal'; modal.setAttribute('data-intake-modal','');
+    modal.innerHTML='<div class="intake-dialog" role="dialog" aria-modal="true" aria-labelledby="intake-title">'+
+      '<button type="button" class="intake-close" data-intake-close aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>'+
+      '<div class="label"><span class="dot"></span>Work with us</div><h2 id="intake-title">Get your <span class="lime">Piece.</span></h2>'+
+      '<p class="lede">Tell us who you are and we\'ll be in touch.</p>'+FORM_HTML+'</div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function(e){ if(e.target===modal || e.target.closest('[data-intake-close]')) closeModal(); });
+    modal.addEventListener('keydown', function(e){
+      if(e.key==='Escape'){ e.stopPropagation(); closeModal(); }
+      if(e.key==='Tab'){
+        var f=[].slice.call(modal.querySelectorAll('button,input,select,a[href]')).filter(function(x){return !x.disabled && x.offsetParent!==null;});
+        if(!f.length) return;
+        if(e.shiftKey && document.activeElement===f[0]){ e.preventDefault(); f[f.length-1].focus(); }
+        else if(!e.shiftKey && document.activeElement===f[f.length-1]){ e.preventDefault(); f[0].focus(); }
+      }
+    });
+    wireForm(modal.querySelector('[data-intake-form]'));
+  }
+  function openModal(){
+    if(!modal) buildModal();
+    lastFocus=document.activeElement;
+    modal.classList.add('open'); document.body.classList.add('modal-open');
+    setTimeout(function(){ var i=modal.querySelector('input'); if(i) i.focus(); }, 30);
+  }
+  function closeModal(){
+    if(!modal) return;
+    modal.classList.remove('open'); document.body.classList.remove('modal-open');
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  window.YPOP_openIntake=openModal;
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('a[data-intake]');
+    if(!a || location.pathname.indexOf('/work-with-us')===0) return;
+    if(e.metaKey||e.ctrlKey||e.shiftKey||e.button===1) return;
+    e.preventDefault();
+    var drawer=document.querySelector('[data-menu-drawer].open'); if(drawer){ drawer.classList.remove('open'); document.body.classList.remove('menu-open'); }
+    openModal();
+  });
+
+  function setErr(form, el, msg){
+    var e=form.querySelector('#'+el.id+'-err');
+    el.setAttribute('aria-invalid', msg?'true':'false');
+    if(msg) el.setAttribute('aria-describedby', el.id+'-err'); else el.removeAttribute('aria-describedby');
+    if(e) e.textContent=msg||'';
+  }
+  function validate(form){
+    var n=form.elements.name, i=form.elements.industry, m=form.elements.email, ok=true, first=null;
+    var nv=n.value.trim(), mv=m.value.trim();
+    if(!nv){ setErr(form,n,'Please enter your name.'); ok=false; first=first||n; } else setErr(form,n,'');
+    if(!i.value){ setErr(form,i,'Please choose your industry.'); ok=false; first=first||i; } else setErr(form,i,'');
+    if(!mv){ setErr(form,m,'Please enter your email.'); ok=false; first=first||m; }
+    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mv)){ setErr(form,m,'Please enter a valid email address.'); ok=false; first=first||m; }
+    else setErr(form,m,'');
+    if(first) first.focus();
+    return ok;
+  }
+  function wireForm(form){
+    if(!form || form.__wired) return; form.__wired=true;
+    var status=form.querySelector('.form-status'), btn=form.querySelector('button[type=submit]');
+    function say(cls,msg){ status.className='form-status '+cls; status.textContent=msg; }
+    form.addEventListener('submit', function(e){
+      e.preventDefault(); say('','');
+      if(!validate(form)) return;
+      var cfg=window.YPOP_HUBSPOT||{};
+      if(!cfg.portalId || !cfg.formGuid){
+        say('warn','Form not connected yet (preview). Nothing was sent. For now, email info@getypop.com.');
+        return;
+      }
+      var name=form.elements.name.value.trim(), parts=name.split(/\s+/);
+      var first=parts.shift(), last=parts.join(' ');
+      var fields=[{objectTypeId:'0-1',name:'firstname',value:first},{objectTypeId:'0-1',name:'email',value:form.elements.email.value.trim()},{objectTypeId:'0-1',name:cfg.industryField||'industry',value:form.elements.industry.value}];
+      if(last) fields.push({objectTypeId:'0-1',name:'lastname',value:last});
+      var body={fields:fields,context:{pageUri:location.href,pageName:document.title}};
+      var hm=document.cookie.match(/(?:^|;\s*)hubspotutk=([^;]+)/); if(hm) body.context.hutk=hm[1];
+      btn.disabled=true; var old=btn.textContent; btn.textContent='Sending…';
+      fetch('https://api.hsforms.com/submissions/v3/integration/submit/'+encodeURIComponent(cfg.portalId)+'/'+encodeURIComponent(cfg.formGuid),{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+      }).then(function(r){
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        form.reset(); say('ok','Thanks — we got it. We\'ll be in touch soon.');
+      }).catch(function(){
+        say('bad','Something went wrong and your details were not sent. Please try again, or email info@getypop.com.');
+      }).finally(function(){ btn.disabled=false; btn.textContent=old; });
+    });
+  }
+  document.querySelectorAll('[data-intake-form]').forEach(wireForm);
+})();
